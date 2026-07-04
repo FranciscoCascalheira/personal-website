@@ -24,7 +24,7 @@ function CaseStudyTeaser() {
             </p>
           </div>
 
-          <h3 className="mt-6 font-serif text-[clamp(2.4rem,4.5vw,4.25rem)] leading-[0.95] tracking-[-0.01em]">
+          <h3 className="mt-6 font-serif text-[clamp(2.4rem,4.5vw,4.25rem)] leading-[0.95] tracking-[-0.01em] text-field-ink">
             {flagship.name}
           </h3>
           <p className="mt-3 max-w-xl text-lg leading-relaxed text-field-ink-muted">
