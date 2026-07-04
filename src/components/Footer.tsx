@@ -33,7 +33,7 @@ export function Footer() {
 
         {/* giant faint wordmark — Augusta's closing move */}
         <div aria-hidden className="relative select-none">
-          <span className="block truncate bg-gradient-to-b from-text/[0.07] to-text/[0.015] bg-clip-text text-[19vw] font-semibold leading-[0.8] tracking-tighter text-transparent">
+          <span className="block whitespace-nowrap bg-gradient-to-b from-text/[0.08] to-text/[0.015] bg-clip-text text-[13.5vw] font-semibold leading-[0.82] tracking-tighter text-transparent">
             Cascalheira
           </span>
         </div>
