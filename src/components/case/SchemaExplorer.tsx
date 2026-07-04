@@ -12,12 +12,13 @@ import { schemaModels, domains } from "@/lib/case-study";
 
 type Line = { x1: number; y1: number; x2: number; y2: number };
 
-/** fig. 1 — the real 12-model schema as an explorable map.
+/** fig. 1 — the real 12-model schema, typeset as a document plate.
  *
- * Left: the models, grouped by domain, as a keyboard-navigable list of nodes.
- * Right (below on mobile): a detail panel for the selected model. Hairline
- * SVG connectors are drawn from the selected node to its relations, measured
- * from live DOM rects so they survive resize and theme changes.
+ * No chips, no panel chrome: the models are set directly on the paper as
+ * typographic nodes, and the selected model's relations are drawn as ink
+ * hairlines with amber endpoints, measured from live DOM rects so they
+ * survive resize and theme changes. The figure sits between two strong
+ * rules, captioned like a printed plate.
  */
 export function SchemaExplorer() {
   const [selectedId, setSelectedId] = useState<string>("application");
@@ -78,12 +79,15 @@ export function SchemaExplorer() {
   };
 
   return (
-    <figure className="hairline bg-bg-elevated/40" aria-labelledby="fig1-caption">
+    <figure
+      className="border-y border-border-strong"
+      aria-labelledby="fig1-caption"
+    >
       <div className="grid lg:grid-cols-[1.15fr_1fr]">
-        {/* the map */}
+        {/* the map — models set as type, relations drawn as ink */}
         <div
           ref={mapRef}
-          className="relative border-b border-border p-5 sm:p-7 lg:border-b-0 lg:border-r"
+          className="relative border-b border-border py-7 lg:border-b-0 lg:border-r lg:pr-10"
           onKeyDown={onKeyDown}
           role="listbox"
           aria-label="Data models. Use the arrow keys to move between models."
@@ -93,24 +97,32 @@ export function SchemaExplorer() {
             aria-hidden
           >
             {lines.map((l, i) => (
-              <line
-                key={i}
-                x1={l.x1}
-                y1={l.y1}
-                x2={l.x2}
-                y2={l.y2}
-                stroke="var(--accent)"
-                strokeOpacity={0.45}
-                strokeWidth={1}
-              />
+              <g key={i}>
+                <line
+                  x1={l.x1}
+                  y1={l.y1}
+                  x2={l.x2}
+                  y2={l.y2}
+                  stroke="var(--accent)"
+                  strokeOpacity={0.5}
+                  strokeWidth={1}
+                />
+                <circle
+                  cx={l.x2}
+                  cy={l.y2}
+                  r={2.5}
+                  fill="var(--accent)"
+                  fillOpacity={0.8}
+                />
+              </g>
             ))}
           </svg>
 
-          <div className="relative space-y-6">
+          <div className="relative space-y-7">
             {domains.map((d) => (
               <div key={d.id}>
-                <p className="mono-label mb-2.5">{d.label}</p>
-                <div className="flex flex-wrap gap-2">
+                <p className="mono-label mb-3">{d.label}</p>
+                <div className="flex flex-wrap gap-x-5 gap-y-2.5">
                   {schemaModels
                     .filter((m) => m.domain === d.id)
                     .map((m) => {
@@ -128,12 +140,12 @@ export function SchemaExplorer() {
                           tabIndex={isSelected ? 0 : -1}
                           aria-selected={isSelected}
                           onClick={() => setSelectedId(m.id)}
-                          className={`border px-3 py-1.5 font-mono text-xs transition-colors ${
+                          className={`relative border-b-2 pb-1 font-mono text-xs transition-colors ${
                             isSelected
-                              ? "border-accent bg-accent-soft text-text"
+                              ? "border-accent text-accent-text"
                               : isRelated
-                                ? "border-accent/40 bg-bg text-text-muted"
-                                : "border-border bg-bg text-text-muted hover:border-border-strong hover:text-text"
+                                ? "border-accent/40 text-text"
+                                : "border-transparent text-text-muted hover:border-border-strong hover:text-text"
                           }`}
                         >
                           {m.name}
@@ -145,19 +157,18 @@ export function SchemaExplorer() {
             ))}
           </div>
 
-          <p className="mono-label mt-6 hidden sm:block" aria-hidden>
+          <p className="mono-label mt-8 hidden sm:block" aria-hidden>
             ← → to walk the schema
           </p>
         </div>
 
-        {/* the detail panel */}
-        <div
-          className="p-5 sm:p-7"
-          role="region"
-          aria-label="Model detail"
-        >
+        {/* the marginal notes — footnotes for the selected model */}
+        <div className="py-7 lg:pl-10" role="region" aria-label="Model detail">
           <div className="flex items-baseline justify-between gap-4">
-            <h3 className="font-mono text-base text-text" aria-live="polite">
+            <h3
+              className="font-serif text-2xl italic text-text"
+              aria-live="polite"
+            >
               {selected.name}
             </h3>
             <span className="mono-label">
@@ -168,7 +179,7 @@ export function SchemaExplorer() {
             {selected.purpose}
           </p>
 
-          <p className="mono-label mt-5 mb-2">Shape</p>
+          <p className="mono-label mt-6 mb-2">Shape</p>
           <ul className="space-y-1">
             {selected.fields.map((f) => (
               <li
@@ -182,7 +193,7 @@ export function SchemaExplorer() {
 
           {selected.relations.length > 0 && (
             <>
-              <p className="mono-label mt-5 mb-2">Relations</p>
+              <p className="mono-label mt-6 mb-2">Relations</p>
               <ul className="space-y-1">
                 {selected.relations.map((r) => {
                   const target = schemaModels.find((m) => m.id === r.to);
@@ -203,7 +214,7 @@ export function SchemaExplorer() {
             </>
           )}
 
-          <p className="mt-5 border-t border-border pt-4 text-sm leading-relaxed text-text-muted">
+          <p className="mt-6 border-t border-border pt-4 text-sm leading-relaxed text-text-muted">
             <span className="font-medium text-text">
               Why it&apos;s shaped this way —{" "}
             </span>
@@ -214,7 +225,7 @@ export function SchemaExplorer() {
 
       <figcaption
         id="fig1-caption"
-        className="border-t border-border px-5 py-3 sm:px-7"
+        className="border-t border-border-strong py-3"
       >
         <span className="mono-label">
           fig. 1 — 12 relational models · one developer · in production for

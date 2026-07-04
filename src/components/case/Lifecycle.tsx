@@ -1,37 +1,58 @@
-import { lifecycle } from "@/lib/case-study";
+"use client";
 
-/** fig. 2 — the application state machine, rendered as a document figure.
- *  Static and legible: the states are the content, not a decoration. */
+import { Fragment } from "react";
+import { lifecycle } from "@/lib/case-study";
+import { useInView } from "@/lib/motion";
+
+/** fig. 2 — the application state machine as a live diagram.
+ *
+ * The states are typeset on a single line (a column on small screens) and
+ * joined by hairlines through which an amber pulse travels once the figure
+ * is in view — the machine reads as running, because it is. Notes annotate
+ * each state below; terminal states close the figure as a ruled footnote. */
 export function Lifecycle() {
+  const { ref, inView } = useInView<HTMLElement>();
+
   return (
-    <figure className="hairline bg-bg-elevated/40">
-      <div className="p-5 sm:p-7">
-        <ol className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <figure
+      ref={ref}
+      className={`border-y border-border-strong ${inView ? "pipeline-live" : ""}`}
+      aria-labelledby="fig2-caption"
+    >
+      <div className="py-7">
+        {/* the machine */}
+        <div className="flex flex-col sm:flex-row sm:items-center" aria-hidden>
           {lifecycle.states.map((s, i) => (
-            <li key={s.id} className="relative">
-              <p className="mono-label mb-2.5">
-                {`0${i + 1}`}
-                {i < lifecycle.states.length - 1 ? " →" : ""}
+            <Fragment key={s.id}>
+              <span className="w-fit border-b-2 border-accent pb-1 font-mono text-xs text-text">
+                {s.id}
+              </span>
+              {i < lifecycle.states.length - 1 && (
+                <span
+                  className="flow-link"
+                  style={{ "--flow-delay": `${i * 0.45}s` } as React.CSSProperties}
+                />
+              )}
+            </Fragment>
+          ))}
+        </div>
+
+        {/* the annotations */}
+        <ol className="mt-10 grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+          {lifecycle.states.map((s, i) => (
+            <li key={s.id}>
+              <p className="mono-label">
+                {`0${i + 1}`} <span className="text-accent-text">{s.id}</span>
               </p>
-              <div className="flex items-center gap-3">
-                <span className="border border-accent/60 bg-accent-soft px-2.5 py-1 font-mono text-xs text-text">
-                  {s.id}
-                </span>
-                {i < lifecycle.states.length - 1 && (
-                  <span
-                    className="hidden h-px flex-1 bg-border-strong lg:block"
-                    aria-hidden
-                  />
-                )}
-              </div>
-              <p className="mt-3 text-sm leading-relaxed text-text-muted">
+              <p className="mt-2 text-sm leading-relaxed text-text-muted">
                 {s.note}
               </p>
             </li>
           ))}
         </ol>
 
-        <div className="mt-7 border-t border-border pt-5">
+        {/* terminal states — the footnote */}
+        <div className="mt-8 border-t border-border pt-5">
           <p className="mono-label mb-3">Terminal states</p>
           <ul className="flex flex-wrap gap-x-6 gap-y-2">
             {lifecycle.terminal.map((t) => (
@@ -44,7 +65,10 @@ export function Lifecycle() {
         </div>
       </div>
 
-      <figcaption className="border-t border-border px-5 py-3 sm:px-7">
+      <figcaption
+        id="fig2-caption"
+        className="border-t border-border-strong py-3"
+      >
         <span className="mono-label">{lifecycle.caption}</span>
       </figcaption>
     </figure>

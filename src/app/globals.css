@@ -97,8 +97,10 @@
 
 /* ───────────────────────────── Base ───────────────────────────── */
 
-* {
-  border-color: var(--border);
+@layer base {
+  * {
+    border-color: var(--border);
+  }
 }
 
 html {
@@ -359,11 +361,6 @@ h1, h2, h3, h4 {
 .group:hover .accent-underline,
 .accent-underline:hover {
   background-size: 100% 1.5px;
-}
-
-/* hairline framing — legacy, being retired as boxes give way to rules */
-.hairline {
-  border: 1px solid var(--border);
 }
 
 .link-quiet {
