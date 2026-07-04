@@ -63,7 +63,7 @@ export function LiveStatusHeader() {
     <p className="mono-label flex items-center gap-2">
       <span className="relative flex size-1.5" aria-hidden>
         <span
-          className={`absolute inline-flex size-full rounded-full ${
+          className={`absolute inline-flex size-full rounded-full motion-reduce:animate-none ${
             awake ? "animate-ping bg-positive/70" : "bg-text-faint"
           }`}
         />

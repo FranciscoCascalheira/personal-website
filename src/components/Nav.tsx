@@ -13,7 +13,10 @@ export function Nav() {
     const onScroll = () => setScrolled(window.scrollY > 24);
     const kick = setTimeout(() => {
       onScroll();
-      setIsMac(/mac|iphone|ipad|ipod/i.test(navigator.platform || navigator.userAgent));
+      const uaPlatform =
+        (navigator as Navigator & { userAgentData?: { platform?: string } })
+          .userAgentData?.platform || navigator.platform || navigator.userAgent;
+      setIsMac(/mac|iphone|ipad|ipod/i.test(uaPlatform));
     }, 0);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {

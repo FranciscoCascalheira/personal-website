@@ -12,7 +12,7 @@ export function MagneticLink({
   href,
   children,
   className = "",
-  strength = 0.3,
+  strength = 0.18,
 }: {
   href: string;
   children: ReactNode;

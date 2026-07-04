@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { nav, site } from "@/lib/site";
+import { usePrefersReducedMotion } from "@/lib/motion";
 
 type Command = {
   id: string;
@@ -91,6 +92,7 @@ export function CommandPalette() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const listRef = useRef<HTMLUListElement | null>(null);
   const restoreRef = useRef<HTMLElement | null>(null);
+  const reduced = usePrefersReducedMotion();
 
   const close = useCallback(() => setOpen(false), []);
 
@@ -103,11 +105,12 @@ export function CommandPalette() {
 
   const goto = useCallback(
     (id: string) => {
+      const behavior: ScrollBehavior = reduced ? "auto" : "smooth";
       const el = document.getElementById(id);
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-      else window.scrollTo({ top: 0, behavior: "smooth" });
+      if (el) el.scrollIntoView({ behavior, block: "start" });
+      else window.scrollTo({ top: 0, behavior });
     },
-    [],
+    [reduced],
   );
 
   const toggleTheme = useCallback(() => {
@@ -171,7 +174,8 @@ export function CommandPalette() {
     );
   }, [commands, query]);
 
-  // Global ⌘K / Ctrl+K listener + "/" quick-open.
+  // Global ⌘K / Ctrl+K listener + "/" quick-open + Escape-to-close (regardless
+  // of where focus sits inside the dialog).
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const k = e.key.toLowerCase();
@@ -179,6 +183,9 @@ export function CommandPalette() {
         e.preventDefault();
         if (open) close();
         else openPalette();
+      } else if (open && e.key === "Escape") {
+        e.preventDefault();
+        close();
       } else if (
         k === "/" &&
         !open &&
@@ -191,6 +198,21 @@ export function CommandPalette() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, openPalette, close]);
+
+  // Take the rest of the page out of the accessibility tree and tab order
+  // while the modal is open, then restore it on close.
+  useEffect(() => {
+    if (!open) return;
+    const landmarks = [
+      document.querySelector("main"),
+      document.querySelector("footer"),
+      document.querySelector("header nav"),
+    ].filter((el): el is HTMLElement => el instanceof HTMLElement);
+    for (const el of landmarks) el.setAttribute("inert", "");
+    return () => {
+      for (const el of landmarks) el.removeAttribute("inert");
+    };
+  }, [open]);
 
   // Let a trigger button elsewhere (the nav) open the palette.
   useEffect(() => {
@@ -253,14 +275,22 @@ export function CommandPalette() {
       role="dialog"
       aria-modal="true"
       aria-label="Command palette"
+      onKeyDown={(e) => {
+        // Trap Tab: focus never leaves the input while the palette is open.
+        if (e.key === "Tab") {
+          e.preventDefault();
+          inputRef.current?.focus();
+        }
+      }}
     >
       <button
         type="button"
+        tabIndex={-1}
         aria-label="Close command palette"
         onClick={close}
         className="absolute inset-0 bg-bg/70 backdrop-blur-sm"
       />
-      <div className="relative w-full max-w-xl overflow-hidden rounded-2xl border border-border-strong bg-bg-elevated shadow-2xl shadow-black/40">
+      <div className="relative w-full max-w-xl overflow-hidden rounded-2xl border border-border-strong bg-bg-elevated shadow-lg shadow-black/20">
         <div className="flex items-center gap-3 border-b border-border px-4">
           <span className="text-text-faint" aria-hidden>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
@@ -279,7 +309,14 @@ export function CommandPalette() {
             placeholder="Jump to a section, copy my email, open GitHub…"
             className="w-full bg-transparent py-4 text-sm text-text outline-none placeholder:text-text-faint"
             aria-label="Search commands"
+            role="combobox"
+            aria-expanded="true"
+            aria-controls="cmdk-list"
+            aria-activedescendant={
+              filtered[activeIndex] ? `cmdk-opt-${filtered[activeIndex].id}` : undefined
+            }
             autoComplete="off"
+            autoCorrect="off"
             spellCheck={false}
           />
           <kbd className="hidden shrink-0 rounded border border-border px-1.5 py-0.5 font-mono text-[10px] text-text-faint sm:block">
@@ -287,7 +324,7 @@ export function CommandPalette() {
           </kbd>
         </div>
 
-        <ul ref={listRef} className="max-h-[52vh] overflow-y-auto p-2" role="listbox" aria-label="Commands">
+        <ul ref={listRef} id="cmdk-list" className="max-h-[52vh] overflow-y-auto p-2" role="listbox" aria-label="Commands">
           {filtered.length === 0 ? (
             <li className="px-3 py-8 text-center text-sm text-text-faint">
               Nothing matches <span className="text-text-muted">“{query}”</span>
@@ -306,8 +343,10 @@ export function CommandPalette() {
                   ) : null}
                   <button
                     type="button"
+                    id={`cmdk-opt-${cmd.id}`}
                     data-idx={i}
                     role="option"
+                    tabIndex={-1}
                     aria-selected={isActive}
                     onMouseMove={() => setActive(i)}
                     onClick={() => run(cmd)}

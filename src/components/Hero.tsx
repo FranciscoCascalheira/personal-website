@@ -15,7 +15,7 @@ const currently = [
 
 const stats = [
   { k: "In production", v: "A recruitment platform the City of Porto runs on" },
-  { k: "500+ commits", v: "Shipped solo across two production apps" },
+  { k: "500+ commits", v: "Solo, across opPORTOnities and UniSpot" },
   { k: "FEUP · 2nd year", v: "Computer Engineering, still a student" },
 ];
 
@@ -77,7 +77,7 @@ export function Hero() {
 
           {/* right — the currently card (mono metadata, Delta-style) */}
           <Reveal delay={200} className="lg:pt-2">
-            <div className="rounded-2xl border border-border bg-bg-elevated/60 p-6 backdrop-blur-sm">
+            <div className="rounded-2xl border border-border bg-bg-elevated p-6">
               <div className="mb-5">
                 <LiveStatusHeader />
               </div>
