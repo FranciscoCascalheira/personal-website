@@ -1,57 +1,68 @@
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────────────────────────────────
-   Theme tokens. Dark is the default register; light is the editorial mode.
-   Values are driven by CSS variables so the [data-theme] switch is instant.
+   PUBLIC RECORD — the site is typeset like a municipal document.
+   Ivory paper is the default register; dark is the night edition of the
+   same document (warm brown-black, never neutral). Values are CSS variables
+   so the [data-theme] switch is instant.
    ───────────────────────────────────────────────────────────────────────── */
 
 :root,
-[data-theme="dark"] {
-  --bg: #0a0b0d; /* near-black, faint cool tint — never #000 */
-  --bg-elevated: #121316;
-  --bg-inset: #17181c;
+[data-theme="light"] {
+  --bg: #f7f3ea; /* warm ivory paper — never a pure-white flat */
+  --bg-elevated: #f1ece0;
+  --bg-inset: #ebe4d4;
 
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.14);
+  --border: rgba(58, 45, 24, 0.16); /* ruled ink lines — visible on purpose */
+  --border-strong: rgba(58, 45, 24, 0.32);
 
-  --text: #f5f5f6;
-  --text-muted: #a1a1a6;
-  --text-faint: #8a8b92; /* AA-clearing on --bg for small mono labels */
+  --text: #191510; /* warm near-black ink, never pure #000 */
+  --text-muted: #504a3d;
+  --text-faint: #6d6452; /* AA-clearing on the ivory for small mono labels */
 
-  --accent: #e0a73e; /* warm amber — the single signature hue */
-  --accent-strong: #ebb65a;
-  --accent-text: #e0a73e; /* amber that stays legible as small text */
-  --accent-soft: rgba(224, 167, 62, 0.14);
+  --accent: #a06a10; /* amber ink — the single signature hue, AA as text */
+  --accent-strong: #855808;
+  --accent-text: #8a5c0e;
+  --accent-soft: rgba(160, 106, 16, 0.1);
 
-  --positive: #3fcf6e;
+  /* the flooded amber field — amber as structure, not trim */
+  --field: #e3a83c;
+  --field-ink: #211603;
+  --field-ink-muted: #4d3a12;
+  --field-rule: rgba(33, 22, 3, 0.25);
 
-  --glow: rgba(224, 167, 62, 0.16);
-  --grid-line: rgba(255, 255, 255, 0.025);
-  color-scheme: dark;
+  --positive: #1f7d46;
+
+  --grid-line: rgba(58, 45, 24, 0.05);
+  color-scheme: light;
 }
 
-[data-theme="light"] {
-  --bg: #fbfaf7; /* warm ivory — editorial paper, never a pure-white flat */
-  --bg-elevated: #f6f4ee;
-  --bg-inset: #f1eee6;
+[data-theme="dark"] {
+  --bg: #16110b; /* the night edition — deep warm brown-black */
+  --bg-elevated: #1d1710;
+  --bg-inset: #241d14;
 
-  --border: rgba(28, 22, 12, 0.1);
-  --border-strong: rgba(28, 22, 12, 0.18);
+  --border: rgba(233, 213, 175, 0.14);
+  --border-strong: rgba(233, 213, 175, 0.3);
 
-  --text: #14110c; /* warm near-black, never pure #000 */
-  --text-muted: #55524b;
-  --text-faint: #6b665c; /* AA-clearing on the ivory for small mono labels */
+  --text: #f0e9da; /* warm paper-white */
+  --text-muted: #b0a691;
+  --text-faint: #948a74;
 
-  --accent: #b4791a; /* darker amber for AA contrast on white */
-  --accent-strong: #986313;
-  --accent-text: #8a5e14; /* deeper amber that clears AA as small text */
-  --accent-soft: rgba(180, 121, 26, 0.1);
+  --accent: #e3a83c;
+  --accent-strong: #edbb5e;
+  --accent-text: #e3a83c;
+  --accent-soft: rgba(227, 168, 60, 0.14);
 
-  --positive: #1f9d57;
+  --field: #e3a83c;
+  --field-ink: #211603;
+  --field-ink-muted: #4d3a12;
+  --field-rule: rgba(33, 22, 3, 0.25);
 
-  --glow: rgba(180, 121, 26, 0.09);
-  --grid-line: rgba(10, 11, 13, 0.03);
-  color-scheme: light;
+  --positive: #4cc274;
+
+  --grid-line: rgba(233, 213, 175, 0.04);
+  color-scheme: dark;
 }
 
 /* Map the semantic variables onto Tailwind's color/font system. `inline`
@@ -68,11 +79,20 @@
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
   --color-accent-text: var(--accent-text);
+  --color-field: var(--field);
+  --color-field-ink: var(--field-ink);
+  --color-field-ink-muted: var(--field-ink-muted);
+  --color-field-rule: var(--field-rule);
   --color-positive: var(--positive);
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", monospace;
   --font-serif: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+}
+
+/* one easing for the whole document — everything is pressed into place */
+:root {
+  --ease-press: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* ───────────────────────────── Base ───────────────────────────── */
@@ -110,7 +130,6 @@ body {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
-  border-radius: 4px;
 }
 :focus:not(:focus-visible) {
   outline: none;
@@ -118,7 +137,6 @@ body {
 
 h1, h2, h3, h4 {
   color: var(--text);
-  letter-spacing: -0.02em;
   text-wrap: balance;
 }
 
@@ -136,9 +154,13 @@ h1, h2, h3, h4 {
   border: 3px solid var(--bg);
 }
 
-/* ─────────────────────── Signature utilities ─────────────────────── */
+/* ─────────────────────── The typographic voices ───────────────────────
+   Three voices, three jobs:
+   serif  — claims and titles (the document's display voice)
+   sans   — running body text
+   mono   — evidence: numbers, labels, stamps, marginalia               */
 
-/* mono technical microcopy — the most stealable move from Delta/Augusta */
+/* mono technical microcopy — evidence labels and marginalia */
 .mono-label {
   font-family: var(--font-mono);
   font-size: 0.72rem;
@@ -148,23 +170,101 @@ h1, h2, h3, h4 {
   font-weight: 500;
 }
 
-/* headline that dissolves from text → faint (Augusta) */
-.text-gradient {
-  background: linear-gradient(
-    180deg,
-    var(--text) 0%,
-    var(--text) 55%,
-    color-mix(in oklab, var(--text) 55%, var(--bg)) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
+/* the display voice: Instrument Serif, set big, tight leading, real
+   hanging punctuation where the engine supports it */
+.display {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 0.98;
+  color: var(--text);
+  hanging-punctuation: first last;
+  text-wrap: balance;
 }
 
-/* headline "focus-in" — the signature amber phrase resolves from soft to
-   sharp once on load, like a build compiling into place. One-shot, and fully
-   disabled under reduced-motion. */
+/* ghost folio numeral — the section number used architecturally */
+.folio {
+  font-family: var(--font-serif);
+  font-size: clamp(4.5rem, 7vw, 7.5rem);
+  line-height: 0.8;
+  letter-spacing: -0.02em;
+  color: color-mix(in oklab, var(--text) 16%, var(--bg));
+  user-select: none;
+}
+
+/* an inked stamp — bordered mono, used for the live-production seal */
+.stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1.5px solid var(--accent);
+  color: var(--accent-text);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.7rem;
+}
+
+/* ─────────────────────── The press: one motion verb ───────────────────
+   Everything on the page is set into place like type on a press:
+   blocks rise a step, headline lines rise out of a clipped slug,
+   rules draw in from the left. One easing, fast, reduced-motion-safe. */
+
+/* block reveal — driven by IntersectionObserver adding [data-revealed] */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.5s var(--ease-press), transform 0.5s var(--ease-press);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal[data-revealed="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* headline lines rise out of a clipped slug (wrap each line in
+   .line-mask > .line-inner inside a .reveal ancestor) */
+.line-mask {
+  display: block;
+  overflow: hidden;
+}
+.line-inner {
+  display: block;
+  transform: translateY(112%);
+  transition: transform 0.65s var(--ease-press);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal[data-revealed="true"] .line-inner {
+  transform: none;
+}
+
+/* rules draw in from the left inside a revealed ancestor */
+.rule-draw {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.7s var(--ease-press);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal[data-revealed="true"] .rule-draw {
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .line-inner,
+  .rule-draw {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .reveal {
+    opacity: 1;
+  }
+}
+
+/* the amber phrase resolves from soft to sharp once on load */
 @keyframes focus-in {
   from {
     opacity: 0;
@@ -179,7 +279,7 @@ h1, h2, h3, h4 {
 }
 .focus-in {
   display: inline-block;
-  animation: focus-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: focus-in 0.9s var(--ease-press) both;
 }
 @media (prefers-reduced-motion: reduce) {
   .focus-in {
@@ -188,9 +288,8 @@ h1, h2, h3, h4 {
 }
 
 /* flagship pipeline connector — a faint hairline with an amber pulse that
-   travels through it, so the funnel reads as a live system. Vertical on
-   mobile, horizontal on desktop; the pulse only runs once the diagram is in
-   view (.pipeline-live) and never under reduced-motion. */
+   travels through it. Vertical on mobile, horizontal on desktop; runs only
+   in view (.pipeline-live) and never under reduced-motion. */
 .flow-link {
   position: relative;
   flex-shrink: 0;
@@ -255,44 +354,16 @@ h1, h2, h3, h4 {
   background-position: 0 100%;
   background-repeat: no-repeat;
   background-size: 0% 1.5px;
-  transition: background-size 0.35s ease;
+  transition: background-size 0.35s var(--ease-press);
 }
 .group:hover .accent-underline,
 .accent-underline:hover {
   background-size: 100% 1.5px;
 }
 
-/* hairline framing */
+/* hairline framing — legacy, being retired as boxes give way to rules */
 .hairline {
   border: 1px solid var(--border);
-}
-
-/* faint background grid for structure without noise */
-.bg-grid {
-  background-image:
-    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
-  background-size: 64px 64px;
-}
-
-/* scroll-reveal — driven by IntersectionObserver adding [data-revealed] */
-.reveal {
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-  transition-delay: var(--reveal-delay, 0ms);
-}
-.reveal[data-revealed="true"] {
-  opacity: 1;
-  transform: none;
-}
-@media (prefers-reduced-motion: reduce) {
-  .reveal {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
 }
 
 .link-quiet {

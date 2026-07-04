@@ -1,18 +1,17 @@
 import Image from "next/image";
-import { Section, SectionHeading } from "./Section";
+import { Section } from "./Section";
 import { Reveal } from "./Reveal";
 import { interests, languages } from "@/lib/data";
 
 export function About() {
   return (
-    <Section id="about">
-      <SectionHeading
-        index="02"
-        label="The author"
-        title="Proof has a person behind it."
-      >
-        The short version of who I am when I step away from the editor.
-      </SectionHeading>
+    <Section
+      id="about"
+      index="02"
+      label="The author"
+      title="Proof has a person behind it."
+      lede="The short version of who I am when I step away from the editor."
+    >
 
       <div className="grid gap-10 lg:grid-cols-[300px_1fr] lg:gap-16">
         <Reveal>

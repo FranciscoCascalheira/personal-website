@@ -1,18 +1,16 @@
-import { Section, SectionHeading } from "./Section";
+import { Section } from "./Section";
 import { Reveal } from "./Reveal";
 import { skills } from "@/lib/data";
 
 export function Stack() {
   return (
-    <Section id="stack">
-      <SectionHeading
-        index="03"
-        label="Stack"
-        title="The tools I reach for."
-      >
-        Comfortable across the full stack — TypeScript on both ends, Postgres
-        underneath, and whatever the problem actually needs.
-      </SectionHeading>
+    <Section
+      id="stack"
+      index="03"
+      label="Stack"
+      title="The tools I reach for."
+      lede="Comfortable across the full stack — TypeScript on both ends, Postgres underneath, and whatever the problem actually needs."
+    >
 
       <div className="grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2">
         {skills.map((group, i) => (

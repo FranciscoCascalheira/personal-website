@@ -15,7 +15,7 @@ function getSnapshot() {
  *  the inline script) via useSyncExternalStore, so there is no flash and no
  *  setState-in-effect. Writing persists the choice and notifies listeners. */
 export function ThemeToggle() {
-  const theme = useSyncExternalStore(subscribe, getSnapshot, () => "dark");
+  const theme = useSyncExternalStore(subscribe, getSnapshot, () => "light");
 
   const toggle = () => {
     const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";

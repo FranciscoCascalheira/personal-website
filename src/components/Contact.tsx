@@ -1,4 +1,4 @@
-import { Section, SectionHeading } from "./Section";
+import { Section } from "./Section";
 import { Reveal } from "./Reveal";
 import { site } from "@/lib/site";
 
@@ -41,11 +41,13 @@ function LinkButton({
 
 export function Contact() {
   return (
-    <Section id="contact">
-      <SectionHeading index="05" label="Contact" title="Let's build something.">
-        Open to internships, collaborations and interesting problems. The inbox
-        is the fastest way in.
-      </SectionHeading>
+    <Section
+      id="contact"
+      index="05"
+      label="Contact"
+      title="Let's build something."
+      lede="Open to internships, collaborations and interesting problems. The inbox is the fastest way in."
+    >
 
       <Reveal>
         <div className="rounded-3xl border border-border bg-bg-elevated/40 p-8 sm:p-12">

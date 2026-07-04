@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { projects } from "@/lib/data";
 import { Reveal } from "./Reveal";
-import { Section, SectionHeading } from "./Section";
+import { Section } from "./Section";
 import { StatusBadge } from "./ui";
 
 /** Exhibit A: not a card, a doorway. The case study is the product; this
@@ -91,16 +91,13 @@ function ExhibitIndex() {
 
 export function Work() {
   return (
-    <Section id="work">
-      <SectionHeading
-        index="01"
-        label="The evidence"
-        title="One system carries the argument."
-      >
-        Real systems with real users. The flagship gets the depth it earned;
-        the rest is stated briefly and honestly.
-      </SectionHeading>
-
+    <Section
+      id="work"
+      index="01"
+      label="The evidence"
+      title="One system carries the argument."
+      lede="Real systems with real users. The flagship gets the depth it earned; the rest is stated briefly and honestly."
+    >
       <div className="space-y-6">
         <CaseStudyTeaser />
         <ExhibitIndex />

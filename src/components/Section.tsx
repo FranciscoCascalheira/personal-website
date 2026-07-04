@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { Reveal } from "./Reveal";
 
+/** The sheet: wide, with real margins. Content inside hangs off the
+ *  marginalia rule — this is deliberately wider than a blog measure. */
 export function Container({
   children,
   className = "",
@@ -9,61 +11,68 @@ export function Container({
   className?: string;
 }) {
   return (
-    <div className={`mx-auto w-full max-w-[1120px] px-6 sm:px-8 ${className}`}>
+    <div className={`mx-auto w-full max-w-[1520px] px-5 sm:px-10 ${className}`}>
       {children}
     </div>
   );
 }
 
-export function Section({
-  id,
-  children,
-  className = "",
-}: {
-  id?: string;
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <section
-      id={id}
-      className={`scroll-mt-24 border-t border-border py-24 sm:py-32 ${className}`}
-    >
-      <Container>{children}</Container>
-    </section>
-  );
+/** A full-bleed ruled line — the document's horizontal structure. */
+export function Rule({ className = "" }: { className?: string }) {
+  return <div aria-hidden className={`h-px w-full bg-border ${className}`} />;
 }
 
-/** The asymmetric, left-aligned section header: a mono index + label on top,
- *  a large title below, and an optional supporting line to the right. */
-export function SectionHeading({
+/** One numbered section of the record.
+ *
+ *  Left: the marginalia column — a ghost folio numeral and a mono label,
+ *  sticky so the margin annotates the content as you read. A vertical rule
+ *  divides margin from body for the section's full height.
+ *  Right: a serif display title, an optional lede, then the content.
+ */
+export function Section({
+  id,
   index,
   label,
   title,
+  lede,
   children,
 }: {
+  id?: string;
   index: string;
   label: string;
   title: ReactNode;
-  children?: ReactNode;
+  lede?: ReactNode;
+  children: ReactNode;
 }) {
   return (
-    <Reveal className="mb-14 grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
-      <div>
-        <p className="mono-label mb-5 flex items-center gap-2">
-          <span className="text-accent-text">{index}</span>
-          <span className="h-px w-6 bg-border-strong" aria-hidden />
-          {label}
-        </p>
-        <h2 className="max-w-2xl text-3xl font-medium leading-[1.1] sm:text-4xl">
-          {title}
-        </h2>
-      </div>
-      {children ? (
-        <p className="max-w-sm text-sm leading-relaxed text-text-muted md:text-right">
-          {children}
-        </p>
-      ) : null}
-    </Reveal>
+    <section id={id} className="scroll-mt-20 border-t border-border">
+      <Container>
+        <div className="grid gap-y-8 py-16 sm:py-24 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-y-0 xl:grid-cols-[260px_minmax(0,1fr)]">
+          <Reveal
+            as="aside"
+            className="flex items-baseline gap-4 lg:sticky lg:top-24 lg:block lg:self-start lg:pr-10"
+          >
+            <p className="folio" aria-hidden>
+              {index}
+            </p>
+            <p className="mono-label lg:mt-5">{label}</p>
+          </Reveal>
+
+          <div className="lg:border-l lg:border-border lg:pl-12 xl:pl-16">
+            <Reveal>
+              <h2 className="display text-[clamp(2.3rem,4.6vw,4.4rem)]">
+                {title}
+              </h2>
+              {lede ? (
+                <p className="mt-6 max-w-xl leading-relaxed text-text-muted">
+                  {lede}
+                </p>
+              ) : null}
+            </Reveal>
+            <div className="mt-12 sm:mt-14">{children}</div>
+          </div>
+        </div>
+      </Container>
+    </section>
   );
 }

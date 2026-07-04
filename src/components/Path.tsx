@@ -1,4 +1,4 @@
-import { Section, SectionHeading } from "./Section";
+import { Section } from "./Section";
 import { Reveal } from "./Reveal";
 import { trajectory, type Experience } from "@/lib/data";
 
@@ -11,10 +11,13 @@ const kindDot: Record<Experience["kind"], string> = {
 
 export function Path() {
   return (
-    <Section id="path">
-      <SectionHeading index="04" label="Path" title="How I got here.">
-        Work, study and the things I do because I want to.
-      </SectionHeading>
+    <Section
+      id="path"
+      index="04"
+      label="Path"
+      title="How I got here."
+      lede="Work, study and the things I do because I want to."
+    >
 
       <ol className="relative">
         <div
