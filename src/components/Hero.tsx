@@ -2,6 +2,7 @@ import { Reveal } from "./Reveal";
 import { Container } from "./Section";
 import { LiveStatusHeader } from "./LiveStatus";
 import { HeroField } from "./HeroField";
+import { MagneticLink } from "./MagneticLink";
 import { site } from "@/lib/site";
 
 const currently = [
@@ -55,15 +56,15 @@ export function Hero() {
 
             <Reveal delay={240}>
               <div className="mt-10 flex flex-wrap items-center gap-3">
-                <a
+                <MagneticLink
                   href="#work"
-                  className="group inline-flex items-center gap-2 rounded-full bg-text px-5 py-2.5 text-sm font-medium text-bg transition-transform hover:-translate-y-0.5"
+                  className="group inline-flex items-center gap-2 rounded-full bg-text px-5 py-2.5 text-sm font-medium text-bg"
                 >
                   See selected work
                   <span className="transition-transform group-hover:translate-x-0.5" aria-hidden>
                     →
                   </span>
-                </a>
+                </MagneticLink>
                 <a
                   href="#contact"
                   className="inline-flex items-center rounded-full border border-border-strong px-5 py-2.5 text-sm font-medium text-text transition-colors hover:bg-bg-elevated"
