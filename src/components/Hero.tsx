@@ -10,38 +10,46 @@ type Proof = {
   checkedAt: string | null;
 };
 
-/** The claim, then the evidence. The hero's job is one sentence a recruiter
- *  can repeat to a colleague — everything else on the page defends it. */
+/** The masthead of the record. The claim is set at viewport scale in the
+ *  document's serif voice; the evidence follows as a ruled ledger, not a
+ *  box. The margin column annotates: dossier id, role, place, live clock. */
 export function Hero({ proof }: { proof: Proof }) {
   return (
-    <section id="top" className="relative overflow-hidden pt-36 sm:pt-44">
-      <div className="absolute inset-0 -z-10 bg-grid [mask-image:radial-gradient(ellipse_at_top,black,transparent_75%)]" />
-
+    <section id="top" className="pt-16">
       <Container>
-        <div className="grid items-start gap-12 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
-          {/* left — the claim */}
-          <div>
-            <Reveal>
-              <p className="mono-label mb-8">
-                {`/// FC-Dossier · Software developer · ${site.locator}`}
-              </p>
-            </Reveal>
+        <div className="grid gap-y-10 pb-16 pt-16 sm:pt-24 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-y-0 xl:grid-cols-[260px_minmax(0,1fr)]">
+          {/* marginalia — the document's running header */}
+          <Reveal
+            as="aside"
+            className="flex flex-wrap items-baseline gap-x-6 gap-y-2 lg:sticky lg:top-24 lg:block lg:self-start lg:pr-10"
+          >
+            <p className="mono-label">{"/// FC-Dossier"}</p>
+            <p className="mono-label lg:mt-2">Software developer</p>
+            <p className="mono-label lg:mt-2">{site.locator}</p>
+            <div className="lg:mt-8">
+              <LiveStatusHeader />
+            </div>
+          </Reveal>
 
-            <Reveal delay={80}>
-              <h1 className="text-balance text-4xl font-medium leading-[1.08] tracking-[-0.03em] sm:text-5xl">
-                <span className="text-gradient">
+          {/* the claim */}
+          <div className="lg:border-l lg:border-border lg:pl-12 xl:pl-16">
+            <Reveal>
+              <h1 className="line-mask">
+                <span className="line-inner display max-w-[17ch] text-[clamp(2.75rem,7vw,6.75rem)]">
                   The City of Porto runs its youth-internship programme on
                   software{" "}
+                  <em className="focus-in not-italic">
+                    <span className="italic text-accent-text">
+                      I built alone
+                    </span>
+                  </em>
+                  .
                 </span>
-                <span className="focus-in font-serif text-4xl italic text-accent sm:text-5xl">
-                  I built alone
-                </span>
-                <span className="text-gradient">.</span>
               </h1>
             </Reveal>
 
-            <Reveal delay={160}>
-              <p className="mt-7 max-w-xl text-lg leading-relaxed text-text-muted">
+            <Reveal delay={140}>
+              <p className="mt-8 max-w-xl text-lg leading-relaxed text-text-muted">
                 I&apos;m Francisco Cascalheira, a second-year Computer
                 Engineering student at FEUP. For opPORTOnities I sat in the
                 requirements meetings, designed the 12-model schema, wrote all
@@ -49,11 +57,11 @@ export function Hero({ proof }: { proof: Proof }) {
               </p>
             </Reveal>
 
-            <Reveal delay={240}>
+            <Reveal delay={220}>
               <div className="mt-10 flex flex-wrap items-center gap-3">
                 <MagneticLink
                   href="/work/opportonities"
-                  className="group inline-flex items-center gap-2 rounded-full bg-text px-5 py-2.5 text-sm font-medium text-bg"
+                  className="group inline-flex items-center gap-2 bg-text px-6 py-3 text-sm font-medium text-bg"
                 >
                   Read the case study
                   <span
@@ -65,42 +73,33 @@ export function Hero({ proof }: { proof: Proof }) {
                 </MagneticLink>
                 <a
                   href="#contact"
-                  className="inline-flex items-center rounded-full border border-border-strong px-5 py-2.5 text-sm font-medium text-text transition-colors hover:bg-bg-elevated"
+                  className="inline-flex items-center border border-border-strong px-6 py-3 text-sm font-medium text-text transition-colors hover:bg-bg-elevated"
                 >
                   Get in touch
                 </a>
               </div>
             </Reveal>
-          </div>
 
-          {/* right — the evidence panel: live where truthfully live */}
-          <Reveal delay={200} className="lg:pt-2">
-            <div className="border border-border bg-bg-elevated p-6">
-              <div className="mb-5">
-                <LiveStatusHeader />
+            {/* the evidence — a ruled ledger, stamped */}
+            <Reveal delay={300} className="mt-16 sm:mt-20">
+              <div className="flex flex-wrap items-end justify-between gap-4 pb-4">
+                <p className="mono-label">Exhibit record</p>
+                <p className="stamp">
+                  {proof.productionOk ? (
+                    <>
+                      <span
+                        className="size-1.5 rounded-full bg-positive"
+                        aria-hidden
+                      />
+                      In production · API responding
+                      {proof.checkedAt ? ` · ${proof.checkedAt} UTC` : null}
+                    </>
+                  ) : (
+                    "In production"
+                  )}
+                </p>
               </div>
-              <dl className="divide-y divide-border">
-                <div className="grid grid-cols-[92px_1fr] gap-3 py-2.5 text-sm">
-                  <dt className="font-mono text-xs uppercase tracking-wider text-text-faint">
-                    Status
-                  </dt>
-                  <dd className="text-text">
-                    {proof.productionOk ? (
-                      <span className="inline-flex items-baseline gap-2">
-                        <span
-                          className="size-1.5 self-center rounded-full bg-positive"
-                          aria-hidden
-                        />
-                        In production — API responding
-                        {proof.checkedAt
-                          ? ` · checked ${proof.checkedAt} UTC`
-                          : null}
-                      </span>
-                    ) : (
-                      "In production"
-                    )}
-                  </dd>
-                </div>
+              <dl>
                 {[
                   { k: "Client", v: "Câmara Municipal do Porto" },
                   { k: "Commits", v: "294 — sole author, verified by git" },
@@ -109,22 +108,22 @@ export function Hero({ proof }: { proof: Proof }) {
                 ].map((row) => (
                   <div
                     key={row.k}
-                    className="grid grid-cols-[92px_1fr] gap-3 py-2.5 text-sm"
+                    className="grid grid-cols-[110px_1fr] items-baseline gap-4 border-t border-border py-3 text-sm sm:grid-cols-[140px_1fr]"
                   >
-                    <dt className="font-mono text-xs uppercase tracking-wider text-text-faint">
-                      {row.k}
-                    </dt>
+                    <dt className="mono-label">{row.k}</dt>
                     <dd className="text-text">{row.v}</dd>
                   </div>
                 ))}
               </dl>
-              <p className="mono-label mt-4">
-                <Link href="/work/opportonities" className="accent-underline">
-                  Full engineering teardown →
-                </Link>
-              </p>
-            </div>
-          </Reveal>
+              <div className="border-t border-border pt-4">
+                <p className="mono-label">
+                  <Link href="/work/opportonities" className="accent-underline">
+                    Full engineering teardown →
+                  </Link>
+                </p>
+              </div>
+            </Reveal>
+          </div>
         </div>
       </Container>
     </section>
