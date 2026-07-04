@@ -120,8 +120,10 @@ export function SchemaExplorer() {
 
           <div className="relative space-y-7">
             {domains.map((d) => (
-              <div key={d.id}>
-                <p className="mono-label mb-3">{d.label}</p>
+              <div key={d.id} role="group" aria-label={d.label}>
+                <p className="mono-label mb-3" aria-hidden>
+                  {d.label}
+                </p>
                 <div className="flex flex-wrap gap-x-5 gap-y-2.5">
                   {schemaModels
                     .filter((m) => m.domain === d.id)

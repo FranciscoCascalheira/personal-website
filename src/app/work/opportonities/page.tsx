@@ -77,7 +77,7 @@ export default async function CaseStudyPage() {
   return (
     <>
       {/* slim document header */}
-      <header className="fixed inset-x-0 top-0 z-40 border-b border-border bg-bg/85 backdrop-blur-sm">
+      <header className="fixed inset-x-0 top-0 z-40 border-b border-border bg-bg">
         <Container className="flex h-14 items-center justify-between">
           <Link href="/" className="link-quiet font-mono text-xs">
             ← Francisco Cascalheira

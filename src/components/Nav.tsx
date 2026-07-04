@@ -30,7 +30,7 @@ export function Nav() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-        scrolled ? "border-b border-border bg-bg/80 backdrop-blur-md" : "border-b border-transparent"
+        scrolled ? "border-b border-border bg-bg" : "border-b border-transparent"
       }`}
     >
       <nav className="mx-auto flex h-16 w-full max-w-[1520px] items-center justify-between px-5 sm:px-10">
@@ -66,7 +66,7 @@ export function Nav() {
               <circle cx="11" cy="11" r="7" />
               <path d="m20 20-3.2-3.2" />
             </svg>
-            <kbd className="border border-border bg-bg px-1.5 py-0.5 font-mono text-[10px] tracking-wide text-text-faint">
+            <kbd className="border border-border bg-bg px-1.5 py-0.5 font-mono text-[11px] tracking-wide text-text-faint">
               {isMac ? "⌘K" : "Ctrl K"}
             </kbd>
           </button>

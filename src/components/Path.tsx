@@ -2,10 +2,12 @@ import { Section } from "./Section";
 import { Reveal } from "./Reveal";
 import { trajectory, type Experience } from "@/lib/data";
 
+// Categories are encoded by ink weight, not hue — the one accent stays the
+// law and green stays reserved for "live/OK" elsewhere on the record.
 const kindDot: Record<Experience["kind"], string> = {
   work: "bg-accent",
-  leadership: "bg-positive",
-  education: "bg-text",
+  leadership: "bg-text",
+  education: "bg-text-muted",
   cert: "bg-text-faint",
 };
 

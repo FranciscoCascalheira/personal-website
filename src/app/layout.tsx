@@ -62,10 +62,18 @@ export const metadata: Metadata = {
    system preference when the visitor has not chosen one. */
 const themeScript = `
 (function () {
+  document.documentElement.classList.add('js');
   try {
     var stored = localStorage.getItem('theme');
-    var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    document.documentElement.dataset.theme = theme;
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    document.documentElement.dataset.theme = stored || (mq.matches ? 'dark' : 'light');
+    if (!stored && mq.addEventListener) {
+      mq.addEventListener('change', function (e) {
+        if (localStorage.getItem('theme')) return;
+        document.documentElement.dataset.theme = e.matches ? 'dark' : 'light';
+        window.dispatchEvent(new Event('themechange'));
+      });
+    }
   } catch (e) {
     document.documentElement.dataset.theme = 'light';
   }

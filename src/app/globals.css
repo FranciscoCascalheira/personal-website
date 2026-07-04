@@ -137,6 +137,12 @@ body {
   outline: none;
 }
 
+/* on the flooded amber field the amber ring vanishes — use the field's ink */
+.bg-field:focus-visible,
+.bg-field :focus-visible {
+  outline-color: var(--field-ink);
+}
+
 @layer base {
   h1, h2, h3, h4 {
     color: var(--text);
@@ -216,14 +222,16 @@ body {
    blocks rise a step, headline lines rise out of a clipped slug,
    rules draw in from the left. One easing, fast, reduced-motion-safe. */
 
-/* block reveal — driven by IntersectionObserver adding [data-revealed] */
-.reveal {
+/* block reveal — driven by IntersectionObserver adding [data-revealed].
+   The hidden initial state is scoped to html.js (set by the pre-paint
+   script) so a no-JS render shows the whole document immediately. */
+html.js .reveal {
   opacity: 0;
   transform: translateY(14px);
   transition: opacity 0.5s var(--ease-press), transform 0.5s var(--ease-press);
   transition-delay: var(--reveal-delay, 0ms);
 }
-.reveal[data-revealed="true"] {
+html.js .reveal[data-revealed="true"] {
   opacity: 1;
   transform: none;
 }
@@ -236,35 +244,37 @@ body {
 }
 .line-inner {
   display: block;
+}
+html.js .line-inner {
   transform: translateY(112%);
   transition: transform 0.65s var(--ease-press);
   transition-delay: var(--reveal-delay, 0ms);
 }
-.reveal[data-revealed="true"] .line-inner {
+html.js .reveal[data-revealed="true"] .line-inner {
   transform: none;
 }
 
 /* rules draw in from the left inside a revealed ancestor */
-.rule-draw {
+html.js .rule-draw {
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.7s var(--ease-press);
   transition-delay: var(--reveal-delay, 0ms);
 }
-.reveal[data-revealed="true"] .rule-draw {
+html.js .reveal[data-revealed="true"] .rule-draw {
   transform: scaleX(1);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal,
-  .line-inner,
-  .rule-draw {
+  html.js .reveal,
+  html.js .line-inner,
+  html.js .rule-draw {
     opacity: 1;
     transform: none;
     transition: none;
   }
-  .reveal {
-    opacity: 1;
+  body {
+    transition: none;
   }
 }
 

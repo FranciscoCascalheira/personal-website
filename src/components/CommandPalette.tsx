@@ -289,9 +289,9 @@ export function CommandPalette() {
         tabIndex={-1}
         aria-label="Close command palette"
         onClick={close}
-        className="absolute inset-0 bg-bg/70 backdrop-blur-sm"
+        className="absolute inset-0 bg-bg/70"
       />
-      <div className="relative w-full max-w-xl overflow-hidden rounded-2xl border border-border-strong bg-bg-elevated shadow-lg shadow-black/20">
+      <div className="relative w-full max-w-xl overflow-hidden border border-border-strong bg-bg-elevated shadow-[0_24px_60px_-20px_rgba(25,21,16,0.45)]">
         <div className="flex items-center gap-3 border-b border-border px-4">
           <span className="text-text-faint" aria-hidden>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
@@ -320,7 +320,7 @@ export function CommandPalette() {
             autoCorrect="off"
             spellCheck={false}
           />
-          <kbd className="hidden shrink-0 rounded border border-border px-1.5 py-0.5 font-mono text-[10px] text-text-faint sm:block">
+          <kbd className="hidden shrink-0 border border-border px-1.5 py-0.5 font-mono text-[11px] text-text-faint sm:block">
             ESC
           </kbd>
         </div>
@@ -351,7 +351,7 @@ export function CommandPalette() {
                     aria-selected={isActive}
                     onMouseMove={() => setActive(i)}
                     onClick={() => run(cmd)}
-                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
+                    className={`flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm transition-colors ${
                       isActive ? "bg-bg-inset text-text" : "text-text-muted"
                     }`}
                   >
