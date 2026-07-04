@@ -1,4 +1,7 @@
+"use client";
+
 import type { Project } from "@/lib/data";
+import { useCountUp, useInView } from "@/lib/motion";
 
 const statusColor: Record<Project["status"], string> = {
   "In production": "bg-positive",
@@ -30,14 +33,32 @@ export function StackChips({ items }: { items: string[] }) {
   );
 }
 
-export function MetricRow({ metrics }: { metrics: Project["metrics"] }) {
+export function CountMetric({
+  value,
+  label,
+  active,
+  className = "text-xl font-medium tabular-nums text-text",
+}: {
+  value: string;
+  label: string;
+  active: boolean;
+  className?: string;
+}) {
+  const shown = useCountUp(value, active);
   return (
-    <dl className="flex flex-wrap gap-x-8 gap-y-4">
+    <div>
+      <dt className={className}>{shown}</dt>
+      <dd className="mono-label mt-1">{label}</dd>
+    </div>
+  );
+}
+
+export function MetricRow({ metrics }: { metrics: Project["metrics"] }) {
+  const { ref, inView } = useInView<HTMLDListElement>();
+  return (
+    <dl ref={ref} className="flex flex-wrap gap-x-8 gap-y-4">
       {metrics.map((m) => (
-        <div key={m.label}>
-          <dt className="text-xl font-medium text-text">{m.value}</dt>
-          <dd className="mono-label mt-1">{m.label}</dd>
-        </div>
+        <CountMetric key={m.label} value={m.value} label={m.label} active={inView} />
       ))}
     </dl>
   );

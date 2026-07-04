@@ -1,6 +1,7 @@
 import { Reveal } from "./Reveal";
-import { AmbientGlow } from "./AmbientGlow";
 import { Container } from "./Section";
+import { LiveStatusHeader } from "./LiveStatus";
+import { HeroField } from "./HeroField";
 import { site } from "@/lib/site";
 
 const currently = [
@@ -21,7 +22,7 @@ export function Hero() {
   return (
     <section id="top" className="relative overflow-hidden pt-36 sm:pt-44">
       <div className="absolute inset-0 -z-10 bg-grid [mask-image:radial-gradient(ellipse_at_top,black,transparent_75%)]" />
-      <AmbientGlow className="right-[-10%] top-[-8%] h-[520px] w-[560px]" />
+      <HeroField />
 
       <Container>
         <div className="grid items-start gap-12 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
@@ -36,7 +37,7 @@ export function Hero() {
             <Reveal delay={80}>
               <h1 className="text-balance text-4xl font-medium leading-[1.05] tracking-[-0.03em] sm:text-5xl lg:text-6xl">
                 <span className="text-gradient">I build software that </span>
-                <span className="font-serif text-4xl italic text-accent sm:text-5xl lg:text-6xl">
+                <span className="focus-in font-serif text-4xl italic text-accent sm:text-5xl lg:text-6xl">
                   actually ships
                 </span>
                 <span className="text-gradient">.</span>
@@ -45,10 +46,10 @@ export function Hero() {
 
             <Reveal delay={160}>
               <p className="mt-7 max-w-xl text-lg leading-relaxed text-text-muted">
-                Second-year Computer Engineering student at FEUP, and sole
-                developer of a recruitment platform running in production for the
-                City of Porto. I take products from requirements to deployment —
-                and I ship them.
+                Second-year Computer Engineering student at FEUP and the sole
+                developer of a recruitment platform the City of Porto runs on
+                today. I own products from the first requirements meeting to the
+                production deploy.
               </p>
             </Reveal>
 
@@ -76,10 +77,9 @@ export function Hero() {
           {/* right — the currently card (mono metadata, Delta-style) */}
           <Reveal delay={200} className="lg:pt-2">
             <div className="rounded-2xl border border-border bg-bg-elevated/60 p-6 backdrop-blur-sm">
-              <p className="mono-label mb-5 flex items-center gap-2">
-                <span className="size-1.5 rounded-full bg-positive" aria-hidden />
-                Currently
-              </p>
+              <div className="mb-5">
+                <LiveStatusHeader />
+              </div>
               <dl className="divide-y divide-border">
                 {currently.map((row) => (
                   <div

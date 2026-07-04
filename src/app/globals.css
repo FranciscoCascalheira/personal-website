@@ -162,6 +162,31 @@ h1, h2, h3, h4 {
   color: transparent;
 }
 
+/* headline "focus-in" — the signature amber phrase resolves from soft to
+   sharp once on load, like a build compiling into place. One-shot, and fully
+   disabled under reduced-motion. */
+@keyframes focus-in {
+  from {
+    opacity: 0;
+    filter: blur(9px);
+    letter-spacing: 0.06em;
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    letter-spacing: normal;
+  }
+}
+.focus-in {
+  display: inline-block;
+  animation: focus-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .focus-in {
+    animation: none;
+  }
+}
+
 .accent-underline {
   background-image: linear-gradient(var(--accent), var(--accent));
   background-position: 0 100%;
