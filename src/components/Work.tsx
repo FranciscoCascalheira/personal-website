@@ -2,67 +2,7 @@ import { projects, type Project } from "@/lib/data";
 import { Reveal } from "./Reveal";
 import { Section, SectionHeading } from "./Section";
 import { StatusBadge, StackChips, MetricRow } from "./ui";
-
-/* A stylised product frame for the flagship. It shows the real domain of the
-   platform without exposing any production UI or client data — the mono
-   caption makes that explicit. A real redacted screenshot can drop in later. */
-function FlagshipVisual() {
-  const entities = ["Candidates", "Companies", "Vacancies", "Applications"];
-  return (
-    <div>
-      <div className="overflow-hidden rounded-xl border border-border bg-bg-inset">
-        <div className="flex items-center gap-2 border-b border-border px-4 py-3">
-          <span className="flex gap-1.5" aria-hidden>
-            <span className="size-2.5 rounded-full bg-border-strong" />
-            <span className="size-2.5 rounded-full bg-border-strong" />
-            <span className="size-2.5 rounded-full bg-border-strong" />
-          </span>
-          <span className="ml-2 truncate rounded-md bg-bg px-3 py-1 font-mono text-xs text-text-faint">
-            opportunities · cm-porto
-          </span>
-        </div>
-        <div className="px-6 py-8">
-          <p className="text-2xl font-medium tracking-tight text-text">
-            op<span className="text-accent">PORTO</span>nities
-          </p>
-          <p className="mono-label mt-2">Talent for the City of Porto</p>
-
-          <div className="mt-7 flex flex-wrap items-center gap-x-2 gap-y-3">
-            {entities.map((e, i) => (
-              <div key={e} className="flex items-center gap-2">
-                <span className="rounded-md border border-border bg-bg px-3 py-1.5 text-sm text-text">
-                  {e}
-                </span>
-                {i < entities.length - 1 ? (
-                  <span className="font-mono text-text-faint" aria-hidden>
-                    →
-                  </span>
-                ) : null}
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border">
-            {[
-              ["294", "solo commits"],
-              ["380+", "vacancies"],
-              ["12", "data models"],
-              ["Live", "in production"],
-            ].map(([v, l]) => (
-              <div key={l} className="bg-bg-inset px-4 py-3">
-                <p className="text-lg font-medium text-text">{v}</p>
-                <p className="mono-label mt-0.5">{l}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      <p className="mt-3 font-mono text-xs text-text-faint">
-        {"/// Illustrative schematic — production UI withheld (client data)"}
-      </p>
-    </div>
-  );
-}
+import { FlagshipVisual } from "./FlagshipVisual";
 
 function Flagship({ project }: { project: Project }) {
   return (

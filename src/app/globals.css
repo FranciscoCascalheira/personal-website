@@ -187,6 +187,70 @@ h1, h2, h3, h4 {
   }
 }
 
+/* flagship pipeline connector — a faint hairline with an amber pulse that
+   travels through it, so the funnel reads as a live system. Vertical on
+   mobile, horizontal on desktop; the pulse only runs once the diagram is in
+   view (.pipeline-live) and never under reduced-motion. */
+.flow-link {
+  position: relative;
+  flex-shrink: 0;
+  width: 1px;
+  height: 16px;
+  margin: 6px 0 6px 20px;
+  background: var(--border);
+}
+.flow-link::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: 9999px;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+  opacity: 0;
+}
+.pipeline-live .flow-link::after {
+  animation: flow-down 2.6s ease-in-out infinite;
+  animation-delay: var(--flow-delay, 0s);
+}
+@keyframes flow-down {
+  0% { top: 0; opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+@media (min-width: 640px) {
+  .flow-link {
+    flex: 1 1 0%;
+    width: auto;
+    height: 1px;
+    margin: 0 8px;
+  }
+  .flow-link::after {
+    left: 0;
+    top: 50%;
+    margin-left: 0;
+    margin-top: -2px;
+  }
+  .pipeline-live .flow-link::after {
+    animation-name: flow-right;
+  }
+}
+@keyframes flow-right {
+  0% { left: 0; opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pipeline-live .flow-link::after {
+    animation: none;
+  }
+}
+
 .accent-underline {
   background-image: linear-gradient(var(--accent), var(--accent));
   background-position: 0 100%;
