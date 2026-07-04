@@ -3,16 +3,26 @@
 import { useEffect, useState } from "react";
 import { nav, site } from "@/lib/site";
 import { ThemeToggle } from "./ThemeToggle";
+import { CommandPalette } from "./CommandPalette";
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const [isMac, setIsMac] = useState(true);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
+    const kick = setTimeout(() => {
+      onScroll();
+      setIsMac(/mac|iphone|ipad|ipod/i.test(navigator.platform || navigator.userAgent));
+    }, 0);
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      clearTimeout(kick);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
+
+  const openPalette = () => window.dispatchEvent(new Event("palette:open"));
 
   return (
     <header
@@ -41,9 +51,27 @@ export function Nav() {
               </li>
             ))}
           </ul>
+
+          <button
+            type="button"
+            onClick={openPalette}
+            aria-label="Open command palette"
+            aria-keyshortcuts="Meta+K Control+K"
+            className="group hidden items-center gap-2 rounded-full border border-border py-1.5 pl-3 pr-1.5 text-text-muted transition-colors hover:border-border-strong hover:text-text sm:inline-flex"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden>
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.2-3.2" />
+            </svg>
+            <kbd className="rounded border border-border bg-bg px-1.5 py-0.5 font-mono text-[10px] tracking-wide text-text-faint">
+              {isMac ? "⌘K" : "Ctrl K"}
+            </kbd>
+          </button>
+
           <ThemeToggle />
         </div>
       </nav>
+      <CommandPalette />
     </header>
   );
 }
