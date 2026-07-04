@@ -34,20 +34,23 @@ export function About() {
         </Reveal>
 
         <Reveal delay={100}>
-          <div className="max-w-2xl space-y-5 text-lg leading-relaxed text-text-muted">
+          <blockquote className="max-w-2xl border-l-2 border-accent/50 pl-5 font-serif text-2xl italic leading-snug text-text sm:text-3xl">
+            Most of what I know, I learned by shipping, not in a lecture hall.
+          </blockquote>
+
+          <div className="mt-8 max-w-2xl space-y-5 text-lg leading-relaxed text-text-muted">
             <p>
-              I&apos;m a second-year Computer Engineering student in Porto, but
-              most of what I actually know comes from building. I like owning a
-              product end to end — sitting in the requirements meeting, designing
-              the data model, and being the person who deploys it. Shipping to
-              real users teaches faster than anything else.
+              I&apos;m a second-year Computer Engineering student in Porto. I
+              like owning a product end to end: sitting in the requirements
+              meeting, designing the data model, and being the person who
+              deploys it and keeps it running.
             </p>
             <p>
-              Away from the editor I read a fair amount — philosophy, ancient
-              history, the occasional argument about Austrian economics. I follow
-              Bitcoin and cybersecurity closely, and I show up at Porto&apos;s
-              tech and startup meetups because the people there are building
-              things too.
+              Away from the editor I read a fair amount, mostly philosophy,
+              ancient history, and the occasional argument about Austrian
+              economics. I follow Bitcoin and cybersecurity closely, and I turn
+              up at Porto&apos;s tech and startup meetups because the people
+              there are building things too.
             </p>
           </div>
 

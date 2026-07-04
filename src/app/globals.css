@@ -31,16 +31,16 @@
 }
 
 [data-theme="light"] {
-  --bg: #ffffff;
-  --bg-elevated: #fafafa;
-  --bg-inset: #f3f3f4;
+  --bg: #fbfaf7; /* warm ivory — editorial paper, never a pure-white flat */
+  --bg-elevated: #f6f4ee;
+  --bg-inset: #f1eee6;
 
-  --border: rgba(10, 11, 13, 0.1);
-  --border-strong: rgba(10, 11, 13, 0.18);
+  --border: rgba(28, 22, 12, 0.1);
+  --border-strong: rgba(28, 22, 12, 0.18);
 
-  --text: #0d0d0d; /* near-black, never pure #000 either */
-  --text-muted: #55565b;
-  --text-faint: #6c6d73; /* AA-clearing on white for small mono labels */
+  --text: #14110c; /* warm near-black, never pure #000 */
+  --text-muted: #55524b;
+  --text-faint: #6b665c; /* AA-clearing on the ivory for small mono labels */
 
   --accent: #b4791a; /* darker amber for AA contrast on white */
   --accent-strong: #986313;
