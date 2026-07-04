@@ -59,18 +59,20 @@ initial theme is set before first paint by an inline script and persisted to
 
 ## Deploy
 
-Import the repo on [vercel.com/new](https://vercel.com/new) (framework and build
-settings are detected automatically). Then point the domain — see below.
+Hosted on **Railway** (Nixpacks build, `next start`). The public site is served
+on `www.franciscocascalheira.com`; the bare domain 301-redirects to it.
 
-### DNS for franciscocascalheira.com
+### DNS (Cloudflare in front of the dominios.pt registration)
 
-In Vercel: Project → Settings → Domains → add `franciscocascalheira.com` and
-`www.franciscocascalheira.com`. At the registrar, set the records Vercel shows:
+Railway custom domains resolve by CNAME, so the DNS lives on Cloudflare
+(nameservers switched at dominios.pt):
 
-| Type  | Name | Value                 |
-| ----- | ---- | --------------------- |
-| A     | @    | `76.76.21.21`         |
-| CNAME | www  | `cname.vercel-dns.com`|
+| Record   | Name  | Target                       | Cloudflare proxy        |
+| -------- | ----- | ---------------------------- | ----------------------- |
+| CNAME    | `www` | `<service>.up.railway.app`   | DNS only (grey)         |
+| CNAME/A  | `@`   | redirect to `www`            | Proxied (orange)        |
 
-(Confirm the exact values in the Vercel dashboard — it verifies automatically
-once they propagate.)
+The apex can't point straight at Railway (Cloudflare flattens the root CNAME to
+an A record, which Railway won't verify), so the root is proxied and a Cloudflare
+**Redirect Rule** sends `franciscocascalheira.com/*` → `https://www.franciscocascalheira.com/$1`.
+Grab the exact `www` CNAME target from Railway → project → Settings → Domains.

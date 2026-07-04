@@ -6,7 +6,7 @@ export const site = {
   location: "Porto, Portugal",
   locator: "PORTO · PT",
   coordinates: "41.1579° N, 8.6291° W",
-  url: "https://franciscocascalheira.com",
+  url: "https://www.franciscocascalheira.com",
   description:
     "Software developer building production software. Second-year Computer Engineering student at FEUP and sole developer of a recruitment platform in production for Câmara Municipal do Porto.",
   email: "francisco.cascalheira2006@gmail.com",
