@@ -1,7 +1,7 @@
 import { site } from "@/lib/site";
 
 export function Footer() {
-  const year = "2026";
+  const year = new Date().getFullYear();
   return (
     <footer className="relative overflow-hidden border-t border-border">
       <div className="mx-auto w-full max-w-[1120px] px-6 pt-20 sm:px-8">

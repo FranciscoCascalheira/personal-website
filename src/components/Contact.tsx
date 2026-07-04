@@ -1,6 +1,5 @@
 import { Section, SectionHeading } from "./Section";
 import { Reveal } from "./Reveal";
-import { AmbientGlow } from "./AmbientGlow";
 import { site } from "@/lib/site";
 
 function LinkButton({
@@ -42,8 +41,7 @@ function LinkButton({
 
 export function Contact() {
   return (
-    <Section id="contact" className="relative">
-      <AmbientGlow className="right-[-10%] top-[0%] h-[420px] w-[460px]" />
+    <Section id="contact">
       <SectionHeading index="05" label="Contact" title="Let's build something.">
         Open to internships, collaborations and interesting problems. The inbox
         is the fastest way in.

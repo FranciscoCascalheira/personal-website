@@ -1,7 +1,6 @@
 import { projects, type Project } from "@/lib/data";
 import { Reveal } from "./Reveal";
 import { Section, SectionHeading } from "./Section";
-import { AmbientGlow } from "./AmbientGlow";
 import { StatusBadge, StackChips, MetricRow } from "./ui";
 
 /* A stylised product frame for the flagship. It shows the real domain of the
@@ -72,7 +71,7 @@ function Flagship({ project }: { project: Project }) {
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
           <div className="flex flex-col">
             <div className="mb-6 flex flex-wrap items-center gap-3">
-              <span className="mono-label text-accent">{`${project.index} · Flagship`}</span>
+              <span className="mono-label text-accent-text">{`${project.index} · Flagship`}</span>
               <StatusBadge status={project.status} />
             </div>
             <p className="mono-label mb-3">{project.client}</p>
@@ -132,8 +131,7 @@ function ProjectCard({ project, delay }: { project: Project; delay: number }) {
 export function Work() {
   const [flagship, ...rest] = projects;
   return (
-    <Section id="work" className="relative">
-      <AmbientGlow className="left-[-15%] top-[10%] h-[440px] w-[480px] opacity-70" />
+    <Section id="work">
       <SectionHeading
         index="01"
         label="Selected work"

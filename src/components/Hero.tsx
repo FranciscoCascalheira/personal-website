@@ -56,7 +56,7 @@ export function Hero() {
               <div className="mt-10 flex flex-wrap items-center gap-3">
                 <a
                   href="#work"
-                  className="group inline-flex items-center gap-2 rounded-full bg-text px-5 py-2.5 text-sm font-medium text-bg transition-opacity hover:opacity-90"
+                  className="group inline-flex items-center gap-2 rounded-full bg-text px-5 py-2.5 text-sm font-medium text-bg transition-transform hover:-translate-y-0.5"
                 >
                   See selected work
                   <span className="transition-transform group-hover:translate-x-0.5" aria-hidden>

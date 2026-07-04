@@ -35,7 +35,7 @@ export function Path() {
             />
             <div className="sm:pl-8">
               <h3 className="text-lg font-medium text-text">{item.role}</h3>
-              <p className="text-sm text-accent">{item.org}</p>
+              <p className="text-sm text-accent-text">{item.org}</p>
               <p className="mt-2 max-w-xl text-sm leading-relaxed text-text-muted">
                 {item.note}
               </p>

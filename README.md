@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# franciscocascalheira.com
 
-## Getting Started
+Personal website of **Francisco Cascalheira** — software developer building
+production software. A single-page portfolio: dark by default, with a light
+editorial mode, built from scratch with an eye on the details.
 
-First, run the development server:
+Design is inspired by the work of Augusta Labs, Delta Y and Sword Health —
+near-black canvas, a typographic mono counterpoint, technical microcopy, one
+warm amber accent, and light used as atmosphere.
+
+## Stack
+
+- **Next.js 16** (App Router) + **React 19**
+- **Tailwind CSS v4** with a semantic CSS-variable token system
+- **Geist / Geist Mono / Instrument Serif** via `next/font`
+- Social cards generated at build with `next/og`
+- Deployed on **Vercel**
+
+## Develop
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # production build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+src/
+  app/
+    layout.tsx            root layout, fonts, metadata, no-flash theme script
+    page.tsx              composes the sections
+    globals.css           design tokens + theming + signature utilities
+    opengraph-image.tsx   social card (also reused for Twitter)
+    icon.svg              favicon monogram
+    robots.ts sitemap.ts
+  components/              Nav, Hero, Work, About, Stack, Path, Contact, Footer
+                          + primitives: Reveal, ThemeToggle, AmbientGlow, Section
+  lib/
+    site.ts               identity, links, nav config
+    data.ts               projects, experience, skills — the content lives here
+    og.tsx                Open Graph image
+public/
+  portrait.jpg
+  Francisco-Cascalheira-CV.pdf
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**To edit content**, change `src/lib/data.ts` and `src/lib/site.ts` — nothing
+else needs to move.
 
-## Learn More
+## Theming
 
-To learn more about Next.js, take a look at the following resources:
+Two registers (dark, light) are defined as CSS variables in `globals.css` and
+mapped onto Tailwind via `@theme inline`, so the toggle is instant and every
+utility (`bg-bg`, `text-text-muted`, `text-accent`, …) follows the theme. The
+initial theme is set before first paint by an inline script and persisted to
+`localStorage`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deploy
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Import the repo on [vercel.com/new](https://vercel.com/new) (framework and build
+settings are detected automatically). Then point the domain — see below.
 
-## Deploy on Vercel
+### DNS for franciscocascalheira.com
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+In Vercel: Project → Settings → Domains → add `franciscocascalheira.com` and
+`www.franciscocascalheira.com`. At the registrar, set the records Vercel shows:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Type  | Name | Value                 |
+| ----- | ---- | --------------------- |
+| A     | @    | `76.76.21.21`         |
+| CNAME | www  | `cname.vercel-dns.com`|
+
+(Confirm the exact values in the Vercel dashboard — it verifies automatically
+once they propagate.)

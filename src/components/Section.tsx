@@ -51,7 +51,7 @@ export function SectionHeading({
     <Reveal className="mb-14 grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
       <div>
         <p className="mono-label mb-5 flex items-center gap-2">
-          <span className="text-accent">{index}</span>
+          <span className="text-accent-text">{index}</span>
           <span className="h-px w-6 bg-border-strong" aria-hidden />
           {label}
         </p>

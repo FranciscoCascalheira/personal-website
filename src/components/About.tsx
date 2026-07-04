@@ -58,7 +58,7 @@ export function About() {
                 {interests.map((item) => (
                   <li
                     key={item}
-                    className="rounded-full border border-border px-3 py-1.5 text-sm text-text-muted"
+                    className="rounded-md border border-border px-3 py-1.5 text-sm text-text-muted"
                   >
                     {item}
                   </li>
