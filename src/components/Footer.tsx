@@ -33,8 +33,12 @@ export function Footer() {
 
         {/* the colophon signature — the document signs itself in its own
             display voice, faint ink on the paper */}
-        <div aria-hidden className="relative select-none">
-          <span className="block whitespace-nowrap font-serif text-[14.5vw] italic leading-[0.9] tracking-[-0.02em] text-text/[0.07]">
+        <div className="relative select-none">
+          <span
+            aria-hidden
+            role="presentation"
+            className="block whitespace-nowrap font-serif text-[14.5vw] italic leading-[0.9] tracking-[-0.02em] text-text/[0.07]"
+          >
             Cascalheira
           </span>
         </div>
