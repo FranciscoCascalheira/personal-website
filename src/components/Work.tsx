@@ -2,75 +2,80 @@ import Link from "next/link";
 import { projects } from "@/lib/data";
 import { Reveal } from "./Reveal";
 import { Section } from "./Section";
-import { StatusBadge } from "./ui";
 
-/** Exhibit A: not a card, a doorway. The case study is the product; this
- *  block states the claim's evidence and hands the reader through. */
+/** Exhibit A is the one structural deployment of the accent: a full amber
+ *  field, ink on it, ruled like the rest of the record. Not a card — a
+ *  plate bound into the document. */
 function CaseStudyTeaser() {
   const flagship = projects[0];
   return (
     <Reveal>
       <Link
         href="/work/opportonities"
-        className="group block border border-border bg-bg-elevated/40 transition-colors hover:border-border-strong"
+        className="group block bg-field text-field-ink"
       >
-        <div className="grid gap-8 p-6 sm:p-10 lg:grid-cols-[1.3fr_1fr]">
-          <div>
-            <p className="mono-label mb-4 flex items-center gap-3">
-              <span className="text-accent-text">Exhibit A</span>
-              <StatusBadge status={flagship.status} />
+        <div className="p-6 sm:p-10">
+          <div className="flex flex-wrap items-baseline justify-between gap-3">
+            <p className="font-mono text-xs font-semibold uppercase tracking-[0.14em]">
+              Exhibit A
             </p>
-            <h3 className="text-3xl font-medium tracking-tight text-text sm:text-4xl">
-              {flagship.name}
-            </h3>
-            <p className="mt-2 text-lg text-text-muted">{flagship.tagline}</p>
-            <p className="mt-5 max-w-xl leading-relaxed text-text-muted">
-              A full engineering teardown: the 12-model schema as an explorable
-              map, the application state machine, the decisions that broke and
-              how they were fixed — sourced from the real repository.
-            </p>
-            <p className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-text">
-              <span className="accent-underline">Read the case study</span>
-              <span
-                className="transition-transform group-hover:translate-x-0.5"
-                aria-hidden
-              >
-                →
-              </span>
+            <p className="font-mono text-xs font-semibold uppercase tracking-[0.14em]">
+              {flagship.status}
             </p>
           </div>
 
-          <ul className="grid content-start gap-px self-center border border-border bg-border sm:grid-cols-2">
-            {flagship.metrics.map((m) => (
-              <li key={m.label} className="bg-bg px-5 py-4">
-                <span className="block text-xl font-medium text-text">
+          <h3 className="mt-6 font-serif text-[clamp(2.4rem,4.5vw,4.25rem)] leading-[0.95] tracking-[-0.01em]">
+            {flagship.name}
+          </h3>
+          <p className="mt-3 max-w-xl text-lg leading-relaxed text-field-ink-muted">
+            {flagship.tagline}. A full engineering teardown: the 12-model
+            schema as an explorable map, the application state machine, the
+            decisions that broke and how they were fixed — sourced from the
+            real repository.
+          </p>
+
+          <dl className="mt-8 grid grid-cols-2 gap-y-6 border-t border-field-rule pt-6 sm:grid-cols-4">
+            {flagship.metrics.map((m, i) => (
+              <div
+                key={m.label}
+                className={i > 0 ? "sm:border-l sm:border-field-rule sm:pl-6" : ""}
+              >
+                <dt className="font-serif text-3xl leading-none sm:text-4xl">
                   {m.value}
-                </span>
-                <span className="mt-0.5 block text-xs text-text-muted">
+                </dt>
+                <dd className="mt-2 font-mono text-[0.68rem] uppercase tracking-[0.14em] text-field-ink-muted">
                   {m.label}
-                </span>
-              </li>
+                </dd>
+              </div>
             ))}
-          </ul>
+          </dl>
+
+          <p className="mt-8 inline-flex items-center gap-2 border-t-2 border-field-ink pt-3 text-sm font-medium">
+            Read the case study
+            <span
+              className="transition-transform group-hover:translate-x-0.5"
+              aria-hidden
+            >
+              →
+            </span>
+          </p>
         </div>
       </Link>
     </Reveal>
   );
 }
 
-/** Further exhibits: a terse index, not a card grid. Depth lives in
+/** Further exhibits: a ruled ledger, not a card grid. Depth lives in
  *  Exhibit A; these rows state what shipped and step aside. */
 function ExhibitIndex() {
   const rest = projects.slice(1);
   return (
-    <div className="border border-border">
+    <div>
       {rest.map((p, i) => (
         <Reveal
           key={p.slug}
           delay={i * 60}
-          className={`grid gap-2 px-6 py-5 sm:grid-cols-[84px_1.1fr_1.6fr_auto] sm:items-baseline sm:gap-6 ${
-            i > 0 ? "border-t border-border" : ""
-          }`}
+          className="grid gap-2 border-t border-border py-6 sm:grid-cols-[90px_1.1fr_1.6fr_auto] sm:items-baseline sm:gap-6"
         >
           <span className="mono-label">{`Exhibit ${"BCD"[i] ?? ""}`}</span>
           <div>
@@ -85,8 +90,13 @@ function ExhibitIndex() {
           </span>
         </Reveal>
       ))}
+      <Rule />
     </div>
   );
+}
+
+function Rule() {
+  return <div aria-hidden className="h-px w-full bg-border" />;
 }
 
 export function Work() {
@@ -98,7 +108,7 @@ export function Work() {
       title="One system carries the argument."
       lede="Real systems with real users. The flagship gets the depth it earned; the rest is stated briefly and honestly."
     >
-      <div className="space-y-6">
+      <div className="space-y-10">
         <CaseStudyTeaser />
         <ExhibitIndex />
       </div>

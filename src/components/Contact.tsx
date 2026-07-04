@@ -18,7 +18,7 @@ function LinkButton({
       <span
         aria-disabled
         title="Coming soon"
-        className="inline-flex cursor-not-allowed items-center gap-2 rounded-full border border-border px-4 py-2 text-sm text-text-faint"
+        className="inline-flex cursor-not-allowed items-center gap-2 border border-border px-4 py-2 text-sm text-text-faint"
       >
         {label}
         <span className="font-mono text-xs">soon</span>
@@ -29,16 +29,21 @@ function LinkButton({
     <a
       href={href}
       {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
-      className="group inline-flex items-center gap-2 rounded-full border border-border-strong px-4 py-2 text-sm text-text transition-colors hover:bg-bg-elevated"
+      className="group inline-flex items-center gap-2 border border-border-strong px-4 py-2 text-sm text-text transition-colors hover:bg-bg-elevated"
     >
       {label}
-      <span className="text-text-faint transition-transform group-hover:translate-x-0.5" aria-hidden>
+      <span
+        className="text-text-faint transition-transform group-hover:translate-x-0.5"
+        aria-hidden
+      >
         ↗
       </span>
     </a>
   );
 }
 
+/** No card around the ask. The email is set like a closing line of the
+ *  document — serif, big, ruled above and below. */
 export function Contact() {
   return (
     <Section
@@ -48,30 +53,32 @@ export function Contact() {
       title="Let's build something."
       lede="Open to internships, collaborations and interesting problems. The inbox is the fastest way in."
     >
-
       <Reveal>
-        <div className="rounded-3xl border border-border bg-bg-elevated/40 p-8 sm:p-12">
-          <p className="mono-label mb-6">{`/// Available for work`}</p>
-          <a
-            href={`mailto:${site.email}`}
-            className="group block text-xl font-medium tracking-tight text-text [overflow-wrap:anywhere] sm:text-3xl lg:text-4xl"
+        <p className="mono-label border-t border-border pt-6">
+          {"/// Available for work"}
+        </p>
+        <a
+          href={`mailto:${site.email}`}
+          className="group mt-6 block font-serif text-[clamp(1.6rem,3.6vw,3.6rem)] leading-[1.05] text-text [overflow-wrap:anywhere]"
+        >
+          <span className="accent-underline">{site.email}</span>
+          <span
+            className="ml-3 inline-block text-text-faint transition-transform group-hover:translate-x-1"
+            aria-hidden
           >
-            <span className="accent-underline">{site.email}</span>
-            <span className="ml-2 inline-block text-text-faint transition-transform group-hover:translate-x-1" aria-hidden>
-              →
-            </span>
-          </a>
+            →
+          </span>
+        </a>
 
-          <div className="mt-10 flex flex-wrap gap-3">
-            <LinkButton
-              href={site.socials.linkedin}
-              label="LinkedIn"
-              external
-              disabled={!site.socials.linkedin}
-            />
-            <LinkButton href={site.socials.github} label="GitHub" external />
-            <LinkButton href={site.cv} label="Download CV" external />
-          </div>
+        <div className="mt-10 flex flex-wrap gap-3 border-b border-border pb-10">
+          <LinkButton
+            href={site.socials.linkedin}
+            label="LinkedIn"
+            external
+            disabled={!site.socials.linkedin}
+          />
+          <LinkButton href={site.socials.github} label="GitHub" external />
+          <LinkButton href={site.cv} label="Download CV" external />
         </div>
       </Reveal>
     </Section>

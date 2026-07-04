@@ -4,7 +4,7 @@ export function Footer() {
   const year = new Date().getFullYear();
   return (
     <footer className="relative overflow-hidden border-t border-border">
-      <div className="mx-auto w-full max-w-[1120px] px-6 pt-20 sm:px-8">
+      <div className="mx-auto w-full max-w-[1520px] px-5 pt-20 sm:px-10">
         <div className="flex flex-col gap-6 pb-16 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="mono-label mb-3">{`/// ${site.locator}`}</p>
@@ -31,9 +31,10 @@ export function Footer() {
           </div>
         </div>
 
-        {/* giant faint wordmark — Augusta's closing move */}
+        {/* the colophon signature — the document signs itself in its own
+            display voice, faint ink on the paper */}
         <div aria-hidden className="relative select-none">
-          <span className="block whitespace-nowrap bg-gradient-to-b from-text/[0.08] to-text/[0.015] bg-clip-text text-[13.5vw] font-semibold leading-[0.82] tracking-tighter text-transparent">
+          <span className="block whitespace-nowrap font-serif text-[14.5vw] italic leading-[0.9] tracking-[-0.02em] text-text/[0.07]">
             Cascalheira
           </span>
         </div>
