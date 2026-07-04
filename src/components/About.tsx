@@ -8,8 +8,8 @@ export function About() {
     <Section id="about">
       <SectionHeading
         index="02"
-        label="About"
-        title="I build things, and I ship them."
+        label="The author"
+        title="Proof has a person behind it."
       >
         The short version of who I am when I step away from the editor.
       </SectionHeading>
@@ -35,22 +35,25 @@ export function About() {
 
         <Reveal delay={100}>
           <blockquote className="max-w-2xl border-l-2 border-accent/50 pl-5 font-serif text-2xl italic leading-snug text-text sm:text-3xl">
-            Most of what I know, I learned by shipping, not in a lecture hall.
+            A CV is a claim. A system in production is proof.
           </blockquote>
 
           <div className="mt-8 max-w-2xl space-y-5 text-lg leading-relaxed text-text-muted">
             <p>
+              That conviction comes from the Austrian economists I read for
+              fun: value isn&apos;t declared, it&apos;s demonstrated in
+              exchange. It&apos;s why this site is built like a dossier rather
+              than a portfolio — one system, in production, examined honestly —
+              and why I care more about who depends on my software than what
+              the course syllabus says.
+            </p>
+            <p>
               I&apos;m a second-year Computer Engineering student in Porto. I
               like owning a product end to end: sitting in the requirements
               meeting, designing the data model, and being the person who
-              deploys it and keeps it running.
-            </p>
-            <p>
-              Away from the editor I read a fair amount, mostly philosophy,
-              ancient history, and the occasional argument about Austrian
-              economics. I follow Bitcoin and cybersecurity closely, and I turn
-              up at Porto&apos;s tech and startup meetups because the people
-              there are building things too.
+              deploys it and answers for it when it breaks. Away from the
+              editor: philosophy, ancient history, cybersecurity, and
+              Porto&apos;s tech and startup meetups.
             </p>
           </div>
 

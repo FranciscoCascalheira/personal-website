@@ -6,13 +6,27 @@ import { Stack } from "@/components/Stack";
 import { Path } from "@/components/Path";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
+import { getProductionStatus } from "@/lib/proof";
 
-export default function Home() {
+export default async function Home() {
+  const status = await getProductionStatus();
+
+  const proof = {
+    productionOk: status?.ok ?? false,
+    checkedAt: status
+      ? new Intl.DateTimeFormat("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZone: "UTC",
+        }).format(new Date(status.checkedAt))
+      : null,
+  };
+
   return (
     <>
       <Nav />
       <main>
-        <Hero />
+        <Hero proof={proof} />
         <Work />
         <About />
         <Stack />

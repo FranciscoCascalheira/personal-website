@@ -1,45 +1,40 @@
+import Link from "next/link";
 import { Reveal } from "./Reveal";
 import { Container } from "./Section";
 import { LiveStatusHeader } from "./LiveStatus";
-import { HeroField } from "./HeroField";
 import { MagneticLink } from "./MagneticLink";
 import { site } from "@/lib/site";
 
-const currently = [
-  { k: "Building", v: "opPORTOnities" },
-  { k: "For", v: "Câmara Municipal do Porto" },
-  { k: "Role", v: "Sole developer" },
-  { k: "Status", v: "In production" },
-  { k: "Stack", v: "TS · Node · Postgres · React" },
-];
+type Proof = {
+  productionOk: boolean;
+  checkedAt: string | null;
+};
 
-const stats = [
-  { k: "In production", v: "A recruitment platform the City of Porto runs on" },
-  { k: "500+ commits", v: "Solo, across opPORTOnities and UniSpot" },
-  { k: "FEUP · 2nd year", v: "Computer Engineering, still a student" },
-];
-
-export function Hero() {
+/** The claim, then the evidence. The hero's job is one sentence a recruiter
+ *  can repeat to a colleague — everything else on the page defends it. */
+export function Hero({ proof }: { proof: Proof }) {
   return (
     <section id="top" className="relative overflow-hidden pt-36 sm:pt-44">
       <div className="absolute inset-0 -z-10 bg-grid [mask-image:radial-gradient(ellipse_at_top,black,transparent_75%)]" />
-      <HeroField />
 
       <Container>
         <div className="grid items-start gap-12 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
-          {/* left — the statement */}
+          {/* left — the claim */}
           <div>
             <Reveal>
               <p className="mono-label mb-8">
-                {`/// Software developer · ${site.locator}`}
+                {`/// FC-Dossier · Software developer · ${site.locator}`}
               </p>
             </Reveal>
 
             <Reveal delay={80}>
-              <h1 className="text-balance text-4xl font-medium leading-[1.05] tracking-[-0.03em] sm:text-5xl lg:text-6xl">
-                <span className="text-gradient">I build software that </span>
-                <span className="focus-in font-serif text-4xl italic text-accent sm:text-5xl lg:text-6xl">
-                  actually ships
+              <h1 className="text-balance text-4xl font-medium leading-[1.08] tracking-[-0.03em] sm:text-5xl">
+                <span className="text-gradient">
+                  The City of Porto runs its youth-internship programme on
+                  software{" "}
+                </span>
+                <span className="focus-in font-serif text-4xl italic text-accent sm:text-5xl">
+                  I built alone
                 </span>
                 <span className="text-gradient">.</span>
               </h1>
@@ -47,21 +42,24 @@ export function Hero() {
 
             <Reveal delay={160}>
               <p className="mt-7 max-w-xl text-lg leading-relaxed text-text-muted">
-                Second-year Computer Engineering student at FEUP and the sole
-                developer of a recruitment platform the City of Porto runs on
-                today. I own products from the first requirements meeting to the
-                production deploy.
+                I&apos;m Francisco Cascalheira, a second-year Computer
+                Engineering student at FEUP. For opPORTOnities I sat in the
+                requirements meetings, designed the 12-model schema, wrote all
+                294 commits, and deployed it. It is in production now.
               </p>
             </Reveal>
 
             <Reveal delay={240}>
               <div className="mt-10 flex flex-wrap items-center gap-3">
                 <MagneticLink
-                  href="#work"
+                  href="/work/opportonities"
                   className="group inline-flex items-center gap-2 rounded-full bg-text px-5 py-2.5 text-sm font-medium text-bg"
                 >
-                  See selected work
-                  <span className="transition-transform group-hover:translate-x-0.5" aria-hidden>
+                  Read the case study
+                  <span
+                    className="transition-transform group-hover:translate-x-0.5"
+                    aria-hidden
+                  >
                     →
                   </span>
                 </MagneticLink>
@@ -75,14 +73,40 @@ export function Hero() {
             </Reveal>
           </div>
 
-          {/* right — the currently card (mono metadata, Delta-style) */}
+          {/* right — the evidence panel: live where truthfully live */}
           <Reveal delay={200} className="lg:pt-2">
-            <div className="rounded-2xl border border-border bg-bg-elevated p-6">
+            <div className="border border-border bg-bg-elevated p-6">
               <div className="mb-5">
                 <LiveStatusHeader />
               </div>
               <dl className="divide-y divide-border">
-                {currently.map((row) => (
+                <div className="grid grid-cols-[92px_1fr] gap-3 py-2.5 text-sm">
+                  <dt className="font-mono text-xs uppercase tracking-wider text-text-faint">
+                    Status
+                  </dt>
+                  <dd className="text-text">
+                    {proof.productionOk ? (
+                      <span className="inline-flex items-baseline gap-2">
+                        <span
+                          className="size-1.5 self-center rounded-full bg-positive"
+                          aria-hidden
+                        />
+                        In production — API responding
+                        {proof.checkedAt
+                          ? ` · checked ${proof.checkedAt} UTC`
+                          : null}
+                      </span>
+                    ) : (
+                      "In production"
+                    )}
+                  </dd>
+                </div>
+                {[
+                  { k: "Client", v: "Câmara Municipal do Porto" },
+                  { k: "Commits", v: "294 — sole author, verified by git" },
+                  { k: "Vacancies", v: "380+ handled in production" },
+                  { k: "Stack", v: "TS · Node · Postgres · React" },
+                ].map((row) => (
                   <div
                     key={row.k}
                     className="grid grid-cols-[92px_1fr] gap-3 py-2.5 text-sm"
@@ -94,23 +118,14 @@ export function Hero() {
                   </div>
                 ))}
               </dl>
+              <p className="mono-label mt-4">
+                <Link href="/work/opportonities" className="accent-underline">
+                  Full engineering teardown →
+                </Link>
+              </p>
             </div>
           </Reveal>
         </div>
-
-        {/* stat strip */}
-        <Reveal delay={320}>
-          <dl className="mt-20 grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-3">
-            {stats.map((s) => (
-              <div key={s.k} className="bg-bg px-6 py-7">
-                <dt className="text-lg font-medium text-text">{s.k}</dt>
-                <dd className="mt-1.5 text-sm leading-relaxed text-text-muted">
-                  {s.v}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </Reveal>
       </Container>
     </section>
   );

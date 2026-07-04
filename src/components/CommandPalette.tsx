@@ -128,6 +128,7 @@ export function CommandPalette() {
   const commands = useMemo<Command[]>(() => {
     const sections: Command[] = [
       { id: "top", label: "Top", group: "Navigate", keywords: "home hero", run: () => goto("top") },
+      { id: "case-study", label: "Case study — opPORTOnities", hint: "deep dive", group: "Navigate", keywords: "work flagship teardown schema porto", run: () => { window.location.href = "/work/opportonities"; } },
       ...nav.map((n) => ({
         id: n.id,
         label: n.label,

@@ -1,94 +1,109 @@
-import { projects, type Project } from "@/lib/data";
+import Link from "next/link";
+import { projects } from "@/lib/data";
 import { Reveal } from "./Reveal";
 import { Section, SectionHeading } from "./Section";
-import { StatusBadge, StackChips, MetricRow } from "./ui";
-import { FlagshipVisual } from "./FlagshipVisual";
+import { StatusBadge } from "./ui";
 
-function Flagship({ project }: { project: Project }) {
+/** Exhibit A: not a card, a doorway. The case study is the product; this
+ *  block states the claim's evidence and hands the reader through. */
+function CaseStudyTeaser() {
+  const flagship = projects[0];
   return (
-    <Reveal className="relative">
-      <div className="rounded-3xl border border-border bg-bg-elevated/40 p-6 sm:p-10">
-        <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
-          <div className="flex flex-col">
-            <div className="mb-6 flex flex-wrap items-center gap-3">
-              <span className="mono-label text-accent-text">{`${project.index} · Flagship`}</span>
-              <StatusBadge status={project.status} />
-            </div>
-            <p className="mono-label mb-3">{project.client}</p>
+    <Reveal>
+      <Link
+        href="/work/opportonities"
+        className="group block border border-border bg-bg-elevated/40 transition-colors hover:border-border-strong"
+      >
+        <div className="grid gap-8 p-6 sm:p-10 lg:grid-cols-[1.3fr_1fr]">
+          <div>
+            <p className="mono-label mb-4 flex items-center gap-3">
+              <span className="text-accent-text">Exhibit A</span>
+              <StatusBadge status={flagship.status} />
+            </p>
             <h3 className="text-3xl font-medium tracking-tight text-text sm:text-4xl">
-              {project.name}
+              {flagship.name}
             </h3>
-            <p className="mt-2 text-lg text-text-muted">{project.tagline}</p>
-            <p className="mt-6 leading-relaxed text-text-muted">{project.summary}</p>
-
-            <ul className="mt-6 space-y-2.5">
-              {project.contributions.map((c) => (
-                <li key={c} className="flex gap-3 text-sm leading-relaxed text-text-muted">
-                  <span className="mt-2 size-1 shrink-0 rounded-full bg-accent" aria-hidden />
-                  {c}
-                </li>
-              ))}
-            </ul>
-
-            <div className="mt-auto pt-8">
-              <StackChips items={project.stack} />
-            </div>
+            <p className="mt-2 text-lg text-text-muted">{flagship.tagline}</p>
+            <p className="mt-5 max-w-xl leading-relaxed text-text-muted">
+              A full engineering teardown: the 12-model schema as an explorable
+              map, the application state machine, the decisions that broke and
+              how they were fixed — sourced from the real repository.
+            </p>
+            <p className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-text">
+              <span className="accent-underline">Read the case study</span>
+              <span
+                className="transition-transform group-hover:translate-x-0.5"
+                aria-hidden
+              >
+                →
+              </span>
+            </p>
           </div>
 
-          <div className="flex items-center">
-            <FlagshipVisual />
-          </div>
+          <ul className="grid content-start gap-px self-center border border-border bg-border sm:grid-cols-2">
+            {flagship.metrics.map((m) => (
+              <li key={m.label} className="bg-bg px-5 py-4">
+                <span className="block text-xl font-medium text-text">
+                  {m.value}
+                </span>
+                <span className="mt-0.5 block text-xs text-text-muted">
+                  {m.label}
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
-      </div>
+      </Link>
     </Reveal>
   );
 }
 
-function ProjectCard({ project, delay }: { project: Project; delay: number }) {
+/** Further exhibits: a terse index, not a card grid. Depth lives in
+ *  Exhibit A; these rows state what shipped and step aside. */
+function ExhibitIndex() {
+  const rest = projects.slice(1);
   return (
-    <Reveal
-      delay={delay}
-      className="group flex h-full flex-col rounded-2xl border border-border bg-bg-elevated/40 p-7 transition-colors hover:border-border-strong"
-    >
-      <div className="mb-5 flex items-center justify-between gap-3">
-        <span className="mono-label">{project.index}</span>
-        <StatusBadge status={project.status} />
-      </div>
-      <h3 className="text-xl font-medium text-text">{project.name}</h3>
-      <p className="mt-1.5 text-sm text-text-muted">{project.tagline}</p>
-      <p className="mono-label mt-4">{project.role}</p>
-      <p className="mt-4 text-sm leading-relaxed text-text-muted">{project.summary}</p>
-      <div className="mt-6">
-        <MetricRow metrics={project.metrics} />
-      </div>
-      <div className="mt-auto pt-6">
-        <StackChips items={project.stack} />
-      </div>
-    </Reveal>
+    <div className="border border-border">
+      {rest.map((p, i) => (
+        <Reveal
+          key={p.slug}
+          delay={i * 60}
+          className={`grid gap-2 px-6 py-5 sm:grid-cols-[84px_1.1fr_1.6fr_auto] sm:items-baseline sm:gap-6 ${
+            i > 0 ? "border-t border-border" : ""
+          }`}
+        >
+          <span className="mono-label">{`Exhibit ${"BCD"[i] ?? ""}`}</span>
+          <div>
+            <h3 className="text-base font-medium text-text">{p.name}</h3>
+            <p className="mono-label mt-1">{p.role}</p>
+          </div>
+          <p className="text-sm leading-relaxed text-text-muted">
+            {p.tagline}. {p.contributions[0]}
+          </p>
+          <span className="mono-label sm:text-right">
+            {p.year} · {p.status}
+          </span>
+        </Reveal>
+      ))}
+    </div>
   );
 }
 
 export function Work() {
-  const [flagship, ...rest] = projects;
   return (
     <Section id="work">
       <SectionHeading
         index="01"
-        label="Selected work"
-        title="Products I've taken to production."
+        label="The evidence"
+        title="One system carries the argument."
       >
-        Real systems with real users, from requirements to deployment. The best
-        of it runs behind closed doors, so a few pieces are described rather than
-        linked.
+        Real systems with real users. The flagship gets the depth it earned;
+        the rest is stated briefly and honestly.
       </SectionHeading>
 
       <div className="space-y-6">
-        <Flagship project={flagship} />
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {rest.map((project, i) => (
-            <ProjectCard key={project.slug} project={project} delay={i * 80} />
-          ))}
-        </div>
+        <CaseStudyTeaser />
+        <ExhibitIndex />
       </div>
     </Section>
   );

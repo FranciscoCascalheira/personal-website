@@ -8,7 +8,7 @@ export const site = {
   coordinates: "41.1579° N, 8.6291° W",
   url: "https://www.franciscocascalheira.com",
   description:
-    "Software developer building production software. Second-year Computer Engineering student at FEUP and sole developer of a recruitment platform in production for Câmara Municipal do Porto.",
+    "The City of Porto runs its youth-internship programme on software I built alone. Second-year Computer Engineering student at FEUP; sole developer of a recruitment platform in production for Câmara Municipal do Porto.",
   email: "francisco.cascalheira2006@gmail.com",
   socials: {
     linkedin: "https://www.linkedin.com/in/francisco-cascalheira-b898a7405/",
