@@ -1,26 +1,204 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ─────────────────────────────────────────────────────────────────────────
+   Theme tokens. Dark is the default register; light is the editorial mode.
+   Values are driven by CSS variables so the [data-theme] switch is instant.
+   ───────────────────────────────────────────────────────────────────────── */
+
+:root,
+[data-theme="dark"] {
+  --bg: #0a0b0d; /* near-black, faint cool tint — never #000 */
+  --bg-elevated: #121316;
+  --bg-inset: #17181c;
+
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+
+  --text: #f5f5f6;
+  --text-muted: #a1a1a6;
+  --text-faint: #6e6f76;
+
+  --accent: #e0a73e; /* warm amber — the single signature hue */
+  --accent-strong: #ebb65a;
+  --accent-soft: rgba(224, 167, 62, 0.14);
+
+  --positive: #3fcf6e;
+
+  --glow: rgba(224, 167, 62, 0.16);
+  --grid-line: rgba(255, 255, 255, 0.025);
+  color-scheme: dark;
 }
 
+[data-theme="light"] {
+  --bg: #ffffff;
+  --bg-elevated: #fafafa;
+  --bg-inset: #f3f3f4;
+
+  --border: rgba(10, 11, 13, 0.1);
+  --border-strong: rgba(10, 11, 13, 0.18);
+
+  --text: #0d0d0d; /* near-black, never pure #000 either */
+  --text-muted: #55565b;
+  --text-faint: #86878c;
+
+  --accent: #b4791a; /* darker amber for AA contrast on white */
+  --accent-strong: #986313;
+  --accent-soft: rgba(180, 121, 26, 0.1);
+
+  --positive: #1f9d57;
+
+  --glow: rgba(180, 121, 26, 0.09);
+  --grid-line: rgba(10, 11, 13, 0.03);
+  color-scheme: light;
+}
+
+/* Map the semantic variables onto Tailwind's color/font system. `inline`
+   keeps them referencing the live CSS vars so runtime theme swaps work. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-inset: var(--bg-inset);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-text-faint: var(--text-faint);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-positive: var(--positive);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", monospace;
+  --font-serif: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ───────────────────────────── Base ───────────────────────────── */
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+h1, h2, h3, h4 {
+  color: var(--text);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+/* thin, unobtrusive scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+  border: 3px solid var(--bg);
+}
+
+/* ─────────────────────── Signature utilities ─────────────────────── */
+
+/* mono technical microcopy — the most stealable move from Delta/Augusta */
+.mono-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  font-weight: 500;
+}
+
+/* headline that dissolves from text → faint (Augusta) */
+.text-gradient {
+  background: linear-gradient(
+    180deg,
+    var(--text) 0%,
+    var(--text) 55%,
+    color-mix(in oklab, var(--text) 55%, var(--bg)) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.accent-underline {
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1.5px;
+  transition: background-size 0.35s ease;
+}
+.group:hover .accent-underline,
+.accent-underline:hover {
+  background-size: 100% 1.5px;
+}
+
+/* hairline framing */
+.hairline {
+  border: 1px solid var(--border);
+}
+
+/* faint background grid for structure without noise */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* scroll-reveal — driven by IntersectionObserver adding [data-revealed] */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal[data-revealed="true"] {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+.link-quiet {
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+}
+.link-quiet:hover {
+  color: var(--text);
 }
