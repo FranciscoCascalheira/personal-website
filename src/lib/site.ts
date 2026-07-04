@@ -11,8 +11,7 @@ export const site = {
     "Software developer building production software. Second-year Computer Engineering student at FEUP and sole developer of a recruitment platform in production for Câmara Municipal do Porto.",
   email: "francisco.cascalheira2006@gmail.com",
   socials: {
-    // LinkedIn URL pending — button stays disabled until provided.
-    linkedin: "",
+    linkedin: "https://www.linkedin.com/in/francisco-cascalheira-b898a7405/",
     github: "https://github.com/FranciscoCascalheira",
   },
   cv: "/Francisco-Cascalheira-CV.pdf",
