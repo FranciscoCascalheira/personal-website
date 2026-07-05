@@ -51,7 +51,7 @@ function DocSection({
           </Reveal>
           <div className="lg:border-l lg:border-border lg:pl-12 xl:pl-16">
             <Reveal>
-              <h2 className="display text-[clamp(1.9rem,3.4vw,3.1rem)]">
+              <h2 className="headline text-[clamp(1.45rem,2.3vw,2rem)]">
                 {title}
               </h2>
             </Reveal>
@@ -112,11 +112,11 @@ export default async function CaseStudyPage() {
                 </p>
               </div>
               <h1 className="line-mask mt-10">
-                <span className="line-inner display text-[clamp(3rem,9vw,8.5rem)]">
+                <span className="line-inner headline text-[clamp(2.25rem,5vw,4rem)]">
                   {caseMeta.title}
                 </span>
               </h1>
-              <p className="mt-6 max-w-2xl font-serif text-2xl italic leading-snug text-text sm:text-3xl">
+              <p className="mt-6 max-w-2xl serif-accent text-2xl leading-snug text-text sm:text-[1.75rem]">
                 {abstract.claim}
               </p>
             </Reveal>
@@ -157,7 +157,7 @@ export default async function CaseStudyPage() {
                   key={m.label}
                   className={i > 0 ? "lg:border-l lg:border-border lg:pl-8" : ""}
                 >
-                  <dt className="font-serif text-4xl leading-none text-text sm:text-5xl">
+                  <dt className="text-4xl font-medium leading-none tracking-tight tabular-nums text-text sm:text-[2.75rem]">
                     {m.value}
                   </dt>
                   <dd className="mono-label mt-3">{m.label}</dd>
@@ -283,7 +283,7 @@ export default async function CaseStudyPage() {
               <p className="mono-label mb-4">End of case study</p>
               <a
                 href={`mailto:${site.email}`}
-                className="accent-underline break-all font-serif text-2xl text-text sm:text-4xl"
+                className="accent-underline break-all text-xl font-medium tracking-tight text-text sm:text-3xl"
               >
                 {site.email}
               </a>

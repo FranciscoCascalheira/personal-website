@@ -21,7 +21,7 @@ export function About() {
               alt="Francisco Cascalheira"
               fill
               sizes="(max-width: 1024px) 100vw, 300px"
-              className="object-cover"
+              className="object-cover object-top grayscale contrast-[1.04] brightness-[1.02]"
               priority={false}
             />
           </div>

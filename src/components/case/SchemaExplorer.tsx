@@ -168,7 +168,7 @@ export function SchemaExplorer() {
         <div className="py-7 lg:pl-10" role="region" aria-label="Model detail">
           <div className="flex items-baseline justify-between gap-4">
             <h3
-              className="font-serif text-2xl italic text-text"
+              className="font-mono text-lg text-text"
               aria-live="polite"
             >
               {selected.name}
