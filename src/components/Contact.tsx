@@ -59,7 +59,7 @@ export function Contact() {
         </p>
         <a
           href={`mailto:${site.email}`}
-          className="group mt-6 block text-[clamp(1.35rem,3vw,2.75rem)] font-medium tracking-tight leading-[1.05] text-text [overflow-wrap:anywhere]"
+          className="group mt-6 block font-serif text-[clamp(1.6rem,3.6vw,3.6rem)] leading-[1.05] text-text [overflow-wrap:anywhere]"
         >
           <span className="accent-underline">{site.email}</span>
           <span

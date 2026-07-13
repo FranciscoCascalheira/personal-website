@@ -35,11 +35,11 @@ export function Hero({ proof }: { proof: Proof }) {
           <div className="lg:border-l lg:border-border lg:pl-12 xl:pl-16">
             <Reveal>
               <h1 className="line-mask">
-                <span className="line-inner headline max-w-[20ch] text-[clamp(2rem,4.6vw,3.5rem)]">
+                <span className="line-inner display max-w-[17ch] text-[clamp(2.75rem,7vw,6.75rem)]">
                   The City of Porto runs its youth-internship programme on
                   software{" "}
                   <em className="focus-in not-italic">
-                    <span className="serif-accent text-[1.15em] text-accent-text">
+                    <span className="italic text-accent-text">
                       I built alone
                     </span>
                   </em>

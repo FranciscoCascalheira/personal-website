@@ -180,24 +180,16 @@ body {
   font-weight: 500;
 }
 
-/* the headline voice: Geist, set plainly and confidently. The document's
-   restraint is the point — headlines don't shout, the structure carries the
-   identity. Serif is reserved as a rare accent (the hero rupture, a quote). */
-.headline {
-  font-family: var(--font-sans);
-  font-weight: 500;
-  letter-spacing: -0.03em;
-  line-height: 1.04;
-  color: var(--text);
-  text-wrap: balance;
-}
-
-/* serif accent — used sparingly for a rupture word or a pulled quote */
-.serif-accent {
+/* the display voice: Instrument Serif, set big, tight leading, real
+   hanging punctuation where the engine supports it */
+.display {
   font-family: var(--font-serif);
   font-weight: 400;
-  font-style: italic;
-  letter-spacing: 0;
+  letter-spacing: -0.01em;
+  line-height: 0.98;
+  color: var(--text);
+  hanging-punctuation: first last;
+  text-wrap: balance;
 }
 
 /* ghost folio numeral — the section number used architecturally */

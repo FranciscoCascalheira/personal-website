@@ -24,7 +24,7 @@ function CaseStudyTeaser() {
             </p>
           </div>
 
-          <h3 className="mt-6 text-[clamp(1.9rem,3.4vw,3rem)] font-medium leading-[1] tracking-[-0.03em] text-field-ink">
+          <h3 className="mt-6 font-serif text-[clamp(2.4rem,4.5vw,4.25rem)] leading-[0.95] tracking-[-0.01em] text-field-ink">
             {flagship.name}
           </h3>
           <p className="mt-3 max-w-xl text-lg leading-relaxed text-field-ink-muted">
@@ -40,7 +40,7 @@ function CaseStudyTeaser() {
                 key={m.label}
                 className={i > 0 ? "sm:border-l sm:border-field-rule sm:pl-6" : ""}
               >
-                <dt className="text-3xl font-medium leading-none tracking-tight tabular-nums">
+                <dt className="font-serif text-3xl leading-none sm:text-4xl">
                   {m.value}
                 </dt>
                 <dd className="mt-2 font-mono text-[0.68rem] uppercase tracking-[0.14em] text-field-ink-muted">

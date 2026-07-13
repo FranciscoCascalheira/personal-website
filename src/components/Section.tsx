@@ -60,7 +60,7 @@ export function Section({
 
           <div className="lg:border-l lg:border-border lg:pl-12 xl:pl-16">
             <Reveal>
-              <h2 className="headline text-[clamp(1.6rem,2.6vw,2.4rem)]">
+              <h2 className="display text-[clamp(2.3rem,4.6vw,4.4rem)]">
                 {title}
               </h2>
               {lede ? (
