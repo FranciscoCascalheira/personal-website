@@ -4,6 +4,7 @@ import { Work } from "@/components/Work";
 import { About } from "@/components/About";
 import { Stack } from "@/components/Stack";
 import { Path } from "@/components/Path";
+import { Appendix } from "@/components/Appendix";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
 import { getProductionStatus } from "@/lib/proof";
@@ -32,6 +33,7 @@ export default async function Home() {
         <Stack />
         <Path />
         <Contact />
+        <Appendix />
       </main>
       <Footer />
     </>

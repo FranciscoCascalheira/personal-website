@@ -23,4 +23,5 @@ export const nav = [
   { id: "stack", label: "Stack", index: "03" },
   { id: "path", label: "Path", index: "04" },
   { id: "contact", label: "Contact", index: "05" },
+  { id: "appendix", label: "Appendix", index: "A." },
 ] as const;
