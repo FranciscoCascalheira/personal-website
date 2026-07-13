@@ -278,6 +278,71 @@ html.js .reveal[data-revealed="true"] .rule-draw {
   }
 }
 
+/* fig. 0 plate — lines etch in (pathLength-normalised dash), lettering and
+   water settle as fades. Same press easing, staged with --plate-delay. */
+html.js .plate-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.85s var(--ease-press);
+  transition-delay: var(--plate-delay, 0ms);
+}
+html.js .reveal[data-revealed="true"] .plate-line {
+  stroke-dashoffset: 0;
+}
+html.js .plate-fade {
+  opacity: 0;
+  transition: opacity 0.7s var(--ease-press);
+  transition-delay: var(--plate-delay, 0ms);
+}
+html.js .reveal[data-revealed="true"] .plate-fade {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.js .plate-line {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    transition: none;
+  }
+  html.js .plate-fade {
+    opacity: 1;
+    transition: none;
+  }
+}
+
+/* below ~640px the plate is a miniature — the micro lettering would render at
+   2–3px, so it steps back and the figcaption carries the information */
+@media (max-width: 640px) {
+  .plate-micro {
+    display: none;
+  }
+}
+
+/* fig. 0 depth layer — when the WebGL overlay mounts it sets [data-plate-3d]
+   on the stage and takes over the network: the SVG's flat twin yields.
+   The stage provides the perspective; the card is what tilts. */
+.plate-stage {
+  perspective: 1100px;
+}
+/* layer promotion only where the depth layer actually mounted */
+.plate-stage[data-plate-3d] .plate-card {
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+.plate-stage[data-plate-3d] .plate-net {
+  transition: opacity 0.45s var(--ease-press) 0ms !important;
+  opacity: 0 !important;
+}
+
+/* print gets the full flat engraving back — canvases don't print */
+@media print {
+  .plate-stage canvas {
+    display: none !important;
+  }
+  .plate-stage[data-plate-3d] .plate-net {
+    opacity: 1 !important;
+  }
+}
+
 /* the amber phrase resolves from soft to sharp once on load */
 @keyframes focus-in {
   from {

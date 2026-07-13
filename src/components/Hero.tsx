@@ -3,6 +3,8 @@ import { Reveal } from "./Reveal";
 import { Container } from "./Section";
 import { LiveStatusHeader } from "./LiveStatus";
 import { MagneticLink } from "./MagneticLink";
+import { Fig0Plate } from "./Fig0Plate";
+import { Fig0Depth } from "./Fig0Depth";
 import { site } from "@/lib/site";
 
 type Proof = {
@@ -78,6 +80,26 @@ export function Hero({ proof }: { proof: Proof }) {
                   Get in touch
                 </a>
               </div>
+            </Reveal>
+
+            {/* fig. 0 — the survey plate: the system etched over the city */}
+            <Reveal delay={280} className="mt-16 sm:mt-20">
+              <figure>
+                <Fig0Depth>
+                  <Fig0Plate />
+                </Fig0Depth>
+                <figcaption className="mt-4 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2 border-t border-border pt-3">
+                  <span className="max-w-xl font-mono text-[0.72rem] font-medium leading-relaxed text-text-faint">
+                    fig. 0 — The matching network over the seven freguesias of
+                    Porto, engraved from the official administrative charts.
+                    The amber line is an accepted application — the door the
+                    platform exists to open.
+                  </span>
+                  <span className="mono-label whitespace-nowrap" aria-hidden>
+                    ● candidate&ensp;□ company&ensp;— match
+                  </span>
+                </figcaption>
+              </figure>
             </Reveal>
 
             {/* the evidence — a ruled ledger, stamped */}
