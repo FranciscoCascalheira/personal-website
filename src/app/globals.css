@@ -333,13 +333,89 @@ html.js .reveal[data-revealed="true"] .plate-fade {
   opacity: 0 !important;
 }
 
-/* print gets the full flat engraving back — canvases don't print */
+/* ───────────────────────── The printed edition ─────────────────────────
+   The dossier's final consequence: it prints as a real typeset document.
+   Ink on white, no chrome, no motion state, every figure in its flat
+   engraved form. Cmd+P is a feature here, not an accident. */
+
+.print-only {
+  display: none;
+}
+
 @media print {
-  .plate-stage canvas {
+  /* canvases don't print — every WebGL layer yields to its flat twin */
+  .plate-stage canvas,
+  canvas,
+  .bust-stage {
     display: none !important;
   }
   .plate-stage[data-plate-3d] .plate-net {
     opacity: 1 !important;
+  }
+
+  /* ink on white, regardless of the visitor's theme */
+  :root,
+  [data-theme="light"],
+  [data-theme="dark"] {
+    --bg: #ffffff;
+    --bg-elevated: #ffffff;
+    --bg-inset: #f4f1e9;
+    --border: rgba(25, 21, 16, 0.28);
+    --border-strong: rgba(25, 21, 16, 0.55);
+    --text: #191510;
+    --text-muted: #33302a;
+    --text-faint: #555046;
+    --accent: #8a5c0e;
+    --accent-strong: #6d4a0c;
+    --accent-text: #6d4a0c;
+    --grid-line: transparent;
+  }
+
+  /* no interface in a document */
+  nav,
+  .no-print {
+    display: none !important;
+  }
+
+  /* the amber flood becomes a ruled box — ink economy */
+  .bg-field {
+    background: transparent !important;
+    border: 2px solid var(--text) !important;
+  }
+
+  /* reveal states must never hide content on paper */
+  html.js .reveal,
+  html.js .line-inner,
+  html.js .rule-draw,
+  html.js .plate-fade {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  html.js .plate-line {
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+  .focus-in {
+    animation: none !important;
+  }
+
+  /* document hygiene */
+  section {
+    break-inside: auto;
+  }
+  figure,
+  .stamp,
+  dl {
+    break-inside: avoid;
+  }
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+  .print-only {
+    display: block;
   }
 }
 

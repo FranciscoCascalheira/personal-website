@@ -5,15 +5,36 @@ export function Footer() {
   return (
     <footer className="relative overflow-hidden border-t border-border">
       <div className="mx-auto w-full max-w-[1520px] px-5 pt-20 sm:px-10">
-        <div className="flex flex-col gap-6 pb-16 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="mono-label mb-3">{`/// ${site.locator}`}</p>
-            <p className="max-w-xs text-sm leading-relaxed text-text-muted">
-              Built from scratch — Next.js, TypeScript and a lot of care for the
-              details.
-            </p>
+        <div className="flex flex-col gap-10 pb-16 sm:flex-row sm:items-end sm:justify-between">
+          {/* the colophon — how the document is made, stated like one */}
+          <div className="max-w-md">
+            <p className="mono-label mb-4">Colophon</p>
+            <ul className="space-y-1.5 border-l border-border pl-4 text-xs leading-relaxed text-text-muted">
+              <li>
+                Set in Instrument Serif, Geist and Geist Mono on ivory paper
+                tokens; one amber ink.
+              </li>
+              <li>
+                fig. 0 is engraved from the official administrative charts
+                (CAOP, EPSG:3763) — the Douro drawn as the legal Porto–Gaia
+                boundary, bridges at true longitude.
+              </li>
+              <li>
+                fig. A&apos;s marble is museum photogrammetry via
+                threedscans.com, cross-hatched in the browser in the
+                document&apos;s own ink.
+              </li>
+              <li>
+                Next.js, statically rendered; Three.js and the marble load
+                only on demand.
+              </li>
+              <li className="font-mono text-[0.68rem] text-text-faint">
+                First load ≈ 310 kB compressed · measured at build, 14 Jul 2026
+                · the marble and the map arrive on demand
+              </li>
+            </ul>
           </div>
-          <div className="flex items-center gap-6 text-sm">
+          <div className="no-print flex items-center gap-6 text-sm">
             <a href="#work" className="link-quiet">
               Work
             </a>

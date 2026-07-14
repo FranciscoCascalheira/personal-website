@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import { influences, clusters } from "@/lib/influences";
+import { BustPlate } from "./BustPlate";
 
 type Line = { x1: number; y1: number; x2: number; y2: number; strong?: boolean };
 
@@ -23,7 +24,7 @@ type Line = { x1: number; y1: number; x2: number; y2: number; strong?: boolean }
  *  repeating.
  */
 export function InfluenceMap() {
-  const [selectedId, setSelectedId] = useState<string>("girard");
+  const [selectedId, setSelectedId] = useState<string>("plato");
   const mapRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef(new Map<string, HTMLButtonElement>());
   const [lines, setLines] = useState<Line[]>([]);
@@ -116,7 +117,7 @@ export function InfluenceMap() {
           aria-label="Influences. Use the arrow keys to move between thinkers."
         >
           <svg
-            className="pointer-events-none absolute inset-0 h-full w-full"
+            className="no-print pointer-events-none absolute inset-0 h-full w-full"
             aria-hidden
           >
             {lines.map((l, i) => (
@@ -204,6 +205,8 @@ export function InfluenceMap() {
             {clusters.find((c) => c.id === selected.cluster)?.label}
           </p>
 
+          {selected.bust && <BustPlate bust={selected.bust} />}
+
           <p className="mt-4 text-sm leading-relaxed text-text-muted">
             {selected.note}
           </p>
@@ -254,8 +257,8 @@ export function InfluenceMap() {
         className="border-t border-border-strong py-3"
       >
         <span className="mono-label">
-          fig. A — the other system · every line is a documented debt, not a
-          mood board · politics deliberately absent
+          fig. A — the other system · every line is a documented debt · marble
+          only where museums have scanned it · politics deliberately absent
         </span>
       </figcaption>
     </figure>

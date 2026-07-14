@@ -288,7 +288,7 @@ export function Fig0Plate() {
               CÂMARA MUNICIPAL DO PORTO · 5.ª EDIÇÃO
             </text>
             <text x="42" y="507" fontSize="6.6" letterSpacing="0.14em" fill={inkFaint} className="font-mono">
-              12 MODELS · 294 COMMITS · AGES 18–21
+              12 MODELS · 308 COMMITS · AGES 18–21
             </text>
             {/* scale bar — true to the projection */}
             <g stroke="var(--text)" strokeWidth="0.8" strokeOpacity="0.8">

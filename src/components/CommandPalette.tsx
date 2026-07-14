@@ -160,6 +160,7 @@ export function CommandPalette() {
         },
       },
       { id: "email", label: "Send an email", hint: "mailto", group: "Actions", keywords: "contact reach", run: () => { window.location.href = `mailto:${site.email}`; } },
+      { id: "print", label: "Print the dossier", hint: "paper edition", group: "Actions", keywords: "pdf print paper document save", run: () => { setOpen(false); setTimeout(() => window.print(), 80); } },
       { id: "theme", label: "Toggle theme", group: "Actions", keywords: "dark light mode appearance", run: toggleTheme },
     ];
     return [...sections, ...links, ...actions];

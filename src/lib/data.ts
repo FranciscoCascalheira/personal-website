@@ -48,7 +48,7 @@ export const projects: Project[] = [
       "Azure Blob",
     ],
     metrics: [
-      { value: "294", label: "solo commits" },
+      { value: "308", label: "solo commits" },
       { value: "380+", label: "vacancies handled" },
       { value: "12", label: "data models" },
       { value: "Live", label: "in production" },

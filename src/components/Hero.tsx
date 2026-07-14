@@ -25,6 +25,9 @@ export function Hero({ proof }: { proof: Proof }) {
             as="aside"
             className="flex flex-wrap items-baseline gap-x-6 gap-y-2 lg:sticky lg:top-24 lg:block lg:self-start lg:pr-10"
           >
+            <p className="print-only mono-label mb-2">
+              Public record · printed edition · franciscocascalheira.com
+            </p>
             <p className="mono-label">{"/// FC-Dossier"}</p>
             <p className="mono-label lg:mt-2">Software developer</p>
             <p className="mono-label lg:mt-2">{site.locator}</p>
@@ -55,12 +58,12 @@ export function Hero({ proof }: { proof: Proof }) {
                 I&apos;m Francisco Cascalheira, a second-year Computer
                 Engineering student at FEUP. For opPORTOnities I sat in the
                 requirements meetings, designed the 12-model schema, wrote all
-                294 commits, and deployed it. It is in production now.
+                308 commits, and deployed it. It is in production now.
               </p>
             </Reveal>
 
             <Reveal delay={220}>
-              <div className="mt-10 flex flex-wrap items-center gap-3">
+              <div className="no-print mt-10 flex flex-wrap items-center gap-3">
                 <MagneticLink
                   href="/work/opportonities"
                   className="group inline-flex items-center gap-2 bg-text px-6 py-3 text-sm font-medium text-bg"
@@ -124,7 +127,7 @@ export function Hero({ proof }: { proof: Proof }) {
               <dl>
                 {[
                   { k: "Client", v: "Câmara Municipal do Porto" },
-                  { k: "Commits", v: "294 — sole author, verified by git" },
+                  { k: "Commits", v: "308 — sole author, verified by git" },
                   { k: "Vacancies", v: "380+ handled in production" },
                   { k: "Stack", v: "TS · Node · Postgres · React" },
                 ].map((row) => (

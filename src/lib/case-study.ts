@@ -1,5 +1,5 @@
 // The opPORTOnities case study. Every claim here is checked against the real
-// repository (294/294 commits authored by me, schema.prisma, git history) —
+// repository (308/308 commits authored by me, schema.prisma, git history) —
 // the same rule as data.ts: describe the system, never expose employer IP,
 // candidate data or credentials. Field lists are categorical summaries, not
 // column dumps.
@@ -21,7 +21,7 @@ export const abstract = {
     "Câmara Municipal do Porto places young people in summer internships through software one student built alone.",
   body: "opPORTOnities is the recruitment platform behind the city's summer-internship programme: candidates aged 18–21 register, approved companies post vacancies, and applications move through a supervised pipeline to confirmed placements. I sat in the requirements meetings, designed the data model, wrote every line, and deployed it. I am the only engineer who has ever committed to this codebase.",
   metrics: [
-    { value: "294", label: "commits, all mine", footnote: "git shortlog -sn: one author" },
+    { value: "308", label: "commits, all mine", footnote: "git shortlog -sn: one author" },
     { value: "380+", label: "vacancies handled" },
     { value: "12", label: "relational models" },
     { value: "3", label: "portals: candidate · company · admin" },

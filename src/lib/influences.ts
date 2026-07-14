@@ -12,6 +12,21 @@ export type Influence = {
   note: string;
   read?: string[];
   links: { to: string; label: string; strong?: boolean }[];
+  /** Real scanned museum marble, engraved client-side. Moderns have none —
+   *  that asymmetry is honest and the figcaption says so. */
+  bust?: {
+    file: string; // under /busts/
+    credit: string;
+    /** base orientation fix for the scan's axes */
+    rotation: [number, number, number];
+    /** which way this face looks on a shared stone (double herm) */
+    yaw: number;
+    /** per-scan framing — the meshes are unit-normalized but proportioned differently */
+    zoom: number;
+    offsetY: number;
+    /** extra ink for scans that read too pale at their framing */
+    toneBias?: number;
+  };
 };
 
 export const clusters: { id: string; label: string }[] = [
@@ -27,6 +42,24 @@ export const clusters: { id: string; label: string }[] = [
 export const influences: Influence[] = [
   // ── Foundations ────────────────────────────────────────────────────────
   {
+    id: "socrates",
+    name: "Socrates",
+    dates: "c. 470–399 BC",
+    cluster: "foundations",
+    note: "He wrote nothing. What we call Socrates is mostly Plato writing him — the most influential man on this map published zero times.",
+    links: [{ to: "plato", label: "wrote him into history" }],
+    bust: {
+      file: "herm-r1.glb",
+      credit:
+        "Double herm of Socrates and Seneca — Antikensammlung Berlin · scan: threedscans.com, 2016",
+      rotation: [0, 0, 0],
+      yaw: 0,
+      zoom: 1.12,
+      offsetY: -0.03,
+      toneBias: 0.12,
+    },
+  },
+  {
     id: "plato",
     name: "Plato",
     dates: "c. 428–348 BC",
@@ -35,8 +68,18 @@ export const influences: Influence[] = [
     read: ["The Republic (the cave, endlessly)"],
     links: [
       { to: "turing", label: "the cave and the machine", strong: true },
+      { to: "socrates", label: "his life's transcript" },
       { to: "fonseca", label: "read through the scholastics" },
     ],
+    bust: {
+      file: "plato-r1.glb",
+      credit:
+        "Herm of Plato — Institut für Klassische Archäologie, Vienna · scan: threedscans.com, 2016",
+      rotation: [0, 0, 0],
+      yaw: 0,
+      zoom: 1.35,
+      offsetY: -0.4,
+    },
   },
   {
     id: "homer",
@@ -55,6 +98,25 @@ export const influences: Influence[] = [
     note: "The Divine Comedy is proof that the strictest structure can carry the most feeling — one hundred cantos of rhymed constraint. Engineers should find that reassuring.",
     read: ["The Divine Comedy"],
     links: [],
+  },
+  {
+    id: "seneca",
+    name: "Seneca",
+    dates: "c. 4 BC–AD 65",
+    cluster: "foundations",
+    note: "Letters from a Stoic, read one letter at a time. Advice survives when it is addressed to one person instead of an audience. Berlin keeps him carved back-to-back with Socrates in a single stone; select either and the same marble turns.",
+    read: ["Letters from a Stoic"],
+    links: [{ to: "socrates", label: "back-to-back in one stone" }],
+    bust: {
+      file: "herm-r1.glb",
+      credit:
+        "Double herm of Socrates and Seneca — Antikensammlung Berlin · scan: threedscans.com, 2016",
+      rotation: [0, 0, 0],
+      yaw: 3.14159,
+      zoom: 1.12,
+      offsetY: -0.03,
+      toneBias: 0.12,
+    },
   },
 
   // ── The mimetic web ────────────────────────────────────────────────────
