@@ -56,7 +56,7 @@ export const influences: Influence[] = [
       yaw: 0,
       zoom: 1.12,
       offsetY: -0.03,
-      toneBias: 0.12,
+      toneBias: 0.05,
     },
   },
   {
@@ -115,7 +115,7 @@ export const influences: Influence[] = [
       yaw: 3.14159,
       zoom: 1.12,
       offsetY: -0.03,
-      toneBias: 0.12,
+      toneBias: 0.05,
     },
   },
 

@@ -40,36 +40,45 @@ const HATCH_FRAG = /* glsl */ `
   uniform float uDpr;
   uniform float uFade;
   uniform float uToneBias;
-  uniform float uLightInk; // 1 on the night edition: hatch the light, not the shadow
+  uniform float uLightInk; // 1 on the night edition: ink follows the light
   varying vec3 vN;
   varying vec3 vV;
 
-  float hatchLayer(vec2 p, float angle, float spacing, float tone, float start) {
-    float density = smoothstep(start, start - 0.30, tone);
+  // a hatch line whose WIDTH carries the tone — the engraver's actual tool.
+  // w in pixels; anti-aliased over ~1.2px.
+  float hatch(vec2 p, float angle, float spacing, float w) {
     vec2 dir = vec2(cos(angle), sin(angle));
     float d = dot(p, vec2(-dir.y, dir.x));
-    float line = 1.0 - smoothstep(0.0, 1.35, abs(fract(d / spacing) - 0.5) * spacing);
-    return line * density;
+    float dist = abs(fract(d / spacing) - 0.5) * spacing;
+    return 1.0 - smoothstep(w * 0.5 - 0.6, w * 0.5 + 0.6, dist);
   }
 
   void main() {
     vec3 N = normalize(vN);
     vec3 V = normalize(vV);
     if (dot(N, V) < 0.0) N = -N; // scanner meshes ship with mixed winding
-    vec3 L = normalize(vec3(-0.3, 0.42, 0.86)); // NW, but mostly frontal — faces stay legible
+    vec3 L = normalize(vec3(-0.3, 0.42, 0.86)); // NW, but mostly frontal
     float tone = clamp(dot(N, L) * 0.5 + 0.5, 0.0, 1.0);
-    tone = pow(tone, 0.62); // lift the mids: hatching is for shadow, not for skin
     float rim = pow(1.0 - abs(dot(N, V)), 2.4);
-    tone = clamp(tone - rim * 0.3 - uToneBias, 0.0, 1.0);
-    // dark ink engraves the shadows; light ink engraves the light
-    float d = mix(tone, 1.0 - tone, uLightInk);
+
+    // ink strength: dark ink keys on shadow, light ink keys on light
+    float k = mix(1.0 - tone, tone, uLightInk);
+    k = clamp(k + rim * 0.18 + uToneBias, 0.0, 1.0);
+    // remap the working band per mode: frontal light skews tone bright, so
+    // the light-ink key needs a higher window for the face to span the
+    // full stroke range instead of saturating
+    float lo = mix(0.32, 0.58, uLightInk);
+    float hi = mix(0.9, 0.985, uLightInk);
+    k = smoothstep(lo, hi, k);
 
     vec2 sp = gl_FragCoord.xy / uDpr;
-    float ink = 0.0;
-    ink = max(ink, hatchLayer(sp, 0.32, 6.5, d, 0.72));
-    ink = max(ink, hatchLayer(sp, -0.88, 6.0, d, 0.46));
-    ink = max(ink, hatchLayer(sp, 1.05, 4.4, d, 0.24));
-    ink = max(ink, smoothstep(0.08, 0.012, d) * mix(1.0, 0.85, uLightInk));
+    // primary direction: thickness rides the tone from hairline to near-solid
+    float ink = hatch(sp, 0.32, 5.5, k * 4.6);
+    // cross direction joins only in the strongest third, thin to moderate
+    float c = clamp((k - 0.62) / 0.38, 0.0, 1.0);
+    ink = max(ink, hatch(sp, -0.88, 5.0, c * 3.2) * step(0.001, c));
+
+    ink *= mix(0.92, 1.0, k); // faintest strokes sit lighter on the paper
     if (ink < 0.02) discard;
     gl_FragColor = vec4(uInk, ink * uFade);
   }
