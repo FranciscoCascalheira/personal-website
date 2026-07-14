@@ -3,10 +3,12 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 /** The bust engraver. Real museum marble (photogrammetry, quantized GLB)
  *  rendered as an ink engraving: tone from a fixed north-west key light is
- *  translated into layered screen-space hatching — sparse strokes in the
- *  lights, cross-hatch in the darks — in the document's own ink on bare
- *  paper. No lighting realism, no material vanity: the point is that the
- *  plate looks PRINTED.
+ *  translated into layered screen-space hatching, in the document's own ink
+ *  on bare paper. On the ivory edition the ink is dark, so the hatch lives
+ *  in the shadows; on the night edition the ink is light, so the engraving
+ *  inverts into white-line work — strokes follow the LIGHT instead. No
+ *  lighting realism, no material vanity: the point is that the plate looks
+ *  PRINTED both ways.
  *
  *  Imported dynamically on first selection of a thinker who has marble.
  */
@@ -38,6 +40,7 @@ const HATCH_FRAG = /* glsl */ `
   uniform float uDpr;
   uniform float uFade;
   uniform float uToneBias;
+  uniform float uLightInk; // 1 on the night edition: hatch the light, not the shadow
   varying vec3 vN;
   varying vec3 vV;
 
@@ -58,13 +61,15 @@ const HATCH_FRAG = /* glsl */ `
     tone = pow(tone, 0.62); // lift the mids: hatching is for shadow, not for skin
     float rim = pow(1.0 - abs(dot(N, V)), 2.4);
     tone = clamp(tone - rim * 0.3 - uToneBias, 0.0, 1.0);
+    // dark ink engraves the shadows; light ink engraves the light
+    float d = mix(tone, 1.0 - tone, uLightInk);
 
     vec2 sp = gl_FragCoord.xy / uDpr;
     float ink = 0.0;
-    ink = max(ink, hatchLayer(sp, 0.32, 6.5, tone, 0.72));
-    ink = max(ink, hatchLayer(sp, -0.88, 6.0, tone, 0.46));
-    ink = max(ink, hatchLayer(sp, 1.05, 4.4, tone, 0.24));
-    ink = max(ink, smoothstep(0.08, 0.012, tone)); // solid deepest shadow
+    ink = max(ink, hatchLayer(sp, 0.32, 6.5, d, 0.72));
+    ink = max(ink, hatchLayer(sp, -0.88, 6.0, d, 0.46));
+    ink = max(ink, hatchLayer(sp, 1.05, 4.4, d, 0.24));
+    ink = max(ink, smoothstep(0.08, 0.012, d) * mix(1.0, 0.85, uLightInk));
     if (ink < 0.02) discard;
     gl_FragColor = vec4(uInk, ink * uFade);
   }
@@ -118,6 +123,8 @@ export function mountBust(
 
   const ink = new THREE.Color(opts.ink);
   const dpr = Math.min(window.devicePixelRatio, 2);
+  const inkIsLight = (c: THREE.Color) =>
+    c.r * 0.299 + c.g * 0.587 + c.b * 0.114 > 0.5 ? 1 : 0;
   const hatchMat = new THREE.ShaderMaterial({
     vertexShader: HATCH_VERT,
     fragmentShader: HATCH_FRAG,
@@ -126,6 +133,7 @@ export function mountBust(
       uDpr: { value: dpr },
       uFade: { value: 0 },
       uToneBias: { value: 0 },
+      uLightInk: { value: inkIsLight(ink) },
     },
     transparent: true,
     side: THREE.DoubleSide,
@@ -212,6 +220,7 @@ export function mountBust(
     },
     setInk(css) {
       ink.set(css);
+      hatchMat.uniforms.uLightInk.value = inkIsLight(ink);
       wake();
     },
     dispose() {
