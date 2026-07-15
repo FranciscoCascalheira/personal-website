@@ -7,7 +7,9 @@ import { Reveal } from "@/components/Reveal";
 import { SchemaExplorer } from "@/components/case/SchemaExplorer";
 import { Lifecycle } from "@/components/case/Lifecycle";
 import { AuditLedger } from "@/components/case/AuditLedger";
+import { RaceCondition } from "@/components/case/RaceCondition";
 import { auditExhibits } from "@/lib/audit";
+import { raceIntro } from "@/lib/race";
 import {
   caseMeta,
   abstract,
@@ -288,6 +290,16 @@ export default async function CaseStudyPage() {
                 </article>
               ))}
             </div>
+          </Reveal>
+
+          {/* fig. 4 — exhibit 3.4, made playable */}
+          <Reveal className="mt-16">
+            <p className="max-w-3xl text-lg leading-relaxed text-text-muted">
+              {raceIntro}
+            </p>
+          </Reveal>
+          <Reveal delay={100} className="mt-10">
+            <RaceCondition />
           </Reveal>
         </DocSection>
 

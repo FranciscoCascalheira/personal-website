@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# fig. 4's Postgres — generated from node_modules by scripts/copy-pglite.mjs
+/public/pg/

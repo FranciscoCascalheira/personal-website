@@ -113,7 +113,7 @@ export const auditExhibits: AuditExhibit[] = [
     index: "3.4",
     title: "Confirming a placement was neither atomic nor exhaustive",
     was: "The confirm re-read nothing inside its transaction, so two concurrent confirms could both pass the outer check; it left other companies' selections live, so a candidate could be placed twice; and it left the losing applicants on the vacancy waiting in pending.",
-    now: "One transaction re-checks the candidate's state, rejects the competing selections, and closes out the other applicants. Three defects, one boundary.",
+    now: "One transaction re-checks the candidate's state, rejects the competing selections, and closes out the other applicants — and, on the race itself, it does not work. The re-check is a check-then-act: both transactions read the candidate before either writes, both are told ACTIVE, and both place. It closed the window where someone confirms twice in sequence and left open the one where two confirms arrive together, which was the bug. The guard that holds is a compare-and-set, and it arrived three weeks later. fig. 4 runs all three against a real Postgres.",
   },
 ];
 

@@ -27,12 +27,17 @@ export function Footer() {
                 technique.
               </li>
               <li>
-                Next.js, statically rendered; Three.js and the marble load
-                only on demand.
+                fig. 4 is a real PostgreSQL compiled to WebAssembly, running in
+                the page on the real schema sanitised to shapes; the two
+                transactions are interleaved with two-phase commit.
+              </li>
+              <li>
+                Next.js, statically rendered; Three.js, the marble and fig.
+                4&apos;s database load only on demand.
               </li>
               <li className="font-mono text-[0.68rem] text-text-faint">
-                First load ≈ 310 kB compressed · measured at build, 14 Jul 2026
-                · the marble and the map arrive on demand
+                First load ≈ 315 kB compressed · measured at build, 15 Jul 2026
+                · the marble, the map and the database arrive on demand
               </li>
             </ul>
           </div>

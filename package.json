@@ -3,12 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/copy-pglite.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/copy-pglite.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@electric-sql/pglite": "^0.5.4",
     "next": "16.2.10",
     "react": "19.2.4",
     "react-dom": "19.2.4",

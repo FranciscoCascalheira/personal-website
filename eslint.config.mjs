@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // fig. 4's Postgres — a vendored copy of the PGlite build, generated into
+    // public/ by scripts/copy-pglite.mjs. Not our code to lint.
+    "public/pg/**",
   ]),
 ]);
 
