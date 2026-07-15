@@ -6,6 +6,8 @@ import { Container } from "@/components/Section";
 import { Reveal } from "@/components/Reveal";
 import { SchemaExplorer } from "@/components/case/SchemaExplorer";
 import { Lifecycle } from "@/components/case/Lifecycle";
+import { AuditLedger } from "@/components/case/AuditLedger";
+import { auditExhibits } from "@/lib/audit";
 import {
   caseMeta,
   abstract,
@@ -251,6 +253,42 @@ export default async function CaseStudyPage() {
               </Reveal>
             ))}
           </div>
+
+          {/* fig. 3 — the audit, audited */}
+          <Reveal className="mt-16">
+            <p className="max-w-3xl text-lg leading-relaxed text-text-muted">
+              Before the largest release I audited the whole platform myself,
+              because nobody else was going to. It landed as one commit. Here
+              is what was actually in it — recounted from the diff, including
+              where the recount disagrees with what I wrote at the time.
+            </p>
+          </Reveal>
+          <Reveal delay={100} className="mt-10">
+            <AuditLedger />
+          </Reveal>
+
+          <Reveal className="mt-16">
+            <div className="max-w-3xl space-y-12">
+              {auditExhibits.map((e) => (
+                <article key={e.index} className="border-t border-border pt-6">
+                  <h3 className="flex items-baseline gap-3 text-xl font-medium text-text">
+                    <span className="font-mono text-sm text-accent-text">
+                      {e.index}
+                    </span>
+                    {e.title}
+                  </h3>
+                  <p className="mt-3 leading-relaxed text-text-muted">
+                    <span className="mono-label mr-2">Was</span>
+                    {e.was}
+                  </p>
+                  <p className="mt-2 leading-relaxed text-text-muted">
+                    <span className="mono-label mr-2">Now</span>
+                    {e.now}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </Reveal>
         </DocSection>
 
         {/* 05 — outcome */}

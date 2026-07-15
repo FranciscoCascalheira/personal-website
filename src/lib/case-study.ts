@@ -311,7 +311,7 @@ export const decisions = [
 
 export const outcome = {
   paragraphs: [
-    "The platform is in production, serving candidates, companies and municipal staff through three portals. It has handled 380+ vacancies. Before each release I run a smoke-test suite against the live API; before the biggest one I ran a four-pass audit of the whole platform and fixed 91 bugs, because nobody else was going to find them.",
+    "The platform is in production, serving candidates, companies and municipal staff through three portals. It has handled 380+ vacancies. Before each release I run a smoke-test suite against the live API; before the biggest one I audited the whole platform and fixed everything I found, because nobody else was going to. That audit is fig. 3, recounted from its own diff.",
     "The stack is deliberately boring: Express, Prisma, PostgreSQL, a React SPA, and a shared types package so the API contract is one set of Zod schemas consumed by both sides. Boring bought me speed as a solo developer — every hour spent fighting a clever framework is an hour the council doesn't get.",
   ],
 } as const;
