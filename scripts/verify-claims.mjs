@@ -153,6 +153,73 @@ for (const [file, re, what] of [
   );
 }
 
+// ── fig. 3's docket line ─────────────────────────────────────────────────────
+// The ledger prints "cc0899d · 1 April 2026 · 34 files · +628 −193" as the
+// evidence a reader can check with git. So check it with git.
+const auditSrc = readFileSync("src/lib/audit.ts", "utf8");
+const field = (k, re = "\\d+") => auditSrc.match(new RegExp(`${k}:\\s*"?(${re})"?`))?.[1];
+const declared = {
+  hash: field("hash", "[0-9a-f]+"),
+  date: field("date", "[^\"]+"),
+  files: field("files"),
+  insertions: field("insertions"),
+  deletions: field("deletions"),
+};
+
+if (Object.values(declared).some((v) => v === undefined)) {
+  record("fig. 3 docket · locatable", false, "could not read auditCommit from src/lib/audit.ts");
+} else {
+  const realDate = git("log", "-1", "--format=%ad", "--date=format:%-d %B %Y", declared.hash);
+  const numstat = git("show", "--numstat", "--format=", declared.hash)
+    .split("\n")
+    .filter(Boolean);
+  const files = numstat.length;
+  let insertions = 0;
+  let deletions = 0;
+  for (const line of numstat) {
+    const [i, d] = line.split("\t");
+    insertions += Number(i) || 0;
+    deletions += Number(d) || 0;
+  }
+  const same =
+    realDate === declared.date &&
+    files === Number(declared.files) &&
+    insertions === Number(declared.insertions) &&
+    deletions === Number(declared.deletions);
+  record(
+    "fig. 3 docket · matches git",
+    same,
+    same
+      ? `${declared.hash} · ${realDate} · ${files} files · +${insertions} −${deletions}`
+      : `site: ${declared.date}, ${declared.files} files, +${declared.insertions} −${declared.deletions} · git: ${realDate}, ${files} files, +${insertions} −${deletions}`,
+  );
+}
+
+// ── every commit the decisions cite ──────────────────────────────────────────
+// Each decision prints `commit: "…"` as its receipt. A receipt for a commit
+// that does not exist is worse than no receipt.
+const evidence = [...readFileSync("src/lib/case-study.ts", "utf8").matchAll(/evidence:\s*"([^"]+)"/g)].map(
+  (m) => m[1],
+);
+if (!evidence.length) {
+  record("decisions · cited commits", false, "no `evidence:` strings found — the check moved or broke");
+} else {
+  const missing = evidence.filter((msg) => {
+    try {
+      return !git("log", "master", "--oneline", "--fixed-strings", `--grep=${msg}`).trim();
+    } catch {
+      return true;
+    }
+  });
+  record(
+    "decisions · every cited commit exists on master",
+    missing.length === 0,
+    missing.length === 0
+      ? `${evidence.length} cited, ${evidence.length} found`
+      : `not on master: ${missing.map((m) => `"${m}"`).join(" · ")}`,
+  );
+}
+
 // ── fig. 3's safety rule ─────────────────────────────────────────────────────
 // Publishing a vulnerability's prior state is only OK while the fix is history.
 let ancestor = false;

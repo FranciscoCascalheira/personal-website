@@ -98,7 +98,7 @@ export function RaceTimeline({
         y={30}
         width={Math.max(FLIP - winFrom, 0)}
         height={TRACK - 30 - 12}
-        style={{ fill: "var(--bg-inset)" }}
+        className="fill-bg-inset"
       />
       {[winFrom, FLIP].map((wx) => (
         <line
