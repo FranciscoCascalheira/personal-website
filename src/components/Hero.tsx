@@ -128,7 +128,7 @@ export function Hero({ proof }: { proof: Proof }) {
                 {[
                   { k: "Client", v: "Câmara Municipal do Porto" },
                   { k: "Commits", v: "294 — sole author, verified by git" },
-                  { k: "Vacancies", v: "380+ handled in production" },
+                  { k: "Vacancies", v: "99 in production — 138 positions" },
                   { k: "Stack", v: "TS · Node · Postgres · React" },
                 ].map((row) => (
                   <div

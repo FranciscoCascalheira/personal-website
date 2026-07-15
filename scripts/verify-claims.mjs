@@ -171,37 +171,64 @@ record(
     : `NOT an ancestor of master — fig. 3's pre-fix states must not be published`,
 );
 
-// ── what this cannot check, and the rule that it must say so ─────────────────
-// A verifier that silently ignores the claims it cannot reach is lying about
-// its own coverage — the same failure as a green tick over an unread test.
+// ── the production figures ───────────────────────────────────────────────────
+// This one was the worst of them. The site said "380+ vacancies handled" and
+// the production database says 99 vacancies / 138 positions — a claim about a
+// public client's programme, overstated ~4x on the landing page, for months. It
+// survived because everyone (me included) assumed the database was out of
+// reach. It never was: TERA-LINKR lives in a Railway project named
+// `patient-flow`, which is why searching for its own name found nothing.
 //
-// "380+ vacancies handled" is counted in the production database. There are no
-// credentials for it in the repo (correct), the dev DATABASE_URL points at a
-// localhost that isn't running, and the public API exposes only /health, which
-// returns {"status":"ok","timestamp"} and nothing countable. So the number
-// cannot be reproduced by a reader — or by this script.
-//
-// What CAN be enforced is the honesty about it. Every other number on the page
-// names a command a reader can run; this one must name its source and admit it
-// is not reproducible. That disclosure is the claim's licence to stay, so it is
-// checked like any other claim and cannot quietly disappear.
-const VACANCIES = /value:\s*"([\d+]+)",\s*\n?\s*label:\s*"vacancies handled",[\s\S]{0,800}?footnote:\s*"([^"]+)"/;
-const vacancies = readFileSync("src/lib/case-study.ts", "utf8").match(VACANCIES);
+// So it is checked against production when the Railway CLI can reach it, and
+// declared out of reach when it cannot — never silently skipped.
+const POSITIONS = /value:\s*"(\d+)",\s*\n?\s*label:\s*"positions across (\d+) vacancies",[\s\S]{0,900}?footnote:\s*"([^"]+)"/;
+const pos = readFileSync("src/lib/case-study.ts", "utf8").match(POSITIONS);
+
 record(
-  "vacancies · out of reach, and says so",
-  !!vacancies && /production database/i.test(vacancies[2]),
-  vacancies
-    ? `"${vacancies[1]}" · footnote: "${vacancies[2]}"`
-    : "the vacancies metric has no footnote naming its source — it is the one number here a reader cannot check, and it must say so",
+  "positions · footnote names the query and a date",
+  !!pos && /slot_number/.test(pos[3]) && /\d{1,2} \w{3} \d{4}/.test(pos[3]),
+  pos
+    ? `"${pos[1]}" positions / "${pos[2]}" vacancies · footnote: "${pos[3]}"`
+    : "the positions metric is missing, or its footnote no longer names sum(slot_number) and a date — the programme is live, so this figure is a dated snapshot and must say when",
 );
-const unverifiable = vacancies
-  ? [
-      {
-        claim: vacancies[1],
-        why: "counted in the production database; no credentials in the repo, and the public API exposes only /health",
-      },
-    ]
-  : [];
+
+const unverifiable = [];
+if (pos) {
+  // Aggregate counts only. That database holds real data on people aged 18–21.
+  const sql =
+    "select (select coalesce(sum(slot_number),0) from vacancies)::text || ' ' || (select count(*) from vacancies)::text";
+  let live = null;
+  try {
+    live = execFileSync(
+      "railway",
+      ["run", "--service", "Postgres", "--", "bash", "-c", `psql "$DATABASE_PUBLIC_URL" -At -c "${sql}"`],
+      { cwd: SOURCE, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"], timeout: 120_000 },
+    )
+      .trim()
+      .split("\n")
+      .pop();
+  } catch {
+    live = null;
+  }
+
+  const m = live?.match(/^(\d+)\s+(\d+)$/);
+  if (m) {
+    const [, positions, vacancies] = m;
+    const ok = positions === pos[1] && vacancies === pos[2];
+    record(
+      "positions · checked against production",
+      ok,
+      ok
+        ? `${positions} positions across ${vacancies} vacancies — matches`
+        : `site claims ${pos[1]}/${pos[2]}, production says ${positions}/${vacancies} — the programme moved, or the claim did`,
+    );
+  } else {
+    unverifiable.push({
+      claim: `${pos[1]} positions across ${pos[2]} vacancies`,
+      why: "the Railway CLI could not reach production from here; the figure is a dated snapshot — re-check with `npm run verify:claims` where railway is logged in",
+    });
+  }
+}
 
 // ── report ───────────────────────────────────────────────────────────────────
 const pad = Math.max(...results.map((r) => r.name.length));

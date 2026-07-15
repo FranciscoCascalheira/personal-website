@@ -31,14 +31,16 @@ export const abstract = {
       footnote: "git shortlog -sn master: one author",
     },
     {
-      value: "380+",
-      label: "vacancies handled",
-      // The only figure on this page that cannot be checked from outside: it is
-      // counted in the production database, which is not mine to open. Every
-      // other number here names a command a reader can run. This one says so
-      // instead — the same convention as fig. 3's reconciliation, which prints
-      // the count it cannot reproduce rather than quietly rounding it away.
-      footnote: "counted in the production database — not reproducible from outside",
+      value: "138",
+      label: "positions across 99 vacancies",
+      // Was "380+", which matched nothing in the production database: not
+      // vacancies (99), positions (138), applications (310) or users (353).
+      // Vacancies were created in one window, 25 Mar — 17 Apr 2026, with no
+      // deletion ever logged, so there was no hidden history behind it either.
+      // A vacancy carries slot_number positions, and positions are what the
+      // council and the companies actually count. Dated, because the programme
+      // is live and this is a snapshot, not a constant.
+      footnote: "sum(slot_number) in production · 16 Jul 2026",
     },
     { value: "12", label: "relational models" },
     { value: "3", label: "portals: candidate · company · admin" },
@@ -328,7 +330,7 @@ export const decisions = [
 
 export const outcome = {
   paragraphs: [
-    "The platform is in production, serving candidates, companies and municipal staff through three portals. It has handled 380+ vacancies. Before each release I run a smoke-test suite against the live API; before the biggest one I audited the whole platform and fixed everything I found, because nobody else was going to. That audit is fig. 3, recounted from its own diff.",
+    "The platform is in production, serving candidates, companies and municipal staff through three portals. It has handled 99 vacancies — 138 positions — for 62 companies, and confirmed 62 placements. Before each release I run a smoke-test suite against the live API; before the biggest one I audited the whole platform and fixed everything I found, because nobody else was going to. That audit is fig. 3, recounted from its own diff.",
     "The stack is deliberately boring: Express, Prisma, PostgreSQL, a React SPA, and a shared types package so the API contract is one set of Zod schemas consumed by both sides. Boring bought me speed as a solo developer — every hour spent fighting a clever framework is an hour the council doesn't get.",
   ],
 } as const;

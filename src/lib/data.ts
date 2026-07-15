@@ -49,7 +49,7 @@ export const projects: Project[] = [
     ],
     metrics: [
       { value: "294", label: "solo commits" },
-      { value: "380+", label: "vacancies handled" },
+      { value: "138", label: "positions handled" },
       { value: "12", label: "data models" },
       { value: "Live", label: "in production" },
     ],
