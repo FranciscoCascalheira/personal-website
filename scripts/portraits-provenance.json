@@ -1,0 +1,231 @@
+{
+  "accepted": {
+    "homer": {
+      "title": "File:Homer British Museum.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Homer_British_Museum.jpg",
+      "license": "Public domain",
+      "artist": "",
+      "page": "https://commons.wikimedia.org/wiki/File:Homer_British_Museum.jpg",
+      "local": "src-homer.jpg"
+    },
+    "dante": {
+      "title": "File:Portrait de Dante.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/6/6f/Portrait_de_Dante.jpg",
+      "license": "Public domain",
+      "artist": "Sandro Botticelli",
+      "page": "https://commons.wikimedia.org/wiki/File:Portrait_de_Dante.jpg",
+      "local": "src-dante.jpg"
+    },
+    "cervantes": {
+      "title": "File:Cervantes Jáuregui.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/0/09/Cervantes_J%C3%A1uregui.jpg",
+      "license": "Public domain",
+      "artist": "Attributed to Juan de Jáuregui",
+      "page": "https://commons.wikimedia.org/wiki/File:Cervantes_J%C3%A1uregui.jpg",
+      "local": "src-cervantes.jpg"
+    },
+    "stendhal": {
+      "title": "File:Stendhal.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Stendhal.jpg/1920px-Stendhal.jpg",
+      "license": "Public domain",
+      "artist": "Olof Johan Södermark",
+      "page": "https://commons.wikimedia.org/wiki/File:Stendhal.jpg",
+      "local": "src-stendhal.jpg"
+    },
+    "flaubert": {
+      "title": "File:Gustave Flaubert.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Gustave_Flaubert.jpg",
+      "license": "Public domain",
+      "artist": "Nadar",
+      "page": "https://commons.wikimedia.org/wiki/File:Gustave_Flaubert.jpg",
+      "local": "src-flaubert.jpg"
+    },
+    "proust": {
+      "title": "File:Marcel Proust vers 1895.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Marcel_Proust_vers_1895.jpg",
+      "license": "Public domain",
+      "artist": "Otto Wegener",
+      "page": "https://commons.wikimedia.org/wiki/File:Marcel_Proust_vers_1895.jpg",
+      "local": "src-proust.jpg",
+      "note": "searched title 'Marcel Proust 1900-2.jpg' is a Commons redirect to this file"
+    },
+    "thiel": {
+      "title": "File:Peter Thiel (51876933345).jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Peter_Thiel_%2851876933345%29.jpg/1920px-Peter_Thiel_%2851876933345%29.jpg",
+      "license": "CC BY-SA 2.0",
+      "artist": "Gage Skidmore from Surprise, AZ, United States of America",
+      "page": "https://commons.wikimedia.org/wiki/File:Peter_Thiel_(51876933345).jpg",
+      "local": "src-thiel.jpg"
+    },
+    "girard": {
+      "title": "File:René Girard.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Ren%C3%A9_Girard.jpg",
+      "license": "Public domain",
+      "artist": "Vicq",
+      "page": "https://commons.wikimedia.org/wiki/File:Ren%C3%A9_Girard.jpg",
+      "local": "src-girard.jpg"
+    },
+    "tolstoy": {
+      "title": "File:Ilya Efimovich Repin (1844-1930) - Portrait of Leo Tolstoy (1887).jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Ilya_Efimovich_Repin_%281844-1930%29_-_Portrait_of_Leo_Tolstoy_%281887%29.jpg",
+      "license": "Public domain",
+      "artist": "Ilya Repin",
+      "page": "https://commons.wikimedia.org/wiki/File:Ilya_Efimovich_Repin_(1844-1930)_-_Portrait_of_Leo_Tolstoy_(1887).jpg",
+      "local": "src-tolstoy.jpg"
+    },
+    "nabokov": {
+      "title": "File:Vladimir Nabokov 1973.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/8/87/Vladimir_Nabokov_1973.jpg",
+      "license": "Public domain",
+      "artist": "Walter Mori (Mondadori Publishers)",
+      "page": "https://commons.wikimedia.org/wiki/File:Vladimir_Nabokov_1973.jpg",
+      "local": "src-nabokov.jpg"
+    },
+    "solzhenitsyn": {
+      "title": "File:Aleksandr Solzhenitsyn 1974crop.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Aleksandr_Solzhenitsyn_1974crop.jpg",
+      "license": "CC0",
+      "artist": "Bert Verhoeff for Anefo",
+      "page": "https://commons.wikimedia.org/wiki/File:Aleksandr_Solzhenitsyn_1974crop.jpg",
+      "local": "src-solzhenitsyn.jpg"
+    },
+    "unamuno": {
+      "title": "File:Miguel de Unamuno Meurisse 1925.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/2/29/Miguel_de_Unamuno_Meurisse_1925.jpg",
+      "license": "Public domain",
+      "artist": "Agence de presse Meurisse",
+      "page": "https://commons.wikimedia.org/wiki/File:Miguel_de_Unamuno_Meurisse_1925.jpg",
+      "local": "src-unamuno.jpg"
+    },
+    "mises": {
+      "title": "File:Ludwig von Mises.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Ludwig_von_Mises.jpg/1920px-Ludwig_von_Mises.jpg",
+      "license": "CC BY-SA 3.0",
+      "artist": "Ludwig von Mises Institute",
+      "page": "https://commons.wikimedia.org/wiki/File:Ludwig_von_Mises.jpg",
+      "local": "src-mises.jpg"
+    },
+    "hayek": {
+      "title": "File:Friedrich Hayek portrait.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/7/7f/Friedrich_Hayek_portrait.jpg",
+      "license": "CC BY-SA 3.0",
+      "artist": "The original uploader was DickClarkMises at English Wikipedia.",
+      "page": "https://commons.wikimedia.org/wiki/File:Friedrich_Hayek_portrait.jpg",
+      "local": "src-hayek.jpg"
+    },
+    "rothbard": {
+      "title": "File:Murray Rothbard.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Murray_Rothbard.jpg/1920px-Murray_Rothbard.jpg",
+      "license": "CC BY-SA 3.0",
+      "artist": "en:Mises Institute Original uploader was Jouvenel at en.wikipedia, transferred to Commons ",
+      "page": "https://commons.wikimedia.org/wiki/File:Murray_Rothbard.jpg",
+      "local": "src-rothbard.jpg"
+    },
+    "hoppe": {
+      "title": "File:Hans-Hermann Hoppe by Gage Skidmore.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Hans-Hermann_Hoppe_by_Gage_Skidmore.jpg",
+      "license": "CC BY-SA 3.0",
+      "artist": "Gage Skidmore",
+      "page": "https://commons.wikimedia.org/wiki/File:Hans-Hermann_Hoppe_by_Gage_Skidmore.jpg",
+      "local": "src-hoppe.jpg"
+    },
+    "camoes": {
+      "title": "File:Luís de Camões por François Gérard.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Lu%C3%ADs_de_Cam%C3%B5es_por_Fran%C3%A7ois_G%C3%A9rard.jpg",
+      "license": "Public domain",
+      "artist": "François Gérard",
+      "page": "https://commons.wikimedia.org/wiki/File:Lu%C3%ADs_de_Cam%C3%B5es_por_Fran%C3%A7ois_G%C3%A9rard.jpg",
+      "local": "src-camoes.jpg"
+    },
+    "vieira": {
+      "title": "File:Padre António Vieira.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/2/28/Padre_Ant%C3%B3nio_Vieira.jpg",
+      "license": "Public domain",
+      "artist": "Unknown authorUnknown author",
+      "page": "https://commons.wikimedia.org/wiki/File:Padre_Ant%C3%B3nio_Vieira.jpg",
+      "local": "src-vieira.jpg"
+    },
+    "hardy": {
+      "title": "File:Godfrey Harold Hardy 1.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/6/6f/Godfrey_Harold_Hardy_1.jpg",
+      "license": "Public domain",
+      "artist": "Unknown authorUnknown author",
+      "page": "https://commons.wikimedia.org/wiki/File:Godfrey_Harold_Hardy_1.jpg",
+      "local": "src-hardy.jpg"
+    },
+    "turing": {
+      "title": "File:Alan Turing (1912-1954) in 1936 at Princeton University.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/1/17/Alan_Turing_%281912-1954%29_in_1936_at_Princeton_University.jpg",
+      "license": "Public domain",
+      "artist": "Unknown photographer",
+      "page": "https://commons.wikimedia.org/wiki/File:Alan_Turing_(1912-1954)_in_1936_at_Princeton_University.jpg",
+      "local": "src-turing.jpg"
+    },
+    "knuth": {
+      "title": "File:KnuthAtOpenContentAlliance.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/4/4f/KnuthAtOpenContentAlliance.jpg",
+      "license": "CC BY-SA 2.5",
+      "artist": "Flickr user Jacob Appelbaum, uploaded to en.wikipedia by users BeSherman, Duozmo",
+      "page": "https://commons.wikimedia.org/wiki/File:KnuthAtOpenContentAlliance.jpg",
+      "local": "src-knuth.jpg"
+    },
+    "pessoa": {
+      "title": "File:Pessoa chapeu.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/3/32/Pessoa_chapeu.jpg",
+      "license": "Public domain",
+      "artist": "Template:Cavalão",
+      "page": "https://commons.wikimedia.org/wiki/File:Pessoa_chapeu.jpg",
+      "local": "src-pessoa.jpg"
+    },
+    "banach": {
+      "title": "File:Stefana Banach - ستيفان بناخ.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/5/51/Stefana_Banach_-_%D8%B3%D8%AA%D9%8A%D9%81%D8%A7%D9%86_%D8%A8%D9%86%D8%A7%D8%AE.jpg",
+      "license": "Public domain",
+      "artist": "nieznany/unknown",
+      "page": "https://commons.wikimedia.org/wiki/File:Stefana_Banach_-_%D8%B3%D8%AA%D9%8A%D9%81%D8%A7%D9%86_%D8%A8%D9%86%D8%A7%D8%AE.jpg",
+      "local": "src-banach.jpg"
+    },
+    "fonseca": {
+      "title": "File:Pedro da Fonseca (1528-1599).png",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/3/37/Pedro_da_Fonseca_%281528-1599%29.png",
+      "license": "Public domain",
+      "artist": "Pedro da Fonseca (1528-1599)",
+      "page": "https://commons.wikimedia.org/wiki/File:Pedro_da_Fonseca_(1528-1599).png",
+      "local": "src-fonseca.jpg",
+      "mode": "document"
+    },
+    "marias": {
+      "title": "File:Julián Marías.JPG",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/1/17/Juli%C3%A1n_Mar%C3%ADas.JPG",
+      "license": "Public domain",
+      "artist": "Unknown authorUnknown author",
+      "page": "https://commons.wikimedia.org/wiki/File:Juli%C3%A1n_Mar%C3%ADas.JPG",
+      "local": "src-marias.jpg"
+    },
+    "lamport": {
+      "title": "File:Leslie Lamport.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/5/50/Leslie_Lamport.jpg",
+      "license": "Copyrighted free use",
+      "artist": "Leslie Lamport",
+      "page": "https://commons.wikimedia.org/wiki/File:Leslie_Lamport.jpg",
+      "local": "src-lamport.jpg"
+    },
+    "ortega": {
+      "title": "File:JoseOrtegayGasset.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/5/5c/JoseOrtegayGasset.jpg",
+      "license": "Public domain",
+      "artist": "",
+      "page": "https://commons.wikimedia.org/wiki/File:JoseOrtegayGasset.jpg",
+      "local": "src-ortega.jpg"
+    },
+    "dostoevsky": {
+      "title": "File:Vasily Perov - Портрет Ф.М.Достоевского - Google Art Project.jpg",
+      "thumb": "",
+      "license": "Public domain",
+      "artist": "Vasily Perov",
+      "page": "https://commons.wikimedia.org/wiki/File:Vasily_Perov_-_%D0%9F%D0%BE%D1%80%D1%82%D1%80%D0%B5%D1%82_%D0%A4.%D0%9C.%D0%94%D0%BE%D1%81%D1%82%D0%BE%D0%B5%D0%B2%D1%81%D0%BA%D0%BE%D0%B3%D0%BE_-_Google_Art_Project.jpg",
+      "local": "src-dostoevsky.jpg"
+    }
+  },
+  "missing": {}
+}

@@ -317,6 +317,19 @@ html.js .reveal[data-revealed="true"] .plate-fade {
   }
 }
 
+/* engraved portrait plates — both theme variants are in the DOM; the
+   attribute picks one, and print always gets the ivory ink. lazy-loading
+   only fetches the visible variant. */
+.plate-img-dark {
+  display: none;
+}
+[data-theme="dark"] .plate-img-light {
+  display: none;
+}
+[data-theme="dark"] .plate-img-dark {
+  display: block;
+}
+
 /* fig. 0 depth layer — when the WebGL overlay mounts it sets [data-plate-3d]
    on the stage and takes over the network: the SVG's flat twin yields.
    The stage provides the perspective; the card is what tilts. */
@@ -345,8 +358,13 @@ html.js .reveal[data-revealed="true"] .plate-fade {
 @media print {
   /* canvases don't print — every WebGL layer yields to its flat twin */
   .plate-stage canvas,
-  canvas,
-  .bust-stage {
+  canvas {
+    display: none !important;
+  }
+  .plate-img-light {
+    display: block !important;
+  }
+  .plate-img-dark {
     display: none !important;
   }
   .plate-stage[data-plate-3d] .plate-net {

@@ -21,8 +21,10 @@ export function Footer() {
               </li>
               <li>
                 fig. A&apos;s marble is museum photogrammetry via
-                threedscans.com, cross-hatched in the browser in the
-                document&apos;s own ink.
+                threedscans.com, cross-hatched in the browser; the portrait
+                plates are engraved at build from license-checked archives
+                (credits on each plate), by the same line-displacement
+                technique.
               </li>
               <li>
                 Next.js, statically rendered; Three.js and the marble load

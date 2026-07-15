@@ -1,6 +1,6 @@
-import Image from "next/image";
 import { Section } from "./Section";
 import { Reveal } from "./Reveal";
+import { AuthorPlate } from "./AuthorPlate";
 import { interests, languages } from "@/lib/data";
 
 export function About() {
@@ -13,22 +13,10 @@ export function About() {
       lede="The short version of who I am when I step away from the editor."
     >
       <div className="grid gap-12 lg:grid-cols-[300px_1fr] lg:gap-16">
-        {/* the plate: a document photograph, captioned, not a rounded card */}
-        <Reveal as="figure">
-          <div className="relative aspect-[4/5] overflow-hidden bg-bg-inset">
-            <Image
-              src="/portrait.jpg"
-              alt="Francisco Cascalheira"
-              fill
-              sizes="(max-width: 1024px) 100vw, 300px"
-              className="object-cover"
-              priority={false}
-            />
-          </div>
-          <figcaption className="mono-label mt-3 flex items-center justify-between border-b border-border pb-3">
-            <span>Plate I — the author</span>
-            <span>Porto · PT</span>
-          </figcaption>
+        {/* the plate: the author engraved in the document's own ink; the
+            photograph stays one press away */}
+        <Reveal>
+          <AuthorPlate />
         </Reveal>
 
         <Reveal delay={100}>

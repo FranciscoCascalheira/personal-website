@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { influences, clusters } from "@/lib/influences";
-import { BustPlate } from "./BustPlate";
+import { PortraitPlate } from "./PortraitPlate";
 
 type Line = { x1: number; y1: number; x2: number; y2: number; strong?: boolean };
 
@@ -205,7 +205,7 @@ export function InfluenceMap() {
             {clusters.find((c) => c.id === selected.cluster)?.label}
           </p>
 
-          {selected.bust && <BustPlate bust={selected.bust} />}
+          <PortraitPlate influence={selected} />
 
           <p className="mt-4 text-sm leading-relaxed text-text-muted">
             {selected.note}
@@ -257,8 +257,9 @@ export function InfluenceMap() {
         className="border-t border-border-strong py-3"
       >
         <span className="mono-label">
-          fig. A — the other system · every line is a documented debt · marble
-          only where museums have scanned it · politics deliberately absent
+          fig. A — the other system · every line is a documented debt · every
+          plate engraved from a license-checked archive, credited beneath ·
+          politics deliberately absent
         </span>
       </figcaption>
     </figure>
