@@ -273,8 +273,12 @@ export function Fig0Plate() {
         >
           <rect x="26" y="402" width="238" height="128" fill="var(--bg)" stroke="var(--border-strong)" strokeWidth="1" />
           <rect x="30" y="406" width="230" height="120" fill="none" stroke="var(--border)" strokeWidth="0.5" />
+          {/* The real name, and the real pun: `PLATFORM_NAME = 'opPORTOnities'`
+              in the repo, and what the council's own emails to candidates say.
+              The plate said "opPORTOnidades" — a Portuguese pun on
+              *oportunidades* that reads well and appears nowhere in the source. */}
           <text x="41" y="454" fontSize="24" fill="var(--text)" className="font-serif">
-            op<tspan fontStyle="italic" fill="var(--accent-text)">PORTO</tspan>nidades
+            op<tspan fontStyle="italic" fill="var(--accent-text)">PORTO</tspan>nities
           </text>
           <g className="plate-micro">
             <text x="42" y="426" fontSize="7" letterSpacing="0.2em" fill={inkFaint} className="font-mono">
