@@ -44,6 +44,7 @@ export function RaceCondition() {
   const cancelled = useRef<{ cancelled: boolean }>({ cancelled: false });
   const timer = useRef<number | null>(null);
   const clock = useRef<number | null>(null);
+  const leverRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
   const stopReveal = () => {
     if (timer.current !== null) window.clearInterval(timer.current);
@@ -129,6 +130,19 @@ export function RaceCondition() {
     }
   }, [guard, reduced]);
 
+  /** The ARIA radio pattern: the group is a single tab stop and the arrows
+   *  move — and select — within it, the way fig. 1's map already behaves. */
+  const onLeverKey = (e: React.KeyboardEvent) => {
+    const keys = ["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp"];
+    if (!keys.includes(e.key)) return;
+    e.preventDefault();
+    const i = raceGuards.findIndex((g) => g.id === guardId);
+    const step = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : -1;
+    const next = raceGuards[(i + step + raceGuards.length) % raceGuards.length];
+    selectGuard(next.id);
+    leverRefs.current.get(next.id)?.focus();
+  };
+
   const measured = phase === "measured";
   const busy = phase === "loading" || phase === "running";
 
@@ -144,6 +158,7 @@ export function RaceCondition() {
         <div
           role="radiogroup"
           aria-label="Guard on the confirm"
+          onKeyDown={onLeverKey}
           className="no-print flex flex-wrap items-baseline gap-x-2 gap-y-2"
         >
           <span className="mono-label mr-2">Guard</span>
@@ -155,6 +170,12 @@ export function RaceCondition() {
                 type="button"
                 role="radio"
                 aria-checked={on}
+                ref={(el) => {
+                  if (el) leverRefs.current.set(g.id, el);
+                  else leverRefs.current.delete(g.id);
+                }}
+                // a radiogroup is one tab stop; the arrows move within it
+                tabIndex={on ? 0 : -1}
                 onClick={() => selectGuard(g.id)}
                 // selected the way fig. 1 selects: a rule, not a filled chip
                 className={`border-b-2 pb-1 font-mono text-xs transition-colors ${
@@ -186,12 +207,13 @@ export function RaceCondition() {
           className="absolute inset-y-8 hidden w-px bg-border sm:block"
           style={{ left: "calc(50% + 2.25rem)" }}
         />
-        <div className="grid grid-cols-[2.5rem_1fr] gap-x-4 border-b border-border pb-3 sm:grid-cols-[2.5rem_1fr_1fr]">
+        {/* Column heads only mean anything once there are two columns. Below
+            sm the transactions stack into one, and each row carries its own
+            actor tag — a "T1" head over a column holding both would lie. */}
+        <div className="hidden gap-x-4 border-b border-border pb-3 sm:grid sm:grid-cols-[2.5rem_1fr_1fr]">
           <span className="mono-label">t</span>
           <span className="mono-label">T1 — company A confirms</span>
-          <span className="mono-label hidden sm:block sm:pl-6">
-            T2 — company B confirms
-          </span>
+          <span className="mono-label sm:pl-6">T2 — company B confirms</span>
         </div>
 
         <ol>
