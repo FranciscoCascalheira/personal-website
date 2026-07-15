@@ -58,7 +58,7 @@ export function Hero({ proof }: { proof: Proof }) {
                 I&apos;m Francisco Cascalheira, a second-year Computer
                 Engineering student at FEUP. For opPORTOnities I sat in the
                 requirements meetings, designed the 12-model schema, wrote all
-                308 commits, and deployed it. It is in production now.
+                294 commits, and deployed it. It is in production now.
               </p>
             </Reveal>
 
@@ -127,7 +127,7 @@ export function Hero({ proof }: { proof: Proof }) {
               <dl>
                 {[
                   { k: "Client", v: "Câmara Municipal do Porto" },
-                  { k: "Commits", v: "308 — sole author, verified by git" },
+                  { k: "Commits", v: "294 — sole author, verified by git" },
                   { k: "Vacancies", v: "380+ handled in production" },
                   { k: "Stack", v: "TS · Node · Postgres · React" },
                 ].map((row) => (

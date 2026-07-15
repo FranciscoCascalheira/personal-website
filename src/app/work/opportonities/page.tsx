@@ -234,12 +234,8 @@ export default async function CaseStudyPage() {
           </Reveal>
         </DocSection>
 
-        {/* 04 — decisions & what broke */}
-        <DocSection
-          n="04"
-          label="Decisions"
-          title="What broke, and what held."
-        >
+        {/* 04 — what held */}
+        <DocSection n="04" label="Decisions" title="What held.">
           <div className="max-w-3xl space-y-12">
             {decisions.map((d, i) => (
               <Reveal key={d.index} delay={i * 40}>
@@ -258,9 +254,14 @@ export default async function CaseStudyPage() {
               </Reveal>
             ))}
           </div>
+        </DocSection>
 
+        {/* 05 — what broke: the audit, its exhibits, and 3.4 made playable.
+            Its own folio because it is its own argument: the decisions above
+            are what I chose, this is what the choosing cost. */}
+        <DocSection n="05" label="The audit" title="What broke.">
           {/* fig. 3 — the audit, audited */}
-          <Reveal className="mt-16">
+          <Reveal>
             <p className="max-w-3xl text-lg leading-relaxed text-text-muted">
               Before the largest release I audited the whole platform myself,
               because nobody else was going to. It landed as one commit. Here
@@ -306,8 +307,8 @@ export default async function CaseStudyPage() {
           </Reveal>
         </DocSection>
 
-        {/* 05 — outcome */}
-        <DocSection n="05" label="Outcome" title="Where it stands today.">
+        {/* 06 — outcome */}
+        <DocSection n="06" label="Outcome" title="Where it stands today.">
           <Reveal>
             <div className="max-w-3xl space-y-5 text-lg leading-relaxed text-text-muted">
               {outcome.paragraphs.map((p) => (
