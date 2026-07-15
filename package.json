@@ -7,7 +7,9 @@
     "dev": "next dev",
     "prebuild": "node scripts/copy-pglite.mjs && node scripts/verify-claims.mjs",
     "build": "next build",
+    "postbuild": "node scripts/verify-bundle.mjs",
     "verify:claims": "node scripts/verify-claims.mjs",
+    "verify:bundle": "node scripts/verify-bundle.mjs",
     "start": "next start",
     "lint": "eslint"
   },

@@ -171,16 +171,38 @@ record(
     : `NOT an ancestor of master — fig. 3's pre-fix states must not be published`,
 );
 
+// ── what this cannot check ───────────────────────────────────────────────────
+// A verifier that silently ignores the claims it cannot reach is lying about
+// its own coverage — the same failure as a green tick over an unread test. So
+// the gaps are declared. These do not fail: they are not known-wrong, they are
+// unfalsifiable from here, which is a different and worth-saying thing.
+const unverifiable = [
+  {
+    claim: claim(
+      "src/lib/case-study.ts",
+      /value:\s*"([\d+]+)",\s*label:\s*"vacancies handled"/,
+      "vacancies handled",
+    ),
+    why: "lives in the production database; the public API exposes only /health",
+  },
+];
+
 // ── report ───────────────────────────────────────────────────────────────────
 const pad = Math.max(...results.map((r) => r.name.length));
 console.log("\n  verify-claims — the dossier, checked against the thing it describes\n");
 for (const r of results) {
   console.log(`  ${r.ok ? "ok  " : "FAIL"}  ${r.name.padEnd(pad)}  ${r.detail}`);
 }
+const stated = unverifiable.filter((u) => u.claim !== null);
+if (stated.length) {
+  console.log("\n  not checkable from here — stated rather than implied:");
+  for (const u of stated) console.log(`  —     "${u.claim}" · ${u.why}`);
+}
+
 const failed = results.filter((r) => !r.ok);
 console.log(
   failed.length
     ? `\n  ${failed.length} claim${failed.length === 1 ? "" : "s"} the site cannot support.\n`
-    : `\n  ${results.length} checks, all supported.\n`,
+    : `\n  ${results.length} checks, all supported · ${stated.length} claim${stated.length === 1 ? "" : "s"} out of reach.\n`,
 );
 process.exit(failed.length ? 1 : 0);
