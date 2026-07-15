@@ -33,11 +33,20 @@ export type Phase = "t1" | "t2-check" | "t2-body";
 
 export type StepKind = "check" | "begin" | "write" | "commit" | "abort";
 
+/** How a step touches the disputed row (young_profiles.y_01.status) — the spine
+ *  of fig. 4. The three guards differ only in *when*, or whether, T2 consults
+ *  it: never (no guard), too early (the audit's re-read), or at the moment of
+ *  writing, atomically (compare-and-set). That is the whole lesson, and it is
+ *  why the timeline draws a leader from each of these steps down to the track. */
+export type Track = "read" | "write" | "claim";
+
 export type RaceStep = {
   id: string;
   actor: Actor;
   phase: Phase;
   kind: StepKind;
+  /** Set only on steps that touch the disputed row. */
+  track?: Track;
   /** Displayed and executed. Control statements (BEGIN/COMMIT) are structural:
    *  the engine owns them, because 2PC dictates their real order. */
   sql: string;
@@ -59,6 +68,11 @@ export type Guard = {
   /** What the guard is, in one line. */
   summary: string;
   steps: RaceStep[];
+  /** The one thing to look at in the diagram, written on the diagram. Without
+   *  it the "no guard" case teaches nothing: its bug is an *absence* — Beta
+   *  never touches the track — and an absence has to be pointed at. `at` is the
+   *  step it labels; omit it to hang the note in the middle of the window. */
+  spotlight: { at?: string; text: string };
   /** The verified outcome. Printed in the static document; asserted by the run. */
   matches: number;
   verdict: string;
@@ -101,11 +115,36 @@ INSERT INTO applications VALUES
   ('app_a', 'y_01', 'vac_a', 'SELECTED'),
   ('app_b', 'y_01', 'vac_b', 'SELECTED');`;
 
-/** The table the verdict is read from. */
-export const raceFinalQuery = `SELECT count(*)::int AS matches FROM matches;`;
+/** The verdict is read straight off the table, as rows rather than a count:
+ *  "two placements" means literally two rows here with the same young_id. */
+export const raceFinalRows = `SELECT id, application_id, young_id, vacancy_id
+  FROM matches ORDER BY id;`;
+
+/** What the table holds when the dust settles, printed so the figure states its
+ *  outcome without a database. The run must reproduce this exactly. */
+export const raceFinalState: Record<string, MatchRow[]> = {
+  none: [
+    { id: "m_a", application_id: "app_a", young_id: "y_01", vacancy_id: "vac_a" },
+    { id: "m_b", application_id: "app_b", young_id: "y_01", vacancy_id: "vac_b" },
+  ],
+  reread: [
+    { id: "m_a", application_id: "app_a", young_id: "y_01", vacancy_id: "vac_a" },
+    { id: "m_b", application_id: "app_b", young_id: "y_01", vacancy_id: "vac_b" },
+  ],
+  cas: [
+    { id: "m_a", application_id: "app_a", young_id: "y_01", vacancy_id: "vac_a" },
+  ],
+};
+
+export type MatchRow = {
+  id: string;
+  application_id: string;
+  young_id: string;
+  vacancy_id: string;
+};
 
 const outerCheck = (actor: Actor, app: string): RaceStep => ({
-  id: `${actor}-outer`,
+  id: `${actor}-read`,
   actor,
   phase: actor === "T1" ? "t1" : "t2-check",
   kind: "check",
@@ -134,6 +173,9 @@ export const raceGuards: Guard[] = [
     date: "the original confirm",
     summary:
       "The status check sits outside the transaction, and nothing re-checks it inside.",
+    spotlight: {
+      text: "Beta never touches the track — nothing here ever asks whether the candidate is already taken",
+    },
     matches: 2,
     verdict: "two placements",
     reading:
@@ -161,6 +203,7 @@ export const raceGuards: Guard[] = [
       },
       {
         id: "T1-block",
+        track: "write",
         actor: "T1",
         phase: "t1",
         kind: "write",
@@ -197,6 +240,7 @@ export const raceGuards: Guard[] = [
       },
       {
         id: "T2-block",
+        track: "write",
         actor: "T2",
         phase: "t2-body",
         kind: "write",
@@ -220,6 +264,10 @@ export const raceGuards: Guard[] = [
     date: "1 Apr 2026 — the audit of fig. 3",
     summary:
       "The transaction re-reads the candidate's status before writing, and rejects the competing selections too.",
+    spotlight: {
+      at: "T2-reread",
+      text: "Beta does ask — but inside the window, so it is told ACTIVE and believes it",
+    },
     matches: 2,
     verdict: "two placements",
     reading:
@@ -231,6 +279,7 @@ export const raceGuards: Guard[] = [
       begin("T2", "t2-check"),
       {
         id: "T1-reread",
+        track: "read",
         actor: "T1",
         phase: "t1",
         kind: "check",
@@ -240,6 +289,7 @@ export const raceGuards: Guard[] = [
       },
       {
         id: "T2-reread",
+        track: "read",
         actor: "T2",
         phase: "t2-check",
         kind: "check",
@@ -266,6 +316,7 @@ export const raceGuards: Guard[] = [
       },
       {
         id: "T1-block",
+        track: "write",
         actor: "T1",
         phase: "t1",
         kind: "write",
@@ -308,6 +359,16 @@ export const raceGuards: Guard[] = [
         note: "The second placement, again.",
       },
       {
+        id: "T2-block",
+        track: "write",
+        actor: "T2",
+        phase: "t2-body",
+        kind: "write",
+        sql: "UPDATE young_profiles SET status = 'BLOCKED' WHERE id = 'y_01';",
+        expect: "1 row",
+        note: "Already BLOCKED by T1. Writing it again changes nothing and warns nobody.",
+      },
+      {
         id: "T2-commit",
         actor: "T2",
         phase: "t2-body",
@@ -324,6 +385,10 @@ export const raceGuards: Guard[] = [
     date: "26 Apr 2026 — in production today",
     summary:
       "The guard stops being a question and becomes the write: claim the candidate conditionally, and believe the row count.",
+    spotlight: {
+      at: "T2-claim",
+      text: "Beta's question is its write, and it lands after the flip — BLOCKED, no rows, 409",
+    },
     matches: 1,
     verdict: "one placement, one 409",
     reading:
@@ -335,6 +400,7 @@ export const raceGuards: Guard[] = [
       begin("T2", "t2-body"),
       {
         id: "T1-claim",
+        track: "claim",
         actor: "T1",
         phase: "t1",
         kind: "write",
@@ -368,6 +434,7 @@ export const raceGuards: Guard[] = [
       },
       {
         id: "T2-claim",
+        track: "claim",
         actor: "T2",
         phase: "t2-body",
         kind: "write",

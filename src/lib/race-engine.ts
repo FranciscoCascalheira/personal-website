@@ -16,9 +16,10 @@
 import {
   raceSchema,
   raceSeed,
-  raceFinalQuery,
+  raceFinalRows,
   raceError,
   type Guard,
+  type MatchRow,
   type RaceStep,
 } from "./race";
 
@@ -30,12 +31,30 @@ export type StepResult = {
   agrees: boolean;
 };
 
+export type { MatchRow };
+
 export type RaceResult = {
   matches: number;
   agrees: boolean;
   ms: number;
   /** Postgres's own version string, trimmed to the part a reader can check. */
   version: string;
+  /** The matches table as it stands when the dust settles — the outcome in the
+   *  only terms that matter: who ended up placed, and how many times. */
+  rows: MatchRow[];
+};
+
+/** A line of what the engine actually did. The schedule below is not the
+ *  reader's schedule — it is two-phase commit — and showing it is the point:
+ *  it is the only way to see that a real Postgres is being driven here. */
+export type EngineLine = {
+  /** `ctl` = transaction control the engine owns; `sql` = a step's statement;
+   *  `note` = why the engine did something the reader cannot infer. */
+  kind: "boot" | "ctl" | "sql" | "note";
+  text: string;
+  /** Row count or value Postgres answered with. */
+  out?: string;
+  actor?: "T1" | "T2";
 };
 
 type PGliteLike = {
@@ -108,10 +127,17 @@ export async function runRace(
   guard: Guard,
   onStep: (r: StepResult) => void,
   signal?: { cancelled: boolean },
+  onLog?: (l: EngineLine) => void,
 ): Promise<RaceResult> {
+  const log = (l: EngineLine) => {
+    if (!signal?.cancelled) onLog?.(l);
+  };
+
   const db = await ensureDb();
   const started = performance.now();
+  log({ kind: "boot", text: await pgVersion(await ensureDb()) });
   await reset(db);
+  log({ kind: "note", text: "schema + seed: one candidate, two open vacancies" });
 
   const emit = (step: RaceStep, actual: string) => {
     if (signal?.cancelled) return;
@@ -130,12 +156,20 @@ export async function runRace(
   const exec = async (step: RaceStep) => {
     const res = await db.query(step.sql);
     const n = res.affectedRows ?? 0;
-    results.set(step.id, render(step, res.rows, n));
+    const out = render(step, res.rows, n);
+    results.set(step.id, out);
+    log({
+      kind: "sql",
+      actor: step.actor,
+      text: step.sql.replace(/\s+/g, " ").replace(/;$/, ""),
+      out,
+    });
     return tripped(step, res.rows, n);
   };
 
   // ── T1: begin, work, prepare (locks held, nothing committed) ──────────────
   await db.exec("BEGIN");
+  log({ kind: "ctl", actor: "T1", text: "BEGIN" });
   for (const step of of("t1")) {
     if (step.kind === "begin") {
       const iso = await db.query("SHOW transaction_isolation");
@@ -149,10 +183,18 @@ export async function runRace(
     await exec(step);
   }
   await db.exec("PREPARE TRANSACTION 'tx1'");
+  log({
+    kind: "ctl",
+    actor: "T1",
+    text: "PREPARE TRANSACTION 'tx1'",
+    out: "locks held, uncommitted",
+  });
   const t1Commit = of("t1").find((s) => s.kind === "commit");
 
   // ── T2: read the world while T1 is still in flight ───────────────────────
+  log({ kind: "note", text: "T1 is now in flight. Anything T2 reads is the pre-T1 world." });
   await db.exec("BEGIN");
+  log({ kind: "ctl", actor: "T2", text: "BEGIN" });
   let refused = false;
   for (const step of of("t2-check")) {
     if (step.kind === "begin") {
@@ -169,10 +211,17 @@ export async function runRace(
 
   // ── T1 commits. This is the instant T2's answers go stale. ────────────────
   await db.exec("COMMIT PREPARED 'tx1'");
+  log({
+    kind: "ctl",
+    actor: "T1",
+    text: "COMMIT PREPARED 'tx1'",
+    out: "now true for everyone",
+  });
   await db.exec("COMMIT PREPARED 'tx2'");
   if (t1Commit) results.set(t1Commit.id, "ok");
 
   // ── T2: write, where a real lock-wait would have released it ──────────────
+  log({ kind: "note", text: "T2 writes here — where a real lock-wait would have released it." });
   await db.exec("BEGIN");
   let aborted = false;
   for (const step of of("t2-body")) {
@@ -186,12 +235,14 @@ export async function runRace(
     }
     if (step.kind === "abort") {
       await db.exec("ROLLBACK");
+      log({ kind: "ctl", actor: "T2", text: "ROLLBACK", out: `${raceError.status}` });
       aborted = true;
       results.set(step.id, `${raceError.status}`);
       continue;
     }
     if (step.kind === "commit") {
       await db.exec("COMMIT");
+      log({ kind: "ctl", actor: step.actor, text: "COMMIT", out: "ok" });
       results.set(step.id, "ok");
       continue;
     }
@@ -206,11 +257,19 @@ export async function runRace(
     if (actual !== undefined) emit(step, actual);
   }
 
-  const final = await db.query(raceFinalQuery);
-  const matches = Number(final.rows[0]?.matches ?? -1);
+  // The outcome, in the only terms that matter: who is actually placed.
+  const final = await db.query(raceFinalRows);
+  const rows = final.rows as unknown as MatchRow[];
+  const matches = rows.length;
+  log({
+    kind: "sql",
+    text: raceFinalRows.replace(/\s+/g, " ").replace(/;$/, ""),
+    out: `${matches} row${matches === 1 ? "" : "s"}`,
+  });
 
   return {
     matches,
+    rows,
     agrees: matches === guard.matches,
     ms: Math.round(performance.now() - started),
     version: await pgVersion(db),

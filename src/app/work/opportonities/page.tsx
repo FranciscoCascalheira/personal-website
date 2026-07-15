@@ -53,7 +53,10 @@ function DocSection({
             </p>
             <p className="mono-label lg:mt-5">{label}</p>
           </Reveal>
-          <div className="lg:border-l lg:border-border lg:pl-12 xl:pl-16">
+          {/* min-w-0: grid items default to min-width:auto, so a wide child
+              (fig. 4's timeline, its matches table) would stretch the track and
+              scroll the whole page sideways instead of scrolling itself */}
+          <div className="min-w-0 lg:border-l lg:border-border lg:pl-12 xl:pl-16">
             <Reveal>
               <h2 className="display text-[clamp(1.9rem,3.4vw,3.1rem)]">
                 {title}

@@ -7,37 +7,42 @@ import {
   raceMethod,
   raceEngineWeight,
   raceError,
+  raceFinalState,
   type Guard,
-  type RaceStep,
+  type MatchRow,
 } from "@/lib/race";
-import type { RaceResult, StepResult } from "@/lib/race-engine";
+import type { EngineLine, RaceResult } from "@/lib/race-engine";
 import { usePrefersReducedMotion } from "@/lib/motion";
+import { RaceTimeline } from "./RaceTimeline";
 
 type Phase = "printed" | "loading" | "running" | "measured" | "error";
 
-/** fig. 4 — the race condition, set as a court transcript and then run.
+/** fig. 4 — the race condition, drawn as time and then actually run.
  *
- *  Two transactions, two columns, one time axis down the left: the shape of an
- *  interleave, in ink. The whole document is here before any JavaScript runs —
- *  the steps, the results, the verdict, and the three guards side by side — so
- *  a reader with no JS, a phone, reduced motion or a printer gets the entire
- *  argument. The live Postgres is an upgrade on top, behind an explicit ask,
- *  because the colophon promises it loads only on demand.
+ *  Three things, in the order a reader needs them:
  *
- *  The printed results and the executed statements come from the same array in
- *  race.ts, so the diagram cannot drift from the run. If Postgres ever answers
- *  something other than what is printed, the figure says so rather than
- *  quietly re-rendering.
+ *    1. the timeline — what happened, with the race window drawn and the
+ *       disputed row running underneath as a track. One screen, no scrolling.
+ *    2. the outcome — the matches table itself. "Placed twice" is not a number,
+ *       it is two rows with the same young_id, so that is what it shows.
+ *    3. the engine log — what was actually done to a real Postgres, including
+ *       the two-phase commit the figure uses to interleave. Read-only: this is
+ *       a record of what ran, not a console to type into.
+ *
+ *  Everything above is server-rendered from the same array the engine executes,
+ *  so no-JS, mobile, reduced-motion and the print edition get the whole
+ *  argument, and the diagram cannot drift from the run.
  */
 export function RaceCondition() {
   const [guardId, setGuardId] = useState(raceGuards[0].id);
   const guard = raceGuards.find((g) => g.id === guardId) as Guard;
 
   const [phase, setPhase] = useState<Phase>("printed");
-  const [results, setResults] = useState<Map<string, StepResult>>(new Map());
+  const [actual, setActual] = useState<Map<string, string>>(new Map());
+  const [lines, setLines] = useState<EngineLine[]>([]);
   const [run, setRun] = useState<RaceResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [shown, setShown] = useState(0);
+  const [head, setHead] = useState(-1);
   const [elapsed, setElapsed] = useState(0);
 
   const reduced = usePrefersReducedMotion();
@@ -46,46 +51,49 @@ export function RaceCondition() {
   const clock = useRef<number | null>(null);
   const leverRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
-  const stopReveal = () => {
+  const stopAll = () => {
     if (timer.current !== null) window.clearInterval(timer.current);
-    timer.current = null;
-  };
-
-  const stopClock = () => {
     if (clock.current !== null) window.clearInterval(clock.current);
-    clock.current = null;
+    timer.current = clock.current = null;
   };
 
-  // Changing the lever puts the figure back to its printed state: the previous
-  // guard's measurements are not evidence about this one.
+  useEffect(() => () => stopAll(), []);
+
+  /** Changing the lever puts the figure back to printed: the previous guard's
+   *  measurements are not evidence about this one. */
   const selectGuard = (id: string) => {
     cancelled.current.cancelled = true;
-    stopReveal();
-    stopClock();
+    stopAll();
     setGuardId(id);
     setPhase("printed");
-    setResults(new Map());
+    setActual(new Map());
+    setLines([]);
     setRun(null);
     setError(null);
-    setShown(0);
+    setHead(-1);
   };
 
-  useEffect(
-    () => () => {
-      stopReveal();
-      stopClock();
-    },
-    [],
-  );
+  /** The ARIA radio pattern: one tab stop, arrows move and select within it —
+   *  the way fig. 1's map already behaves. */
+  const onLeverKey = (e: React.KeyboardEvent) => {
+    if (!["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp"].includes(e.key)) return;
+    e.preventDefault();
+    const i = raceGuards.findIndex((g) => g.id === guardId);
+    const step = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : -1;
+    const next = raceGuards[(i + step + raceGuards.length) % raceGuards.length];
+    selectGuard(next.id);
+    leverRefs.current.get(next.id)?.focus();
+  };
 
   const start = useCallback(async () => {
     cancelled.current = { cancelled: false };
     const signal = cancelled.current;
     setPhase("loading");
     setError(null);
-    setResults(new Map());
+    setActual(new Map());
+    setLines([]);
     setRun(null);
-    setShown(0);
+    setHead(-1);
 
     // A 5.6 MB engine is a long silence on a slow line. Rather than fake a
     // progress bar over a fetch we do not control, count the seconds honestly.
@@ -100,51 +108,49 @@ export function RaceCondition() {
       const { runRace } = await import("@/lib/race-engine");
       if (signal.cancelled) return;
       setPhase("running");
-      const collected: StepResult[] = [];
-      const out = await runRace(guard, (r) => collected.push(r), signal);
+      const got = new Map<string, string>();
+      const log: EngineLine[] = [];
+      const out = await runRace(
+        guard,
+        (r) => got.set(r.step.id, r.actual),
+        signal,
+        (l) => log.push(l),
+      );
       if (signal.cancelled) return;
-      stopClock();
-      setResults(new Map(collected.map((r) => [r.step.id, r])));
+      if (clock.current !== null) window.clearInterval(clock.current);
+      setActual(got);
+      setLines(log);
       setRun(out);
       setPhase("measured");
 
-      // The wave travels down the transcript in tick order — the only way to
-      // watch an interleave happen in time rather than read that it did.
+      // The playhead walks the timeline so the interleave happens in time
+      // rather than merely being reported.
       if (reduced) {
-        setShown(guard.steps.length);
+        setHead(guard.steps.length);
         return;
       }
-      let i = 0;
+      // Park the head on the first step in the same commit as `measured`.
+      // Leaving it at -1 ("printed, show all") until the first tick flashed the
+      // whole diagram — flip, BLOCKED, punchline — before the run reached them.
+      setHead(0);
+      let i = 1;
       timer.current = window.setInterval(() => {
+        setHead(i);
         i += 1;
-        setShown(i);
-        if (i >= guard.steps.length) stopReveal();
-      }, 90);
+        if (i > guard.steps.length) stopAll();
+      }, 260);
     } catch (e) {
       if (signal.cancelled) return;
-      stopClock();
-      // Kept to one line: an unbounded WASM stack would break the band.
+      stopAll();
       const msg = e instanceof Error ? e.message : String(e);
       setError(msg.length > 120 ? `${msg.slice(0, 117)}…` : msg);
       setPhase("error");
     }
   }, [guard, reduced]);
 
-  /** The ARIA radio pattern: the group is a single tab stop and the arrows
-   *  move — and select — within it, the way fig. 1's map already behaves. */
-  const onLeverKey = (e: React.KeyboardEvent) => {
-    const keys = ["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp"];
-    if (!keys.includes(e.key)) return;
-    e.preventDefault();
-    const i = raceGuards.findIndex((g) => g.id === guardId);
-    const step = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : -1;
-    const next = raceGuards[(i + step + raceGuards.length) % raceGuards.length];
-    selectGuard(next.id);
-    leverRefs.current.get(next.id)?.focus();
-  };
-
   const measured = phase === "measured";
   const busy = phase === "loading" || phase === "running";
+  const rows: MatchRow[] = measured && run ? run.rows : raceFinalState[guard.id];
 
   return (
     <figure
@@ -152,16 +158,14 @@ export function RaceCondition() {
       aria-labelledby="fig4-caption"
     >
       {/* the lever */}
-      <div className="border-b border-border py-5">
-        {/* On paper the levers are inert, and the line below already names the
-            guard — so they stay out of the print edition. */}
+      <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 border-b border-border py-4">
         <div
           role="radiogroup"
           aria-label="Guard on the confirm"
           onKeyDown={onLeverKey}
-          className="no-print flex flex-wrap items-baseline gap-x-2 gap-y-2"
+          className="no-print flex flex-wrap items-baseline gap-x-5 gap-y-2"
         >
-          <span className="mono-label mr-2">Guard</span>
+          <span className="mono-label">Guard</span>
           {raceGuards.map((g) => {
             const on = g.id === guardId;
             return (
@@ -174,10 +178,8 @@ export function RaceCondition() {
                   if (el) leverRefs.current.set(g.id, el);
                   else leverRefs.current.delete(g.id);
                 }}
-                // a radiogroup is one tab stop; the arrows move within it
                 tabIndex={on ? 0 : -1}
                 onClick={() => selectGuard(g.id)}
-                // selected the way fig. 1 selects: a rule, not a filled chip
                 className={`border-b-2 pb-1 font-mono text-xs transition-colors ${
                   on
                     ? "border-accent text-accent-text"
@@ -189,79 +191,118 @@ export function RaceCondition() {
             );
           })}
         </div>
-
-        <p className="mt-4 font-mono text-xs text-text-faint">
+        <p className="font-mono text-xs text-text-faint">
           <span className="text-text">{guard.commit}</span> · {guard.date}
         </p>
-        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-text-muted">
+      </div>
+
+      {/* 1 — the diagram */}
+      <div className="py-6">
+        <p className="mb-5 max-w-3xl text-sm leading-relaxed text-text-muted">
           {guard.summary}
+        </p>
+        {/* A 1000-unit viewBox squeezed into a phone renders its labels at
+            ~4px. Below the breakpoint the diagram keeps a legible scale and
+            scrolls inside its own rail instead; print gets it whole. */}
+        <div className="-mx-1 overflow-x-auto px-1 print:overflow-visible">
+          <div className="min-w-[52rem] print:min-w-0">
+            <RaceTimeline
+              guard={guard}
+              actual={measured ? actual : undefined}
+              upto={measured ? head : -1}
+            />
+          </div>
+        </div>
+        <p className="mono-label mt-2 sm:hidden">scroll the diagram sideways →</p>
+        {/* The vocabulary, said once. Without it the leader — the one mark that
+            carries the whole lesson — is a line the reader has to guess at. */}
+        <p className="mt-3 max-w-3xl font-mono text-xs leading-relaxed text-text-faint">
+          key — a hollow mark asks a question · a filled mark writes · the tall
+          bar is T1&apos;s commit, which is the flip · a line dropping to
+          y_01.status means that step asked the row what it currently says
         </p>
       </div>
 
-      {/* the transcript — the figure proper, given the air to be one */}
-      <div className="relative py-8">
-        {/* the time axis: one continuous rule down the column boundary, drawn
-            once rather than stitched out of each row's border */}
-        <span
-          aria-hidden
-          className="absolute inset-y-8 hidden w-px bg-border sm:block"
-          style={{ left: "calc(50% + 2.25rem)" }}
-        />
-        {/* Column heads only mean anything once there are two columns. Below
-            sm the transactions stack into one, and each row carries its own
-            actor tag — a "T1" head over a column holding both would lie. */}
-        <div className="hidden gap-x-4 border-b border-border pb-3 sm:grid sm:grid-cols-[2.5rem_1fr_1fr]">
-          <span className="mono-label">t</span>
-          <span className="mono-label">T1 — company A confirms</span>
-          <span className="mono-label sm:pl-6">T2 — company B confirms</span>
-        </div>
-
-        <ol>
-          {guard.steps.map((step, i) => (
-            <StepRow
-              key={step.id}
-              step={step}
-              tick={i + 1}
-              result={results.get(step.id)}
-              revealed={measured && shown > i}
-              pending={(busy || measured) && !(measured && shown > i)}
-            />
-          ))}
-        </ol>
-      </div>
-
-      {/* the verdict */}
+      {/* 2 — the outcome: the table, not a number */}
       <div className="border-t border-border py-5">
         <div className="flex flex-wrap items-baseline gap-x-6 gap-y-1">
-          <p className="mono-label">Verdict</p>
-          {/* the words carry the outcome; green is kept for the guard holding */}
+          <p className="mono-label">matches</p>
           <p
             className={`font-mono text-xs ${
               guard.matches > 1 ? "text-text" : "text-positive"
             }`}
           >
             {guard.verdict}
-            <span className="text-text-faint"> · </span>
-            <span className="tabular-nums">
-              matches = {measured && run ? run.matches : guard.matches}
-            </span>
           </p>
         </div>
-        <p className="mt-3 max-w-3xl text-sm leading-relaxed text-text-muted">
+
+        <div className="mt-3 overflow-x-auto">
+          <table className="min-w-[26rem] border-collapse text-left font-mono text-xs">
+            <thead>
+              <tr className="border-b border-border">
+                {["id", "application_id", "young_id", "vacancy_id"].map((h) => (
+                  <th
+                    key={h}
+                    scope="col"
+                    className="py-1.5 pr-6 font-normal text-text-faint"
+                  >
+                    {h}
+                  </th>
+                ))}
+                {/* the annotation column is still a column: an empty head
+                    leaves its cells with nothing to be described by */}
+                <th scope="col" className="py-1.5 font-normal text-text-faint">
+                  <span className="sr-only">note</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r, i) => {
+                // The second row is the bug, stated as a fact about a person.
+                const dup = rows.findIndex((o) => o.young_id === r.young_id) !== i;
+                return (
+                  <tr key={r.id} className="border-b border-border last:border-b-0">
+                    <td className="py-1.5 pr-8 text-text">{r.id}</td>
+                    <td className="py-1.5 pr-6 text-text">{r.application_id}</td>
+                    <td
+                      className={`py-1.5 pr-6 ${dup ? "text-accent-text" : "text-text"}`}
+                    >
+                      {r.young_id}
+                    </td>
+                    <td className="py-1.5 pr-6 text-text">{r.vacancy_id}</td>
+                    <td className="whitespace-nowrap py-1.5 text-accent-text">
+                      {dup ? "← the same candidate, placed again" : ""}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {guard.matches === 1 && (
+          <p className="mt-3 max-w-3xl border-l-2 border-border-strong pl-3 font-mono text-xs leading-relaxed text-text-muted">
+            <span className="text-positive">{raceError.status}</span> —{" "}
+            <span className="text-text">&ldquo;{raceError.message}&rdquo;</span>
+            <span className="text-text-faint"> · {raceError.source}</span>
+          </p>
+        )}
+
+        <p className="mt-4 max-w-3xl text-sm leading-relaxed text-text-muted">
           {guard.reading}
         </p>
 
         {measured && run && !run.agrees && (
           <p className="mt-3 max-w-3xl border-l-2 border-accent pl-3 font-mono text-xs leading-relaxed text-accent-text">
-            The run disagrees with the printed diagram: Postgres returned{" "}
-            {run.matches} match{run.matches === 1 ? "" : "es"} where this figure
+            The run disagrees with the printed figure: Postgres returned{" "}
+            {run.matches} row{run.matches === 1 ? "" : "s"} where this figure
             claims {guard.matches}. Trust the run, not the print — and tell me,
             because one of the two is wrong.
           </p>
         )}
       </div>
 
-      {/* the ask — nothing above loaded a byte of Postgres */}
+      {/* 3 — the ask, and then what the engine actually did */}
       <div className="no-print border-t border-border py-5">
         <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
           <button
@@ -302,6 +343,8 @@ export function RaceCondition() {
             )}
           </p>
         </div>
+
+        {lines.length > 0 && <EngineLog lines={lines} />}
       </div>
 
       {/* the three guards, side by side — the part that prints */}
@@ -333,17 +376,8 @@ export function RaceCondition() {
             </div>
           ))}
         </dl>
-
-        {/* the refusal itself, in the words the losing company actually gets */}
-        <p className="mt-4 max-w-3xl border-l-2 border-border-strong pl-3 font-mono text-xs leading-relaxed text-text-muted">
-          <span className="text-positive">{raceError.status}</span> —{" "}
-          <span className="text-text">&ldquo;{raceError.message}&rdquo;</span>
-          <span className="text-text-faint"> · {raceError.source}</span>
-        </p>
       </div>
 
-      {/* how the interleave is produced, said out loud — marginalia, not a
-          peer of the verdict */}
       <div className="border-t border-border py-4">
         <p className="mono-label">Method</p>
         <p className="mt-2 max-w-3xl text-xs leading-relaxed text-text-faint">
@@ -358,84 +392,59 @@ export function RaceCondition() {
   );
 }
 
-/** One tick of the interleave.
- *
- *  The ink law, so amber keeps exactly one job: amber marks the instant the
- *  race is decided (the tick and its result) — and a disagreement, which is the
- *  only other thing worth interrupting a reader for. Green is the site's
- *  reserved "holding" ink and marks the refusal: a 409 here is the guard
- *  working, not a failure. Everything else is plain ink. The results are
- *  verified ground truth, so they are set in full ink when printed; they only
- *  fall back to faint while a live run is re-measuring them, which is what the
- *  wave down the transcript is. */
-function StepRow({
-  step,
-  tick,
-  result,
-  revealed,
-  pending,
-}: {
-  step: RaceStep;
-  tick: number;
-  result?: StepResult;
-  revealed: boolean;
-  pending: boolean;
-}) {
-  const value = revealed && result ? result.actual : step.expect;
-  const disagrees = revealed && result ? !result.agrees : false;
-  const emphasis = step.decisive || disagrees;
-
-  const resultInk = emphasis
-    ? "text-accent-text"
-    : step.kind === "abort"
-      ? "text-positive"
-      : pending
-        ? "text-text-faint"
-        : "text-text";
-
-  const cell = (
-    <div className="min-w-0">
-      <span className="mono-label sm:hidden">{step.actor}</span>
-      <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-text">
-        {step.sql}
-      </pre>
-      <p
-        className={`mt-1 font-mono text-xs transition-colors duration-150 ${resultInk}`}
-        style={{ transitionTimingFunction: "var(--ease-press)" }}
-      >
-        <span aria-hidden>→ </span>
-        <span className="sr-only">result: </span>
-        {value}
-        {disagrees && (
-          <span className="text-text"> (printed: {step.expect})</span>
-        )}
-      </p>
-      {step.note && (
-        <p className="mt-1.5 max-w-md text-xs leading-relaxed text-text-muted">
-          {step.note}
-        </p>
-      )}
-    </div>
-  );
-
+/** What was really done to the database, in the order it was really done —
+ *  which is not the reader's order, because the interleave is built out of
+ *  two-phase commit. That difference is the interesting part, so it is shown
+ *  rather than smoothed over. */
+function EngineLog({ lines }: { lines: EngineLine[] }) {
   return (
-    <li className="grid break-inside-avoid grid-cols-[2.5rem_1fr] gap-x-4 border-b border-border py-3 last:border-b-0 sm:grid-cols-[2.5rem_1fr_1fr]">
-      <span
-        className={`font-mono text-xs tabular-nums ${
-          step.decisive ? "text-accent-text" : "text-text-faint"
-        }`}
-      >
-        {String(tick).padStart(2, "0")}
-      </span>
-
-      <div className={step.actor === "T1" ? "" : "hidden sm:block"}>
-        {step.actor === "T1" ? cell : null}
-      </div>
-      <div
-        className={`sm:pl-6 ${step.actor === "T2" ? "" : "hidden sm:block"}`}
-      >
-        {step.actor === "T2" ? cell : null}
-      </div>
-    </li>
+    <div className="mt-5">
+      <p className="mono-label mb-2">
+        What the engine did · in the order it really happened
+      </p>
+      <ol className="max-h-64 overflow-y-auto border-l border-border pl-3">
+        {lines.map((l, i) => (
+          <li
+            key={i}
+            className="flex flex-wrap items-baseline gap-x-3 py-0.5 font-mono text-[11px] leading-relaxed"
+          >
+            <span
+              className={`w-5 shrink-0 ${
+                l.actor === "T2" ? "text-text-muted" : "text-text-faint"
+              }`}
+            >
+              {l.actor ?? ""}
+            </span>
+            {/* The 409 is the guard holding, so it is green here exactly as it
+                is on the diagram and in the verdict — one fact, one hue. Other
+                transaction control is structure, not accent. */}
+            <span
+              className={
+                l.kind === "note"
+                  ? "italic text-text-faint"
+                  : l.kind === "ctl"
+                    ? "text-text-muted"
+                    : l.kind === "boot"
+                      ? "text-text-muted"
+                      : "min-w-0 break-all text-text"
+              }
+            >
+              {l.text}
+            </span>
+            {l.out && (
+              <span
+                className={
+                  l.out === String(raceError.status)
+                    ? "text-positive"
+                    : "text-text-faint"
+                }
+              >
+                → {l.out}
+              </span>
+            )}
+          </li>
+        ))}
+      </ol>
+    </div>
   );
 }
