@@ -171,21 +171,37 @@ record(
     : `NOT an ancestor of master — fig. 3's pre-fix states must not be published`,
 );
 
-// ── what this cannot check ───────────────────────────────────────────────────
+// ── what this cannot check, and the rule that it must say so ─────────────────
 // A verifier that silently ignores the claims it cannot reach is lying about
-// its own coverage — the same failure as a green tick over an unread test. So
-// the gaps are declared. These do not fail: they are not known-wrong, they are
-// unfalsifiable from here, which is a different and worth-saying thing.
-const unverifiable = [
-  {
-    claim: claim(
-      "src/lib/case-study.ts",
-      /value:\s*"([\d+]+)",\s*label:\s*"vacancies handled"/,
-      "vacancies handled",
-    ),
-    why: "lives in the production database; the public API exposes only /health",
-  },
-];
+// its own coverage — the same failure as a green tick over an unread test.
+//
+// "380+ vacancies handled" is counted in the production database. There are no
+// credentials for it in the repo (correct), the dev DATABASE_URL points at a
+// localhost that isn't running, and the public API exposes only /health, which
+// returns {"status":"ok","timestamp"} and nothing countable. So the number
+// cannot be reproduced by a reader — or by this script.
+//
+// What CAN be enforced is the honesty about it. Every other number on the page
+// names a command a reader can run; this one must name its source and admit it
+// is not reproducible. That disclosure is the claim's licence to stay, so it is
+// checked like any other claim and cannot quietly disappear.
+const VACANCIES = /value:\s*"([\d+]+)",\s*\n?\s*label:\s*"vacancies handled",[\s\S]{0,800}?footnote:\s*"([^"]+)"/;
+const vacancies = readFileSync("src/lib/case-study.ts", "utf8").match(VACANCIES);
+record(
+  "vacancies · out of reach, and says so",
+  !!vacancies && /production database/i.test(vacancies[2]),
+  vacancies
+    ? `"${vacancies[1]}" · footnote: "${vacancies[2]}"`
+    : "the vacancies metric has no footnote naming its source — it is the one number here a reader cannot check, and it must say so",
+);
+const unverifiable = vacancies
+  ? [
+      {
+        claim: vacancies[1],
+        why: "counted in the production database; no credentials in the repo, and the public API exposes only /health",
+      },
+    ]
+  : [];
 
 // ── report ───────────────────────────────────────────────────────────────────
 const pad = Math.max(...results.map((r) => r.name.length));

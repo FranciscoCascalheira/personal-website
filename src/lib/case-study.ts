@@ -30,7 +30,16 @@ export const abstract = {
       // merged: my work, but not the platform the council uses.
       footnote: "git shortlog -sn master: one author",
     },
-    { value: "380+", label: "vacancies handled" },
+    {
+      value: "380+",
+      label: "vacancies handled",
+      // The only figure on this page that cannot be checked from outside: it is
+      // counted in the production database, which is not mine to open. Every
+      // other number here names a command a reader can run. This one says so
+      // instead — the same convention as fig. 3's reconciliation, which prints
+      // the count it cannot reproduce rather than quietly rounding it away.
+      footnote: "counted in the production database — not reproducible from outside",
+    },
     { value: "12", label: "relational models" },
     { value: "3", label: "portals: candidate · company · admin" },
   ],
