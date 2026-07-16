@@ -12,13 +12,29 @@
  *   - the colophon's "≈ 310 kB, measured at build" had drifted to 316 kB.
  *
  * So this checks every hard claim against the thing it claims to describe, and
- * fails loudly. Two rules it lives by:
+ * fails loudly. Three rules it lives by:
  *
  *   1. A claim that cannot be located is a FAILURE, never a pass. If a regex
  *      stops matching because the prose moved, the check must go red — a
  *      verifier that silently matches nothing is worse than no verifier.
  *   2. Verify with the command the site actually prints next to the number.
  *      That is precisely where 308 went wrong.
+ *   3. A command can only prove arithmetic. It cannot prove that the column
+ *      means what its name suggests.
+ *
+ * Rule 3 was bought on 16 July 2026, at the cost of the second wrong number in
+ * a week. "138 positions" was `sum(slot_number)` and this script was GREEN on
+ * it: it ran the same query the site printed, got the same answer, and agreed.
+ * Both were wrong, because slot_number is the slot's LABEL (`1 | 2`), not a
+ * count — the route writes one vacancy row per slot and validates the labels for
+ * uniqueness. Summing them answers nothing. The check and the claim shared a
+ * misreading, so the check could never catch it.
+ *
+ * What caught it was a source with no assumptions in common: the council's own
+ * published minutes, which count 90 admitted positions where the site's arithmetic
+ * implied 138. Hence the two checks added below — the invariant that proves
+ * slot_number is an ordinal (so the bug cannot return quietly), and the liveness
+ * of every public-record URL the site cites. A dead citation is a false citation.
  *
  * Run: npm run verify:claims   (needs ~/TERA-LINKR; skips cleanly without it,
  * so the Railway build does not depend on a repo that isn't there)
@@ -239,31 +255,77 @@ record(
 );
 
 // ── the production figures ───────────────────────────────────────────────────
-// This one was the worst of them. The site said "380+ vacancies handled" and
-// the production database says 99 vacancies / 138 positions — a claim about a
-// public client's programme, overstated ~4x on the landing page, for months. It
-// survived because everyone (me included) assumed the database was out of
-// reach. It never was: TERA-LINKR lives in a Railway project named
-// `patient-flow`, which is why searching for its own name found nothing.
+// The most expensive claim on the site. It has been wrong twice.
 //
-// So it is checked against production when the Railway CLI can reach it, and
-// declared out of reach when it cannot — never silently skipped.
-const POSITIONS = /value:\s*"(\d+)",\s*\n?\s*label:\s*"positions across (\d+) vacancies",[\s\S]{0,900}?footnote:\s*"([^"]+)"/;
-const pos = readFileSync("src/lib/case-study.ts", "utf8").match(POSITIONS);
+//   "380+ vacancies handled" — matched nothing in production, for months. It
+//   survived because everyone (me included) assumed the database was out of
+//   reach. It never was: TERA-LINKR lives in a Railway project named
+//   `patient-flow`, which is why searching for its own name found nothing.
+//
+//   "138 positions" — sum(slot_number), which is the sum of slot LABELS. This
+//   script checked it against production and passed it, because the query and
+//   the claim were the same misreading.
+//
+// It is now claimed in two places, and both are checked: the 308 bug survived
+// precisely because the claim sites drifted apart one at a time.
+const POSITIONS = [
+  ["src/lib/case-study.ts", /value:\s*"(\d+)",\s*\n?\s*label:\s*"internship positions",[\s\S]{0,1400}?footnote:\s*"([^"]+)"/, "abstract metric"],
+  ["src/lib/data.ts", /\{\s*value:\s*"(\d+)",\s*label:\s*"internship positions"\s*\}/, "data.ts metric"],
+];
 
+const claimed = [];
+for (const [file, re, what] of POSITIONS) {
+  const text = readFileSync(file, "utf8");
+  const m = text.match(re);
+  if (!m) {
+    record(`positions · ${what}`, false, `could not find the claim in ${file} — check moved or broke`);
+    continue;
+  }
+  claimed.push({ what, value: m[1], footnote: m[2] });
+}
+
+// The footnote must name what is being counted, and when. The programme is live;
+// this is a snapshot, not a constant. It must also NOT name sum(slot_number)
+// again — that is the bug, written down.
+const withNote = claimed.find((c) => c.footnote);
 record(
-  "positions · footnote names the query and a date",
-  !!pos && /slot_number/.test(pos[3]) && /\d{1,2} \w{3} \d{4}/.test(pos[3]),
-  pos
-    ? `"${pos[1]}" positions / "${pos[2]}" vacancies · footnote: "${pos[3]}"`
-    : "the positions metric is missing, or its footnote no longer names sum(slot_number) and a date — the programme is live, so this figure is a dated snapshot and must say when",
+  "positions · footnote names the count and a date",
+  !!withNote &&
+    /count\(\*\)/.test(withNote.footnote) &&
+    !/sum\(slot_number\)/.test(withNote.footnote) &&
+    /\d{1,2} \w{3} \d{4}/.test(withNote.footnote),
+  withNote
+    ? `"${withNote.value}" · footnote: "${withNote.footnote}"`
+    : "the positions footnote is missing, or it names sum(slot_number) again — slot_number is the slot's label, not a count",
 );
 
+// Every site that claims it must agree with every other.
+if (claimed.length > 1) {
+  const values = [...new Set(claimed.map((c) => c.value))];
+  record(
+    "positions · every claim site agrees",
+    values.length === 1,
+    values.length === 1
+      ? `${claimed.length} sites, all say ${values[0]}`
+      : claimed.map((c) => `${c.what}=${c.value}`).join(" · "),
+  );
+}
+
 const unverifiable = [];
-if (pos) {
+if (claimed.length) {
   // Aggregate counts only. That database holds real data on people aged 18–21.
+  //
+  // Two queries, not one. The count is what the site claims. The invariant is
+  // what makes the count MEAN anything: if slot_number is a label numbered 1..n
+  // within each company, then max(slot_number) = count(*) for every company and
+  // its values are distinct. That held for 60 of 60 companies, which is how the
+  // ordinal was proven. If someone ever "fixes" this back to a sum, the
+  // invariant is the thing that says why they must not.
   const sql =
-    "select (select coalesce(sum(slot_number),0) from vacancies)::text || ' ' || (select count(*) from vacancies)::text";
+    "select (select count(*) from vacancies)::text || ' ' || " +
+    "(select count(*) from (select company_id from vacancies group by 1 " +
+    " having max(slot_number) = count(*) and count(distinct slot_number) = count(*)) t)::text || ' ' || " +
+    "(select count(distinct company_id) from vacancies)::text";
   let live = null;
   try {
     live = execFileSync(
@@ -278,23 +340,122 @@ if (pos) {
     live = null;
   }
 
-  const m = live?.match(/^(\d+)\s+(\d+)$/);
+  const m = live?.match(/^(\d+)\s+(\d+)\s+(\d+)$/);
   if (m) {
-    const [, positions, vacancies] = m;
-    const ok = positions === pos[1] && vacancies === pos[2];
+    const [, rows, ordinal, companies] = m;
+    const ok = claimed.every((c) => c.value === rows);
     record(
       "positions · checked against production",
       ok,
       ok
-        ? `${positions} positions across ${vacancies} vacancies — matches`
-        : `site claims ${pos[1]}/${pos[2]}, production says ${positions}/${vacancies} — the programme moved, or the claim did`,
+        ? `${rows} vacancy rows — matches`
+        : `site claims ${claimed.map((c) => c.value).join("/")}, production has ${rows} rows — the programme moved, or the claim did`,
+    );
+    record(
+      "positions · slot_number is still an ordinal, not a count",
+      ordinal === companies,
+      ordinal === companies
+        ? `${ordinal}/${companies} companies label their slots 1..n — one row per position, so count(*) is the figure`
+        : `only ${ordinal}/${companies} companies label slots 1..n — the column's meaning changed; re-read the route that writes it before trusting any figure here`,
     );
   } else {
     unverifiable.push({
-      claim: `${pos[1]} positions across ${pos[2]} vacancies`,
+      claim: `${claimed[0].value} internship positions`,
       why: "the Railway CLI could not reach production from here; the figure is a dated snapshot — re-check with `npm run verify:claims` where railway is logged in",
     });
   }
+}
+
+// ── the public record ────────────────────────────────────────────────────────
+// The site is called a public record and, until 16 July 2026, cited none: every
+// figure was checked against a repo nobody can clone and a database nobody can
+// open. These are the council's own documents, and they are the only evidence
+// here a sceptic can reach without me. A citation that 404s is worse than none —
+// it is a claim that there is evidence, which there then isn't.
+//
+// NOT a status-code check. cm-porto.pt returns **200 with an error page** for a
+// document it does not have — `/files/uploads/cms/NOPE.pdf` answers 200 — so the
+// first version of this passed a deliberately-invented 404 URL and reported the
+// citations healthy. Three of the four citations live on that host. A check that
+// cannot tell a document from an apology is decoration.
+//
+// So each citation declares `proof`: a string that must appear in the response.
+// jpn.up.pt serves 403 without a browser UA and cm-porto.pt is slow; both are
+// handled here rather than reported as rot.
+const CITED = [
+  ...readFileSync("src/lib/case-study.ts", "utf8").matchAll(
+    /url:\s*"(https?:\/\/[^"]+)"[\s\S]{0,400}?proof:\s*"([^"]+)"/g,
+  ),
+].map((m) => ({ url: m[1], proof: m[2] }));
+const urlCount = [...readFileSync("src/lib/case-study.ts", "utf8").matchAll(/url:\s*"https?:\/\//g)].length;
+
+if (!CITED.length) {
+  record("public record · citations present", false, "no url/proof pairs in case-study.ts — the check moved, or the citations were removed");
+} else if (CITED.length !== urlCount) {
+  // A citation without a proof would be checked by nothing at all.
+  record("public record · every citation declares its proof", false, `${urlCount} urls but ${CITED.length} proofs`);
+} else {
+  const UA =
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36";
+  const dead = [];
+  for (const { url, proof } of CITED) {
+    let body = "";
+    let code = "000";
+    try {
+      body = execFileSync(
+        "curl",
+        ["-sS", "-L", "--max-time", "45", "-A", UA, "-w", "\\n%{http_code}", url],
+        { encoding: "latin1", stdio: ["ignore", "pipe", "ignore"], timeout: 60_000, maxBuffer: 32 * 1024 * 1024 },
+      );
+      code = body.trimEnd().split("\n").pop().trim();
+    } catch {
+      code = "000";
+    }
+    // The body is read as latin1 so a PDF survives the trip as bytes. That makes
+    // it a byte string, so the needle has to be bytes too — matched as UTF-8 text
+    // it would miss its own á and call a live citation dead.
+    const needle = Buffer.from(proof, "utf8").toString("latin1");
+    if (code !== "200") dead.push(`${url} → HTTP ${code}`);
+    else if (!body.includes(needle)) dead.push(`${url} → 200 but no “${proof}” in it`);
+  }
+  record(
+    "public record · every cited source is still the document cited",
+    dead.length === 0,
+    dead.length === 0
+      ? `${CITED.length} cited, ${CITED.length} answering with what they are supposed to say`
+      : `dead: ${dead.join(" · ")}`,
+  );
+}
+
+// ── the claim no command can check ───────────────────────────────────────────
+// "Available for work" cannot be verified by anything. It can only be re-stated.
+// So it expires: 90 days after the date it carries, this goes red and someone
+// has to look at it and mean it again. See the note in src/lib/site.ts.
+// Anchored to the availability BLOCK, not to the word: the first version of this
+// matched `open: false` inside the doc comment two lines above the real value,
+// read the site as closed, and skipped itself in silence — a check that did not
+// run and did not say so, which is the one thing this file is against. The same
+// bug as `@theme inline {`. Match the code, never the prose about the code.
+const siteSrc = readFileSync("src/lib/site.ts", "utf8");
+const block = siteSrc.match(/availability:\s*\{([\s\S]*?)\}/);
+const openM = block?.[1].match(/open:\s*(true|false)/);
+const asOfM = block?.[1].match(/asOf:\s*"(\d{4}-\d{2}-\d{2})"/);
+if (!openM || !asOfM) {
+  record("availability · locatable", false, "could not read site.availability from src/lib/site.ts");
+} else if (openM[1] === "false") {
+  // Not a skip. Declining to claim is itself the claim, and it gets a line.
+  record("availability · not claimed", true, "open: false — the site does not say it is available");
+} else {
+  const days = Math.floor((Date.now() - Date.parse(`${asOfM[1]}T00:00:00Z`)) / 86_400_000);
+  record(
+    "availability · re-stated within 90 days",
+    days <= 90 && days >= 0,
+    days < 0
+      ? `asOf ${asOfM[1]} is in the future`
+      : days <= 90
+        ? `"available for work" stated ${asOfM[1]}, ${days} day${days === 1 ? "" : "s"} ago`
+        : `"available for work" was last stated ${asOfM[1]}, ${days} days ago — say it again or set open: false`,
+  );
 }
 
 // ── report ───────────────────────────────────────────────────────────────────

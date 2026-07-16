@@ -2,6 +2,22 @@
 // (solo commit counts, production status, aggregate vacancy counts). No repo
 // links to employer IP; case studies describe, they don't expose.
 
+/** Three states, and each one is a fact about who depends on the thing:
+ *
+ *    In production  — people who are not me depend on it today.
+ *    In development — it is being written now.
+ *    Delivered      — handed over and accepted; nobody is adding to it.
+ *
+ *  The rungs used to be "In production | Shipped | Delivered", which read like a
+ *  ladder and defined nothing. "Shipped" was the worst of them: it dressed a
+ *  demo on a generated subdomain in the same word as a municipal platform with
+ *  real users, and it sat on a card whose own summary said "ready to deploy".
+ *  A word that flatters every rung equally is not a status. It is decoration. */
+export type Status = "In production" | "In development" | "Delivered";
+
+export const statusLegend =
+  "In production — someone other than me depends on it today · In development — being written now · Delivered — handed over, accepted, finished";
+
 export type Project = {
   slug: string;
   index: string;
@@ -10,7 +26,7 @@ export type Project = {
   client?: string;
   year: string;
   role: string;
-  status: "In production" | "Shipped" | "Delivered";
+  status: Status;
   summary: string;
   contributions: string[];
   stack: string[];
@@ -49,7 +65,7 @@ export const projects: Project[] = [
     ],
     metrics: [
       { value: "294", label: "solo commits" },
-      { value: "138", label: "positions handled" },
+      { value: "99", label: "internship positions" },
       { value: "12", label: "data models" },
       { value: "Live", label: "in production" },
     ],
@@ -60,10 +76,15 @@ export const projects: Project[] = [
     name: "UniSpot",
     tagline: "A clock-in kiosk and HR back office",
     year: "2026",
-    role: "Sole developer",
-    status: "Shipped",
+    // Was "Sole developer" with a metric reading "223 solo commits". Neither was
+    // true: `git log` on the repo says 279 commits — 254 mine, 22 João Ferreira's,
+    // 3 André Grasslin's — and 223 was not the count of anything. On a site whose
+    // headline is that I built one thing alone, claiming I built everything alone
+    // is the cheapest way to make the true claim worthless.
+    role: "Lead developer — 254 of 279 commits, with two colleagues",
+    status: "In development",
     summary:
-      "A mobile-first attendance product: a PIN-unlocked kiosk terminal for clocking in and out, an admin back office for HR to review and correct records, and one-click Excel export. Built end to end on the modern Next.js stack and ready to deploy.",
+      "A mobile-first attendance product: a PIN-unlocked kiosk terminal for clocking in and out, an admin back office for HR to review and correct records, and one-click Excel export. It runs as a demo on a generated Railway subdomain and is written to be installed white-label; no client has installed it yet, and it is still being written.",
     contributions: [
       "Built the kiosk flow, the admin back office and the correction tooling as a single Next.js 15 app.",
       "Modelled attendance and shifts in Prisma/PostgreSQL with server-side validation.",
@@ -78,7 +99,7 @@ export const projects: Project[] = [
       "Railway",
     ],
     metrics: [
-      { value: "223", label: "solo commits" },
+      { value: "254", label: "of 279 commits" },
       { value: "Kiosk", label: "+ back office" },
       { value: "Excel", label: "export" },
     ],
@@ -88,9 +109,14 @@ export const projects: Project[] = [
     index: "03",
     name: "EngineHER",
     tagline: "A mentorship app tackling the gender gap in engineering",
-    year: "2025",
-    role: "Architecture & integration — team of 5",
-    status: "Shipped",
+    // 2025 was wrong: the repository was created 25 Feb 2026 and its four
+    // releases are dated April and May 2026. The course is LEIC-ES 2025/26 —
+    // the academic year, not the calendar one. An off-by-one that quietly aged
+    // the work by twelve months in the wrong direction.
+    year: "2026",
+    // nbsp: "team of 5" broke across lines and left "OF 5" orphaned on its own
+    role: "Architecture & integration — team of 5",
+    status: "Delivered",
     summary:
       "A Flutter mobile app connecting female engineering students with mentors and role models. Built across three Agile sprints by a team of five, with a real CI pipeline and a thorough automated test suite. My focus was the architecture — data flow, system structure and the integration between components.",
     contributions: [
@@ -103,27 +129,6 @@ export const projects: Project[] = [
       { value: "4", label: "releases" },
       { value: "80+", label: "automated tests" },
       { value: "5", label: "person team" },
-    ],
-  },
-  {
-    slug: "space-invaders",
-    index: "04",
-    name: "Space Invaders",
-    tagline: "A terminal arcade game, engineered properly",
-    year: "2025",
-    role: "Co-developer — team of 2",
-    status: "Delivered",
-    summary:
-      "A classic arcade game rebuilt in Java for the terminal, used as a vehicle for clean software design. MVC architecture, applied design patterns, seeded gameplay and progressive difficulty — with full unit and integration test coverage.",
-    contributions: [
-      "Structured the game around MVC with deliberate use of design patterns.",
-      "Implemented seeded gameplay, multiple states and progressive difficulty.",
-      "Wrote unit and integration tests with JUnit and JaCoCo coverage.",
-    ],
-    stack: ["Java", "Lanterna", "Gradle", "JUnit", "JaCoCo"],
-    metrics: [
-      { value: "MVC", label: "architecture" },
-      { value: "Full", label: "test coverage" },
     ],
   },
 ];
@@ -141,7 +146,7 @@ export const trajectory: Experience[] = [
     role: "Software Developer",
     org: "Universal Linker",
     period: "Feb 2026 — Present",
-    note: "Sole developer of a recruitment platform in production for Câmara Municipal do Porto; solo build of UniSpot; contributor to the company product.",
+    note: "Sole developer of a recruitment platform in production for Câmara Municipal do Porto; lead developer of UniSpot; contributor to the company product.",
     kind: "work",
   },
   {

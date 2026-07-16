@@ -5,6 +5,7 @@ import { LiveStatusHeader } from "./LiveStatus";
 import { MagneticLink } from "./MagneticLink";
 import { Fig0Plate } from "./Fig0Plate";
 import { Fig0Depth } from "./Fig0Depth";
+import { publicRecord } from "@/lib/case-study";
 import { site } from "@/lib/site";
 
 type Proof = {
@@ -126,9 +127,28 @@ export function Hero({ proof }: { proof: Proof }) {
               </div>
               <dl>
                 {[
-                  { k: "Client", v: "Câmara Municipal do Porto" },
+                  {
+                    k: "Client",
+                    /* The one line here a stranger can check without me: the
+                       council's own programme page. It does not name me — it
+                       establishes that the programme, and the platform it
+                       points at, are real. */
+                    v: (
+                      <a
+                        href={publicRecord[0].url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="link-quiet"
+                      >
+                        Câmara Municipal do Porto
+                        <span className="ml-1 text-text-faint" aria-hidden>
+                          ↗
+                        </span>
+                      </a>
+                    ),
+                  },
                   { k: "Commits", v: "294 — sole author, verified by git" },
-                  { k: "Vacancies", v: "99 in production — 138 positions" },
+                  { k: "Positions", v: "99 in production — 60 placed" },
                   { k: "Stack", v: "TS · Node · Postgres · React" },
                 ].map((row) => (
                   <div

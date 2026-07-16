@@ -58,7 +58,11 @@ export function Nav() {
           <button
             type="button"
             onClick={openPalette}
-            aria-label="Open command palette"
+            /* The visible label IS the shortcut, so the accessible name has to
+               contain it (WCAG 2.5.3): a voice-control user says what they can
+               read. It also tells a screen-reader user the shortcut, which
+               aria-keyshortcuts alone does not reliably do. */
+            aria-label={`Open command palette, ${isMac ? "⌘K" : "Ctrl K"}`}
             aria-keyshortcuts="Meta+K Control+K"
             className="group hidden items-center gap-2 border border-border py-1.5 pl-3 pr-1.5 text-text-muted transition-colors hover:border-border-strong hover:text-text sm:inline-flex"
           >

@@ -5,6 +5,59 @@
 // candidate data or credentials. Field lists are categorical summaries, not
 // column dumps.
 
+/** The public record.
+ *
+ *  This document is called a public record and, until 16 July 2026, cited none.
+ *  Every figure on it was checked on my machine, against a repository nobody
+ *  else can clone and a database nobody else can open. A sceptic could not
+ *  reproduce one of them.
+ *
+ *  The council publishes its own. Its jury's minutes are signed, dated and
+ *  hosted on cm-porto.pt, and they agree with the database — including where
+ *  the database was misread (see the positions metric). They do not name me:
+ *  they corroborate the programme, the platform and the numbers, and authorship
+ *  remains git's word against nobody's. That distinction is the point.
+ *
+ *  Every source here is checked by `npm run verify:claims`. A dead citation is a
+ *  false citation — it asserts that evidence exists, which is a worse lie than
+ *  silence. `proof` is what must come back in the response: cm-porto.pt answers
+ *  **200 with an error page** for documents it does not have, so a status code
+ *  proves nothing at all. The first version of that check passed a URL I had
+ *  invented to make it fail. */
+export const publicRecord = [
+  {
+    id: "programme",
+    cite: "cm-porto.pt — the programme",
+    url: "https://www.cm-porto.pt/agenda-economia/tera.porto.pt",
+    attests: "5th edition · ages 18–21 · 60 financed internships",
+    proof: "opPORTOnities",
+  },
+  {
+    id: "entities",
+    cite: "Ata n.º 3 — entidades, 20 Apr 2026",
+    url: "https://www.cm-porto.pt/files/uploads/cms/Ata%20n%C2%BA%203%20opPORTOnities%20-%20Entidades.pdf",
+    attests: "60 entities applied · 55 admitted, offering 90 positions · 5 excluded, named",
+    // ponytail: %PDF proves it is a document and not the council's error page,
+    // which is the failure that actually happens. It cannot prove the document
+    // still SAYS this — Ata 6 is a scan with no text layer, so no grep could.
+    proof: "%PDF",
+  },
+  {
+    id: "allocation",
+    cite: "Ata n.º 6 — alocação final, 26 May 2026",
+    url: "https://www.cm-porto.pt/files/uploads/cms/Ata%20n%C2%BA%206%20opPORTOnities%20-%20Aloca%C3%A7%C3%A3o%20final.pdf",
+    attests: "“matching realizado em plataforma digital própria do Programa” · 60 places filled",
+    proof: "%PDF",
+  },
+  {
+    id: "platform",
+    cite: "tera-linker.com — the platform",
+    url: "https://www.tera-linker.com/",
+    attests: "where the council's own TERA site sends applicants",
+    proof: "Plataforma de estágios da Câmara Municipal do Porto",
+  },
+] as const;
+
 export const caseMeta = {
   title: "opPORTOnities",
   docId: "FC-DOSSIER 01",
@@ -31,16 +84,23 @@ export const abstract = {
       footnote: "git shortlog -sn master: one author",
     },
     {
-      value: "138",
-      label: "positions across 99 vacancies",
-      // Was "380+", which matched nothing in the production database: not
-      // vacancies (99), positions (138), applications (310) or users (353).
-      // Vacancies were created in one window, 25 Mar — 17 Apr 2026, with no
-      // deletion ever logged, so there was no hidden history behind it either.
-      // A vacancy carries slot_number positions, and positions are what the
-      // council and the companies actually count. Dated, because the programme
-      // is live and this is a snapshot, not a constant.
-      footnote: "sum(slot_number) in production · 16 Jul 2026",
+      value: "99",
+      label: "internship positions",
+      // The third number to stand here, and the first that survives its own
+      // sources. "380+" matched nothing in production. "138" was sum(slot_number)
+      // — and slot_number is the slot's LABEL, not a count: the type is `1 | 2`,
+      // the route validates the set of them for uniqueness, and it writes one
+      // vacancy row per slot. Summing labels is meaningless; 138 is 60 ones plus
+      // 39 twos. verify-claims was green on it, because the check ran the same
+      // command the claim did and inherited the same misreading.
+      //
+      // What caught it was a source with no assumptions in common: the council's
+      // own minutes. Ata n.º 3 admits 55 entities offering 90 opportunities; the
+      // table is 60 rows here, 55 there, and the nine-position gap is exactly the
+      // five entities it excludes by name. Count the rows. Dated, because the
+      // programme is live and this is a snapshot, not a constant.
+      footnote: "count(*) from vacancies — one row per slot · 16 Jul 2026",
+      record: "entities",
     },
     { value: "12", label: "relational models" },
     { value: "3", label: "portals: candidate · company · admin" },
@@ -136,20 +196,21 @@ export const schemaModels: SchemaModel[] = [
       "contacts (primary + secondary)",
       "vetting documents (commercial registry, tax standing)",
       "status: PENDING_APPROVAL → ACTIVE | INACTIVE",
-      "maxVacancies — admin-set quota",
+      "maxVacancies — how many slots it asked for: 1 or 2",
     ],
     relations: [
       { to: "user", label: "belongs to" },
       { to: "vacancy", label: "1—N" },
     ],
-    note: "Companies are vetted too: the council approves each one and sets how many vacancy slots it may publish. The quota lives in the database, not in a policy PDF.",
+    note: "Companies are vetted too. A company declares how many interns it wants while its application is pending, and that answer freezes the moment the council approves it — the route refuses to move a slot afterwards. The council ratifies the number; it does not choose it.",
   },
   {
     id: "vacancy",
     name: "Vacancy",
     domain: "matching",
-    purpose: "An internship offer inside a company's quota.",
+    purpose: "One internship position. A company asking for two gets two rows.",
     fields: [
+      "slotNumber — this slot's label within the company: 1 or 2",
       "title, description, requirements",
       "desired skills, schedule, benefits",
       "supervisor contact",
@@ -160,7 +221,7 @@ export const schemaModels: SchemaModel[] = [
       { to: "application", label: "1—N" },
       { to: "match", label: "1—N" },
     ],
-    note: "Vacancies pass through admin review before publication — the council curates what young people see.",
+    note: "One row, one position: the table is the count. slotNumber labels a company's slots so its two postings can be told apart — it is an ordinal, and adding them up answers nothing. This site published that sum as a headline figure for a day; the council's minutes are what caught it.",
   },
   {
     id: "application",
@@ -330,7 +391,8 @@ export const decisions = [
 
 export const outcome = {
   paragraphs: [
-    "The platform is in production, serving candidates, companies and municipal staff through three portals. It has handled 99 vacancies — 138 positions — for 62 companies, and confirmed 62 placements. Before each release I run a smoke-test suite against the live API; before the biggest one I audited the whole platform and fixed everything I found, because nobody else was going to. That audit is fig. 3, recounted from its own diff.",
+    "The platform is in production, serving candidates, companies and municipal staff through three portals. It holds 99 internship positions from 60 companies and 310 applications, and 62 placements have been confirmed on it — 60 of them still standing. Before each release I run a smoke-test suite against the live API; before the biggest one I audited the whole platform and fixed everything I found, because nobody else was going to. That audit is fig. 3, recounted from its own diff.",
+    "Those figures have a second source, which is the only reason to believe them. The council's jury received 60 entity applications and admitted 55, offering 90 positions; the five it excluded account for the nine-position difference, and it names them. Its final allocation, signed on 26 May, calls the placements the result of “o processo de matching realizado em plataforma digital própria do Programa” and fills the 60 places the executive approved on 17 March. The database says 60 active placements. Neither document mentions me — they are the council's account of its own programme, and they were written without reference to this page.",
     "The stack is deliberately boring: Express, Prisma, PostgreSQL, a React SPA, and a shared types package so the API contract is one set of Zod schemas consumed by both sides. Boring bought me speed as a solo developer — every hour spent fighting a clever framework is an hour the council doesn't get.",
   ],
 } as const;

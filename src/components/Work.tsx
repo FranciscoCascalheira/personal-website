@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { projects } from "@/lib/data";
+import { projects, statusLegend } from "@/lib/data";
 import { Reveal } from "./Reveal";
 import { Section } from "./Section";
 
@@ -75,7 +75,13 @@ function ExhibitIndex() {
         <Reveal
           key={p.slug}
           delay={i * 60}
-          className="grid gap-2 border-t border-border py-6 sm:grid-cols-[90px_1.1fr_1.6fr_auto] sm:items-baseline sm:gap-6"
+          /* The status column is pinned, not `auto`. Each row is its own grid
+             container (Reveal wraps it to stagger the entrance), so an `auto`
+             track sized itself to its own row's text — "2026 · In development"
+             is 43px wider than "2026 · Delivered" — and that difference fed back
+             through the fr columns until no two rows shared a column position.
+             A ledger's entire claim is that it is a table. */
+          className="grid gap-2 border-t border-border py-6 sm:grid-cols-[90px_1.1fr_1.6fr_12rem] sm:items-baseline sm:gap-6"
         >
           <span className="mono-label">{`Exhibit ${"BCD"[i] ?? ""}`}</span>
           <div>
@@ -91,6 +97,11 @@ function ExhibitIndex() {
         </Reveal>
       ))}
       <Rule />
+      {/* A ledger states its units. Three status words that read like a ladder
+          and define nothing are decoration; these are the definitions. */}
+      <p className="mt-3 font-mono text-[0.68rem] leading-relaxed text-text-faint">
+        {statusLegend}
+      </p>
     </div>
   );
 }

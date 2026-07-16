@@ -17,6 +17,7 @@ import {
   constraints,
   decisions,
   outcome,
+  publicRecord,
 } from "@/lib/case-study";
 import { getProductionStatus } from "@/lib/proof";
 import { site } from "@/lib/site";
@@ -135,10 +136,54 @@ export default async function CaseStudyPage() {
                   { k: "Programme", v: caseMeta.programme },
                   { k: "Role", v: caseMeta.role },
                   { k: "Stack", v: caseMeta.stack },
+                  {
+                    k: "Public record",
+                    /* The provenance row. Everything above is my account of my
+                       own work; this is the council's, published on its own
+                       domain, and it is the only evidence here that does not
+                       depend on trusting me. */
+                    v: (
+                      <ul className="space-y-1.5">
+                        {publicRecord.map((r) => (
+                          <li key={r.id}>
+                            {/* Full ink, not link-quiet: these citations were
+                                reading quieter than the inert text beside them,
+                                so the only checkable evidence in the block was
+                                also the faintest thing in it. accent-underline
+                                is the house's link verb. */}
+                            <a
+                              href={r.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="accent-underline text-text"
+                            >
+                              {r.cite}
+                              <span className="ml-1 text-text-faint" aria-hidden>
+                                ↗
+                              </span>
+                            </a>
+                            <span className="mt-0.5 block font-mono text-[0.68rem] leading-relaxed text-text-faint">
+                              {r.attests}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    ),
+                  },
                 ].map((row) => (
                   <div
                     key={row.k}
-                    className="grid grid-cols-[110px_1fr] items-baseline gap-4 border-t border-border py-3 text-sm sm:grid-cols-[140px_1fr]"
+                    /* The public-record row stacks below sm: on a 390px phone a
+                       110px label gutter left the citations ~224px of measure,
+                       which wrapped every one of them and turned a mono gloss
+                       into a three-line mono paragraph. Mono is for glancing at,
+                       not reading. The other rows are short enough to keep the
+                       two-column docket. */
+                    className={`grid items-baseline gap-x-4 border-t border-border py-3 text-sm sm:grid-cols-[140px_1fr] ${
+                      row.k === "Public record"
+                        ? "gap-y-2 sm:gap-y-0"
+                        : "grid-cols-[110px_1fr]"
+                    }`}
                   >
                     <dt className="mono-label">{row.k}</dt>
                     <dd className="text-text">{row.v}</dd>
@@ -168,9 +213,36 @@ export default async function CaseStudyPage() {
                     {m.value}
                   </dt>
                   <dd className="mono-label mt-3">{m.label}</dd>
+                  {/* Mono, matching the public-record gloss exactly. These lines
+                      are literal machine text — `count(*) from vacancies`,
+                      `git shortlog -sn master` — and mono is this document's
+                      voice for evidence. They were set in the body face while
+                      mono was spent on the label above them, which is backwards. */}
                   {"footnote" in m && m.footnote ? (
-                    <dd className="mt-1 text-xs text-text-faint">
+                    <dd className="mt-1 font-mono text-[0.68rem] leading-relaxed text-text-faint">
                       {m.footnote}
+                    </dd>
+                  ) : null}
+                  {/* the citation sits with the figure it confirms, not in a
+                      bibliography nobody scrolls to */}
+                  {"record" in m && m.record ? (
+                    <dd className="mt-1 text-xs">
+                      {publicRecord
+                        .filter((r) => r.id === m.record)
+                        .map((r) => (
+                          <a
+                            key={r.id}
+                            href={r.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="link-quiet"
+                          >
+                            {r.cite}
+                            <span className="ml-1 text-text-faint" aria-hidden>
+                              ↗
+                            </span>
+                          </a>
+                        ))}
                     </dd>
                   ) : null}
                 </div>
