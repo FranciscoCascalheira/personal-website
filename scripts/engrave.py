@@ -11,11 +11,14 @@ follow the light). Numbers mirror src/lib/bust-scene.ts.
 
 Usage:
   python scripts/engrave.py in.jpg out-light.png out-dark.png \
-      [fx fy [zoom]] [document] [p45]
+      [fx fy [zoom]] [document] [p45] [matte]
   fx fy    crop focus in source fractions (default 0.5 0.42)
   zoom     tighten the crop around the focus (default 1.0)
   document duotone reproduction for printed matter (no line work)
   p45      4:5 plate (the author's About column) instead of 4:3
+  matte    cut the sitter off a photographic ground (needs opencv)
+
+Requires pillow + numpy; `matte` additionally needs opencv-python.
 """
 
 import re
@@ -34,16 +37,72 @@ AA = 0.75
 INK_LIGHT_THEME = (25, 21, 16)  # --text on ivory
 INK_DARK_THEME = (240, 233, 218)  # --text on the night edition
 
+# The night plate's tonal lift, applied to a matted sitter only. See sitter_mask:
+# a photographed sitter's face sits mid-range, and white-line work only starts
+# inking at 0.52. Painters put the face at the top of the range; a camera and a
+# ceiling light do not. This puts it back where the ink is.
+MATTE_NIGHT_LIFT = 0.6
+
 
 def smoothstep(lo, hi, x):
     t = np.clip((x - lo) / (hi - lo), 0.0, 1.0)
     return t * t * (3 - 2 * t)
 
 
-def prepare(path, focus=None, zoom=1.0):
+def sitter_mask(path):
+    """Cut the sitter off a photographic ground. Returns a feathered 0..1 mask.
+
+    Every other plate here is a painting or a studio portrait, where the sitter is
+    lit and the ground recedes. White-line work depends on that: it inks the
+    brightest thing, which in five centuries of portraiture is the face.
+
+    The author's plate is a snapshot against a bright wall under a flat light, so
+    the wall is brighter than the face and the night edition inked the WALL and
+    skipped the sitter — a glowing oval with a dark mass where a person should
+    be. No crop and no tonal window can fix that: anything that inks a face
+    darker than its own background inks the background harder. The ground has to
+    go, and it has to go from the SOURCE. The engraver is not wrong; it was being
+    handed a portrait that no engraver would accept.
+
+    Cutting it also cleans the ivory plate, which had been quietly carrying the
+    masking tape and the wall's shadow as stray marks.
+    """
+    import cv2  # only `matte` needs it; the other 31 plates must not pay for it
+
+    src = cv2.imread(path)
+    if src is None:
+        raise SystemExit(f"matte: cannot read {path}")
+    h, w = src.shape[:2]
+    m = np.zeros((h, w), np.uint8)
+    rect = (int(w * 0.10), int(h * 0.03), int(w * 0.82), int(h * 0.96))
+    cv2.grabCut(src, m, rect, np.zeros((1, 65), np.float64),
+                np.zeros((1, 65), np.float64), 6, cv2.GC_INIT_WITH_RECT)
+    fg = np.where((m == cv2.GC_FGD) | (m == cv2.GC_PR_FGD), 255, 0).astype(np.uint8)
+    # A sitter is one body. Anything else grabCut liked — the masking tape on the
+    # wall — is a separate blob, and keeping only the largest component drops it.
+    n, lab, stats, _ = cv2.connectedComponentsWithStats(fg, 8)
+    if n > 1:
+        fg = np.where(lab == 1 + np.argmax(stats[1:, cv2.CC_STAT_AREA]), 255, 0).astype(np.uint8)
+    fg = cv2.morphologyEx(fg, cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8))
+    # feathered: a hard cut-out edge would read as a sticker, not a plate
+    return cv2.GaussianBlur(fg.astype(np.float32) / 255.0, (0, 0), 2.5)
+
+
+def prepare(path, focus=None, zoom=1.0, mask=None, ground=None, lift=1.0):
     img = Image.open(path).convert("L")
     img = ImageOps.exif_transpose(img)
-    img = ImageOps.autocontrast(img, cutoff=1)
+    if mask is None:
+        img = ImageOps.autocontrast(img, cutoff=1)
+    else:
+        # Autocontrast the SITTER, not the frame: stretching a histogram that is
+        # mostly wall just normalises the wall. Then set the ground to whatever
+        # takes no ink in this edition, so it prints as paper (ivory) or as night.
+        g = np.asarray(img, dtype=np.float32) / 255.0
+        px = g[mask > 0.5]
+        lo, hi = np.percentile(px, 1), np.percentile(px, 99)
+        g = np.clip((g - lo) / max(hi - lo, 1e-6), 0.0, 1.0) ** lift
+        g = g * mask + ground * (1.0 - mask)
+        img = Image.fromarray((g * 255).astype(np.uint8))
     # center-crop to 4:3, biased slightly toward the top (faces sit high)
     w, h = img.size
     if zoom > 1.0:
@@ -127,6 +186,19 @@ def save(ink, rgb, path):
 
 
 def main(src, out_light, out_dark, focus=None, mode="portrait", zoom=1.0):
+    if mode == "matte":
+        # Two prints from one sitter, and the ground differs because the ink does:
+        # a white ground takes no dark ink and becomes paper; a black ground takes
+        # no light ink and becomes night. One source could never serve both — that
+        # is the whole reason this mode exists.
+        mask = sitter_mask(src)
+        save(engrave(*prepare(src, focus, zoom, mask, 1.0), light_ink=False),
+             INK_LIGHT_THEME, out_light)
+        save(engrave(*prepare(src, focus, zoom, mask, 0.0, MATTE_NIGHT_LIFT), light_ink=True),
+             INK_DARK_THEME, out_dark)
+        print(f"engraved {src} (matted) → {out_light}, {out_dark}")
+        return
+
     tone, relief = prepare(src, focus, zoom)
     if mode == "document":
         ink = reproduce_document(tone)
@@ -147,6 +219,8 @@ if __name__ == "__main__":
     nums = [a for a in args if re.match(r"^[\d.]+$", a)]
     if "document" in args:
         mode = "document"
+    if "matte" in args:
+        mode = "matte"
     zoom = 1.0
     if "p45" in args:
         # portrait plates (the author's) run 4:5 like the About column
