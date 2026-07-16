@@ -31,18 +31,20 @@ export const metadata: Metadata = {
 /** A numbered section of the record: ghost folio numeral and mono label in
  *  the margin, serif title and content hanging off the vertical rule. */
 function DocSection({
+  id,
   n,
   label,
   title,
   children,
 }: {
+  id?: string;
   n: string;
   label: string;
   title: ReactNode;
   children: ReactNode;
 }) {
   return (
-    <section className="border-t border-border">
+    <section id={id} className="scroll-mt-24 border-t border-border">
       <Container>
         <div className="grid gap-y-8 py-14 sm:py-20 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-y-0 xl:grid-cols-[260px_minmax(0,1fr)]">
           <Reveal
@@ -70,6 +72,20 @@ function DocSection({
     </section>
   );
 }
+
+/** The document's contents. Front matter: it tells a reader deciding whether
+ *  to spend twenty minutes that this is a finite, seven-part argument, and it
+ *  makes the ghost folios below read as chapter marks, not decoration. Titles
+ *  mirror the DocSection headings exactly; the gloss names what is inside. */
+const contents = [
+  { id: "abstract", n: "00", label: "Abstract", title: "What this document claims.", gloss: "the claim, and the four numbers under it" },
+  { id: "problem", n: "01", label: "The problem", title: "What the city needed.", gloss: "forms, spreadsheets, and email threads" },
+  { id: "constraints", n: "02", label: "Constraints", title: "The rules of the job.", gloss: "a live deadline, minors' data, three portals" },
+  { id: "system", n: "03", label: "The system", title: "Twelve models, one machine.", gloss: "the schema, and the application state machine" },
+  { id: "decisions", n: "04", label: "Decisions", title: "What held.", gloss: "four that held, each with its commit" },
+  { id: "audit", n: "05", label: "The audit", title: "What broke.", gloss: "the self-audit, its exhibits, the race made playable" },
+  { id: "outcome", n: "06", label: "Outcome", title: "Where it stands today.", gloss: "in production, corroborated by the council's minutes" },
+] as const;
 
 export default async function CaseStudyPage() {
   const status = await getProductionStatus();
@@ -195,8 +211,51 @@ export default async function CaseStudyPage() {
           </Container>
         </section>
 
+        {/* contents — front matter navigation. Rows share the DocSection grid
+            (folio in the margin column, title hanging off the rule) so the
+            index reads as a scale model of the document it opens. */}
+        <nav aria-label="Contents" className="border-b border-border">
+          <Container>
+            <Reveal className="py-12 sm:py-16">
+              <p className="mono-label">Contents</p>
+              <ol className="mt-8">
+                {contents.map((c) => (
+                  <li key={c.id}>
+                    <a
+                      href={`#${c.id}`}
+                      /* gap-x separates the 40px folio from the title on
+                         mobile (no rule there); at lg+ it must be 0 so the rule
+                         and titles land on the SAME x as the DocSection spine
+                         below (whose grid has no column gap) — otherwise the
+                         index hovers 24px right of the document it heads. */
+                      className="group grid grid-cols-[2.5rem_minmax(0,1fr)] items-baseline gap-x-4 border-t border-border py-4 sm:gap-x-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-x-0 xl:grid-cols-[260px_minmax(0,1fr)]"
+                    >
+                      <span className="flex items-baseline gap-3 lg:pr-10">
+                        <span className="font-mono text-sm text-text-faint tabular-nums">
+                          {c.n}
+                        </span>
+                        <span className="mono-label hidden lg:inline">
+                          {c.label}
+                        </span>
+                      </span>
+                      <span className="flex flex-wrap items-baseline gap-x-4 gap-y-1 lg:border-l lg:border-border lg:pl-12 xl:pl-16">
+                        <span className="accent-underline font-serif text-lg text-text sm:text-xl">
+                          {c.title}
+                        </span>
+                        <span className="font-mono text-[0.7rem] leading-relaxed text-text-faint">
+                          {c.gloss}
+                        </span>
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </Reveal>
+          </Container>
+        </nav>
+
         {/* 00 — abstract */}
-        <DocSection n="00" label="Abstract" title="What this document claims.">
+        <DocSection id="abstract" n="00" label="Abstract" title="What this document claims.">
           <Reveal>
             <p className="max-w-3xl text-lg leading-relaxed text-text-muted">
               {abstract.body}
@@ -252,7 +311,7 @@ export default async function CaseStudyPage() {
         </DocSection>
 
         {/* 01 — problem */}
-        <DocSection n="01" label="The problem" title="What the city needed.">
+        <DocSection id="problem" n="01" label="The problem" title="What the city needed.">
           <Reveal>
             <div className="max-w-3xl space-y-5 text-lg leading-relaxed text-text-muted">
               {problem.paragraphs.map((p) => (
@@ -263,7 +322,7 @@ export default async function CaseStudyPage() {
         </DocSection>
 
         {/* 02 — constraints */}
-        <DocSection n="02" label="Constraints" title="The rules of the job.">
+        <DocSection id="constraints" n="02" label="Constraints" title="The rules of the job.">
           <div className="grid gap-x-12 sm:grid-cols-2">
             {constraints.map((c, i) => (
               <Reveal
@@ -281,7 +340,7 @@ export default async function CaseStudyPage() {
         </DocSection>
 
         {/* 03 — the system */}
-        <DocSection n="03" label="The system" title="Twelve models, one machine.">
+        <DocSection id="system" n="03" label="The system" title="Twelve models, one machine.">
           <Reveal>
             <p className="max-w-3xl text-lg leading-relaxed text-text-muted">
               The whole platform stands on twelve Prisma models over
@@ -307,7 +366,7 @@ export default async function CaseStudyPage() {
         </DocSection>
 
         {/* 04 — what held */}
-        <DocSection n="04" label="Decisions" title="What held.">
+        <DocSection id="decisions" n="04" label="Decisions" title="What held.">
           <div className="max-w-3xl space-y-12">
             {decisions.map((d, i) => (
               <Reveal key={d.index} delay={i * 40}>
@@ -331,7 +390,7 @@ export default async function CaseStudyPage() {
         {/* 05 — what broke: the audit, its exhibits, and 3.4 made playable.
             Its own folio because it is its own argument: the decisions above
             are what I chose, this is what the choosing cost. */}
-        <DocSection n="05" label="The audit" title="What broke.">
+        <DocSection id="audit" n="05" label="The audit" title="What broke.">
           {/* fig. 3 — the audit, audited */}
           <Reveal>
             <p className="max-w-3xl text-lg leading-relaxed text-text-muted">
@@ -380,7 +439,7 @@ export default async function CaseStudyPage() {
         </DocSection>
 
         {/* 06 — outcome */}
-        <DocSection n="06" label="Outcome" title="Where it stands today.">
+        <DocSection id="outcome" n="06" label="Outcome" title="Where it stands today.">
           <Reveal>
             <div className="max-w-3xl space-y-5 text-lg leading-relaxed text-text-muted">
               {outcome.paragraphs.map((p) => (

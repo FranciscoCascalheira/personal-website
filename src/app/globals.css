@@ -395,6 +395,12 @@ html.js .reveal[data-revealed="true"] .plate-fade {
   .no-print {
     display: none !important;
   }
+  /* …except the contents index, which IS document front matter — a printed
+     dossier keeps its table of contents. More specific than the nav hide,
+     so its !important wins. */
+  nav[aria-label="Contents"] {
+    display: block !important;
+  }
 
   /* the amber flood becomes a ruled box — ink economy */
   .bg-field {
