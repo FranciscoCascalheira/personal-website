@@ -122,7 +122,8 @@ body {
   font-feature-settings: "cv11", "ss01";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  transition: background-color 0.4s ease, color 0.4s ease;
+  /* the night-edition crossfade rides the one house easing, like everything else */
+  transition: background-color 0.4s var(--ease-press), color 0.4s var(--ease-press);
 }
 
 ::selection {

@@ -29,7 +29,7 @@ export function Nav() {
 
   return (
     <header
-      className={`no-print fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
+      className={`no-print fixed inset-x-0 top-0 z-50 transition-colors duration-300 ease-[var(--ease-press)] ${
         scrolled ? "border-b border-border bg-bg" : "border-b border-transparent"
       }`}
     >

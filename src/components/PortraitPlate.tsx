@@ -140,7 +140,7 @@ export function PortraitPlate({ influence }: { influence: Influence }) {
         )}
         <div
           ref={glBoxRef}
-          className={`absolute inset-0 transition-opacity duration-300 ${
+          className={`absolute inset-0 transition-opacity duration-300 ease-[var(--ease-press)] ${
             showGl ? "opacity-100" : "pointer-events-none opacity-0"
           }`}
         />
