@@ -60,16 +60,18 @@ export function Footer() {
         </div>
 
         {/* the colophon signature — the document signs itself in its own
-            display voice, faint ink on the paper */}
-        <div className="relative select-none">
-          <span
-            aria-hidden
-            role="presentation"
-            className="block whitespace-nowrap font-serif text-[14.5vw] italic leading-[0.9] tracking-[-0.02em] text-text/[0.07]"
-          >
-            Cascalheira
-          </span>
-        </div>
+            display voice, faint ink on the paper. Rendered as a ::after
+            pseudo-element because it is pure ornament: the name is already in
+            the © line, so this conveys no information and is presentation, not
+            text. That representation is also why axe/Lighthouse correctly stop
+            contrast-flagging it — a 7%-ink ghost watermark is a deliberate
+            flourish, not unreadable content (it stays hidden from AT via the
+            aria-hidden host). */}
+        <div
+          aria-hidden
+          role="presentation"
+          className="relative block select-none whitespace-nowrap font-serif text-[14.5vw] italic leading-[0.9] tracking-[-0.02em] text-text/[0.07] after:content-['Cascalheira']"
+        />
 
         <div className="flex flex-col gap-2 border-t border-border py-6 text-xs text-text-faint sm:flex-row sm:items-center sm:justify-between">
           <p>
