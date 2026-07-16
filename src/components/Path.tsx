@@ -22,12 +22,16 @@ export function Path() {
       label="Path"
       title="How I got here."
       lede="Work, study and the things I do because I want to."
+      minor
     >
       <Reveal>
+        {/* the horizontal scroller clips the last card at the viewport edge;
+            the right-fade mask is the "more this way" affordance so the clip
+            reads as scrollable, not broken */}
         <ol
           tabIndex={0}
           aria-label="Trajectory, in reverse chronological order. Scrolls horizontally on wide screens."
-          className="flex flex-col gap-10 lg:snap-x lg:flex-row lg:gap-0 lg:overflow-x-auto lg:pb-6"
+          className="flex flex-col gap-10 lg:snap-x lg:flex-row lg:gap-0 lg:overflow-x-auto lg:pb-6 lg:[mask-image:linear-gradient(to_right,#000_92%,transparent)]"
         >
           {trajectory.map((item) => (
             <li

@@ -11,9 +11,12 @@ export function Stack() {
       index="03"
       label="Stack"
       title="The tools I reach for."
-      lede="Comfortable across the full stack — TypeScript on both ends, Postgres underneath, and whatever the problem actually needs."
+      lede="TypeScript on both ends, Postgres underneath, and whatever the problem actually needs."
+      minor
     >
-      <dl className="max-w-3xl">
+      {/* fills the content column so its right edge meets the deck's — the two
+          share a boundary and the deck reads as a deck, not a floating lede */}
+      <dl>
         {skills.map((group, i) => (
           <Reveal
             key={group.group}

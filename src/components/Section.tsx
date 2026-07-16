@@ -36,6 +36,7 @@ export function Section({
   title,
   lede,
   children,
+  minor = false,
 }: {
   id?: string;
   index: string;
@@ -43,7 +44,46 @@ export function Section({
   title: ReactNode;
   lede?: ReactNode;
   children: ReactNode;
+  /** Supporting matter, not a rival monument. A minor section drops the
+   *  display title to a quiet serif, tightens its air, and inlines its folio —
+   *  so the page has hierarchy (Work is loud; the stack that supports it is
+   *  not) and a composed rhythm instead of six equal headlines. */
+  minor?: boolean;
 }) {
+  if (minor) {
+    return (
+      <section id={id} className="scroll-mt-20 border-t border-border">
+        <Container>
+          <div className="grid gap-y-6 py-12 sm:py-14 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-y-0 xl:grid-cols-[260px_minmax(0,1fr)]">
+            <Reveal
+              as="aside"
+              className="flex items-baseline gap-3 lg:block lg:self-start lg:pr-10"
+            >
+              <p className="font-mono text-sm text-text-faint" aria-hidden>
+                {index}
+              </p>
+              <p className="mono-label lg:mt-2">{label}</p>
+            </Reveal>
+
+            <div className="lg:border-l lg:border-border lg:pl-12 xl:pl-16">
+              <Reveal className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2">
+                <h2 className="font-serif text-[clamp(1.5rem,2.4vw,2.1rem)] leading-tight text-text">
+                  {title}
+                </h2>
+                {lede ? (
+                  <p className="max-w-md text-sm leading-relaxed text-text-muted">
+                    {lede}
+                  </p>
+                ) : null}
+              </Reveal>
+              <div className="mt-8">{children}</div>
+            </div>
+          </div>
+        </Container>
+      </section>
+    );
+  }
+
   return (
     <section id={id} className="scroll-mt-20 border-t border-border">
       <Container>
