@@ -204,7 +204,7 @@ export function RaceCondition() {
         {/* A 1000-unit viewBox squeezed into a phone renders its labels at
             ~4px. Below the breakpoint the diagram keeps a legible scale and
             scrolls inside its own rail instead; print gets it whole. */}
-        <div className="-mx-1 overflow-x-auto px-1 print:overflow-visible">
+        <div className="-mx-1 overflow-x-auto overscroll-x-contain px-1 print:overflow-visible">
           <div className="min-w-[52rem] print:min-w-0">
             <RaceTimeline
               guard={guard}
@@ -236,7 +236,7 @@ export function RaceCondition() {
           </p>
         </div>
 
-        <div className="mt-3 overflow-x-auto">
+        <div className="mt-3 overflow-x-auto overscroll-x-contain">
           <table className="min-w-[26rem] border-collapse text-left font-mono text-xs">
             <thead>
               <tr className="border-b border-border">

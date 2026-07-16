@@ -97,9 +97,20 @@ export function Hero({ proof }: { proof: Proof }) {
             {/* fig. 0 — the survey plate: the system etched over the city */}
             <Reveal delay={120}>
               <figure>
-                <Fig0Depth>
-                  <Fig0Plate />
-                </Fig0Depth>
+                {/* On a phone the survey is a landscape sheet crushed to a
+                    ~195px strip: the map goes faint and every label drops under
+                    the sub-640px micro cut. Give it real width in a scroll rail
+                    (the fig. 4 idiom) — the plate renders at 40rem, ~1.8× taller
+                    and legible, and you swipe to pan the city. Above sm it is
+                    whole and full-width exactly as before, and the WebGL depth
+                    layer (fine-pointer, ≥640px only) never sees the rail. */}
+                <div className="plate-rail -mx-5 overflow-x-auto overscroll-x-contain sm:mx-0 sm:overflow-x-visible">
+                  <div className="min-w-[40rem] px-5 sm:min-w-0 sm:px-0">
+                    <Fig0Depth>
+                      <Fig0Plate />
+                    </Fig0Depth>
+                  </div>
+                </div>
                 <figcaption className="mt-4 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2 border-t border-border pt-3">
                   <span className="max-w-xl font-mono text-[0.72rem] font-medium leading-relaxed text-text-faint">
                     fig. 0 — The matching network over the seven freguesias of
@@ -109,6 +120,9 @@ export function Hero({ proof }: { proof: Proof }) {
                   </span>
                   <span className="mono-label whitespace-nowrap" aria-hidden>
                     ● candidate&ensp;□ company&ensp;— match
+                    <span className="ml-3 text-text-faint sm:hidden">
+                      · swipe →
+                    </span>
                   </span>
                 </figcaption>
               </figure>

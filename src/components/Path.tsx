@@ -31,7 +31,7 @@ export function Path() {
         <ol
           tabIndex={0}
           aria-label="Trajectory, in reverse chronological order. Scrolls horizontally on wide screens."
-          className="flex flex-col gap-10 lg:snap-x lg:flex-row lg:gap-0 lg:overflow-x-auto lg:pb-6 lg:[mask-image:linear-gradient(to_right,#000_92%,transparent)]"
+          className="flex flex-col gap-10 lg:snap-x lg:flex-row lg:gap-0 lg:overflow-x-auto lg:overscroll-x-contain lg:pb-6 lg:[mask-image:linear-gradient(to_right,#000_92%,transparent)]"
         >
           {trajectory.map((item) => (
             <li
