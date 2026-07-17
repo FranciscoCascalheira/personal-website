@@ -49,14 +49,6 @@
       "local": "src-proust.jpg",
       "note": "searched title 'Marcel Proust 1900-2.jpg' is a Commons redirect to this file"
     },
-    "thiel": {
-      "title": "File:Peter Thiel (51876933345).jpg",
-      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Peter_Thiel_%2851876933345%29.jpg/1920px-Peter_Thiel_%2851876933345%29.jpg",
-      "license": "CC BY-SA 2.0",
-      "artist": "Gage Skidmore from Surprise, AZ, United States of America",
-      "page": "https://commons.wikimedia.org/wiki/File:Peter_Thiel_(51876933345).jpg",
-      "local": "src-thiel.jpg"
-    },
     "girard": {
       "title": "File:René Girard.jpg",
       "thumb": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Ren%C3%A9_Girard.jpg",
@@ -225,6 +217,14 @@
       "artist": "Vasily Perov",
       "page": "https://commons.wikimedia.org/wiki/File:Vasily_Perov_-_%D0%9F%D0%BE%D1%80%D1%82%D1%80%D0%B5%D1%82_%D0%A4.%D0%9C.%D0%94%D0%BE%D1%81%D1%82%D0%BE%D0%B5%D0%B2%D1%81%D0%BA%D0%BE%D0%B3%D0%BE_-_Google_Art_Project.jpg",
       "local": "src-dostoevsky.jpg"
+    },
+    "machado": {
+      "title": "File:Machado de Assis by Marc Ferrez.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Machado_de_Assis_by_Marc_Ferrez.jpg/1600px-Machado_de_Assis_by_Marc_Ferrez.jpg",
+      "license": "Public domain",
+      "artist": "Marc Ferrez / Adam Cuerden",
+      "page": "https://commons.wikimedia.org/wiki/File:Machado_de_Assis_by_Marc_Ferrez.jpg",
+      "local": "src-machado.jpg"
     }
   },
   "missing": {}

@@ -150,11 +150,11 @@ export const portraitPlates: Record<string, PortraitPlate> = {
     credit: "After Olof Johan Södermark · Public domain",
     source: "https://commons.wikimedia.org/wiki/File:Stendhal.jpg",
   },
-  thiel: {
-    light: "/portraits/thiel-l1.png",
-    dark: "/portraits/thiel-d1.png",
-    credit: "After a photograph by Gage Skidmore · engraving CC BY-SA 2.0",
-    source: "https://commons.wikimedia.org/wiki/File:Peter_Thiel_(51876933345).jpg",
+  machado: {
+    light: "/portraits/machado-l1.png",
+    dark: "/portraits/machado-d1.png",
+    credit: "After a photograph by Marc Ferrez, c. 1890 · Public domain",
+    source: "https://commons.wikimedia.org/wiki/File:Machado_de_Assis_by_Marc_Ferrez.jpg",
   },
   tolstoy: {
     light: "/portraits/tolstoy-l1.png",

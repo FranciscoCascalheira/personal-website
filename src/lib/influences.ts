@@ -32,9 +32,15 @@ export type Influence = {
   };
 };
 
+// One axis only: each shelf holds one kind of thing. The old "mimetic web"
+// mixed novelists with a VC because it grouped by a theory (Girard's) rather
+// than by what the figures ARE — so Girard is now the critic filed WITH the
+// novel he explained, reaching the novelists by edges, not by cohabiting a
+// shelf with them.
 export const clusters: { id: string; label: string }[] = [
-  { id: "foundations", label: "Foundations" },
-  { id: "mimetic", label: "The mimetic web" },
+  { id: "ancients", label: "The ancients" },
+  { id: "epic", label: "The epic" },
+  { id: "novel", label: "The novel" },
   { id: "russians", label: "The Russians" },
   { id: "madrid", label: "The School of Madrid" },
   { id: "austrians", label: "The Austrians" },
@@ -43,12 +49,12 @@ export const clusters: { id: string; label: string }[] = [
 ];
 
 export const influences: Influence[] = [
-  // ── Foundations ────────────────────────────────────────────────────────
+  // ── The ancients & the epic ────────────────────────────────────────────
   {
     id: "socrates",
     name: "Socrates",
     dates: "c. 470–399 BC",
-    cluster: "foundations",
+    cluster: "ancients",
     note: "He wrote nothing. What we call Socrates is mostly Plato writing him — the most influential man on this map published zero times.",
     links: [{ to: "plato", label: "wrote him into history" }],
     bust: {
@@ -66,7 +72,7 @@ export const influences: Influence[] = [
     id: "plato",
     name: "Plato",
     dates: "c. 428–348 BC",
-    cluster: "foundations",
+    cluster: "ancients",
     note: "The cave half of the sentence at the top of this appendix. It asks what is real and answers: less than you see. I picked a degree that lives between his question and Turing's.",
     read: ["The Republic (the cave, endlessly)"],
     links: [
@@ -88,7 +94,7 @@ export const influences: Influence[] = [
     id: "homer",
     name: "Homer",
     dates: "c. 8th century BC",
-    cluster: "foundations",
+    cluster: "epic",
     note: "The Iliad and the Odyssey are the source code. Most of what I admire in literature is a fork of one of the two.",
     read: ["The Iliad", "The Odyssey"],
     links: [{ to: "camoes", label: "the epic line, Aegean to Tagus" }],
@@ -97,7 +103,7 @@ export const influences: Influence[] = [
     id: "dante",
     name: "Dante",
     dates: "1265–1321",
-    cluster: "foundations",
+    cluster: "epic",
     note: "The Divine Comedy is proof that the strictest structure can carry the most feeling — one hundred cantos of rhymed constraint. Engineers should find that reassuring.",
     read: ["The Divine Comedy"],
     links: [],
@@ -106,7 +112,7 @@ export const influences: Influence[] = [
     id: "seneca",
     name: "Seneca",
     dates: "c. 4 BC–AD 65",
-    cluster: "foundations",
+    cluster: "ancients",
     note: "Letters from a Stoic, read one letter at a time. Advice survives when it is addressed to one person instead of an audience. Berlin keeps him carved back-to-back with Socrates in a single stone — one block, two philosophers, facing opposite ways.",
     read: ["Letters from a Stoic"],
     links: [{ to: "socrates", label: "back-to-back in one stone" }],
@@ -122,12 +128,12 @@ export const influences: Influence[] = [
     },
   },
 
-  // ── The mimetic web ────────────────────────────────────────────────────
+  // ── The novel (and the critic who read it) ─────────────────────────────
   {
     id: "girard",
     name: "René Girard",
     dates: "1923–2015",
-    cluster: "mimetic",
+    cluster: "novel",
     note: "Deceit, Desire and the Novel reorganised my shelves: Cervantes, Stendhal, Flaubert, Proust and Dostoevsky stopped being separate authors and became one system with one insight — we borrow our desires from others.",
     read: ["Deceit, Desire and the Novel"],
     links: [
@@ -135,15 +141,15 @@ export const influences: Influence[] = [
       { to: "stendhal", label: "vanity, dissected" },
       { to: "flaubert", label: "bovarysme" },
       { to: "proust", label: "the deepest case study" },
+      { to: "machado", label: "jealousy, before it was named" },
       { to: "dostoevsky", label: "the underground of desire" },
-      { to: "thiel", label: "mimetic theory, applied" },
     ],
   },
   {
     id: "cervantes",
     name: "Miguel de Cervantes",
     dates: "1547–1616",
-    cluster: "mimetic",
+    cluster: "novel",
     note: "Don Quixote: a man who outsourced his desires to the books he read. The first novel is already the whole warning.",
     read: ["Don Quixote"],
     links: [{ to: "girard", label: "reread through his eyes" }],
@@ -152,7 +158,7 @@ export const influences: Influence[] = [
     id: "stendhal",
     name: "Stendhal",
     dates: "1783–1842",
-    cluster: "mimetic",
+    cluster: "novel",
     note: "The Red and the Black — ambition as imitation, two centuries before anyone called it status games.",
     read: ["The Red and the Black"],
     links: [{ to: "girard", label: "reread through his eyes" }],
@@ -161,7 +167,7 @@ export const influences: Influence[] = [
     id: "flaubert",
     name: "Gustave Flaubert",
     dates: "1821–1880",
-    cluster: "mimetic",
+    cluster: "novel",
     note: "Madame Bovary names the disease: wanting a life because you read about it somewhere. A useful caution for people who read too much.",
     read: ["Madame Bovary"],
     links: [{ to: "girard", label: "reread through his eyes" }],
@@ -170,18 +176,19 @@ export const influences: Influence[] = [
     id: "proust",
     name: "Marcel Proust",
     dates: "1871–1922",
-    cluster: "mimetic",
+    cluster: "novel",
     note: "In Search of Lost Time, read in full at nineteen — my longest-running project to date, and the best study of memory I know in any medium.",
     read: ["In Search of Lost Time"],
     links: [{ to: "girard", label: "reread through his eyes" }],
   },
   {
-    id: "thiel",
-    name: "Peter Thiel",
-    dates: "b. 1967",
-    cluster: "mimetic",
-    note: "He sat in Girard's Stanford seminars and turned mimetic theory into a startup thesis: competition is imitation, so escape the herd.",
-    links: [{ to: "girard", label: "his teacher at Stanford" }],
+    id: "machado",
+    name: "Machado de Assis",
+    dates: "1839–1908",
+    cluster: "novel",
+    note: "Dom Casmurro is a whole novel built on a suspicion that may be borrowed — jealousy as a desire caught from others, decades before Girard named it. He watched people want what someone else has and wrote it colder than anyone.",
+    read: ["Dom Casmurro", "Memórias Póstumas de Brás Cubas"],
+    links: [{ to: "girard", label: "mimetic jealousy, avant la lettre" }],
   },
 
   // ── The Russians ───────────────────────────────────────────────────────
@@ -304,7 +311,7 @@ export const influences: Influence[] = [
     id: "camoes",
     name: "Luís de Camões",
     dates: "c. 1524–1580",
-    cluster: "portuguese",
+    cluster: "epic",
     note: "Os Lusíadas — the epic of leaving home by sea. Required reading for anyone from the interior who left by the A23.",
     read: ["Os Lusíadas"],
     links: [
