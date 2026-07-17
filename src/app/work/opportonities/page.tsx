@@ -117,7 +117,11 @@ export default async function CaseStudyPage() {
         {/* document title block — the plate cover */}
         <section className="border-b border-border py-16 sm:py-24">
           <Container>
-            <Reveal>
+            {/* immediate: this is the case study's above-fold masthead (the LCP
+                text on a shared-link landing), so it plays its rise-in on load
+                instead of waiting for hydration — same fix as the homepage
+                hero. */}
+            <Reveal immediate>
               <div className="flex flex-wrap items-baseline justify-between gap-4">
                 <p className="mono-label">Case study · {caseMeta.period}</p>
                 <p className="stamp">
@@ -145,7 +149,7 @@ export default async function CaseStudyPage() {
               </p>
             </Reveal>
 
-            <Reveal delay={120}>
+            <Reveal delay={120} immediate>
               <dl className="mt-14">
                 {[
                   { k: "Client", v: caseMeta.client },
