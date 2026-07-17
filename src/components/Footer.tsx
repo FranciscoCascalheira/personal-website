@@ -36,7 +36,7 @@ export function Footer() {
                 4&apos;s database load only on demand.
               </li>
               <li className="font-mono text-[0.68rem] text-text-faint">
-                First load ≈ 317 kB compressed · measured at build, 16 Jul 2026
+                First load ≈ 322 kB compressed · measured at build, 17 Jul 2026
                 · the marble, the map and the database arrive on demand
               </li>
             </ul>
