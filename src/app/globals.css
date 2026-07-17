@@ -372,17 +372,20 @@ html.js .reveal[data-revealed="true"] .plate-fade {
   }
 }
 
-/* engraved portrait plates — both theme variants are in the DOM; the
-   attribute picks one, and print always gets the ivory ink. lazy-loading
-   only fetches the visible variant. */
+/* engraved portrait plates. An engraving IS ink on paper, so every plate now
+   shows the ivory-ink engraving on a warm paper ground on BOTH themes — on the
+   night edition it reads as a lit plate mounted under glass, crisp and
+   legible. The old white-line "night" variants are retired: they flooded to a
+   bright blob for flat-lit busts (light marble on a light ground inks
+   everything) and went too dark for low-key photos. The .dark image stays in
+   the DOM but is never shown (lazy, so never fetched). */
 .plate-img-dark {
   display: none;
 }
-[data-theme="dark"] .plate-img-light {
-  display: none;
-}
-[data-theme="dark"] .plate-img-dark {
-  display: block;
+/* the mounted plate's paper — warm cream, the tone the dark ink was engraved
+   for. Fixed, not a theme token: a physical plate is paper on either edition. */
+.plate-paper {
+  background: #f4efe3;
 }
 
 /* fig. 0 depth layer — when the WebGL overlay mounts it sets [data-plate-3d]

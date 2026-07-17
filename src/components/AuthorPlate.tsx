@@ -13,7 +13,7 @@ export function AuthorPlate() {
 
   return (
     <figure>
-      <div className="relative aspect-[4/5] overflow-hidden border border-border bg-bg-elevated">
+      <div className="plate-paper relative aspect-[4/5] overflow-hidden border border-border">
         <Image
           src="/portrait.jpg"
           alt="Francisco Cascalheira"

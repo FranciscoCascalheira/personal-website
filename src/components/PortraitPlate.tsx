@@ -47,8 +47,10 @@ export function PortraitPlate({ influence }: { influence: Influence }) {
     let idleHandle: number | undefined;
     let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const ink = () =>
-      getComputedStyle(document.documentElement).getPropertyValue("--text").trim();
+    // the plate is always paper now, so the live bust engraves in the ivory
+    // edition's ink (dark on cream) regardless of theme — matching the static
+    // plate under it
+    const ink = () => "#191510";
 
     const io = new IntersectionObserver(
       ([entry]) => {
@@ -117,7 +119,7 @@ export function PortraitPlate({ influence }: { influence: Influence }) {
 
   return (
     <figure ref={figRef} className="mt-5">
-      <div className="relative aspect-[4/3] w-full overflow-hidden border border-border bg-bg-elevated">
+      <div className="plate-paper relative aspect-[4/3] w-full overflow-hidden border border-border">
         {plate && (
           <>
             {/* the ivory variant loads eagerly: it is also what PRINTS,
