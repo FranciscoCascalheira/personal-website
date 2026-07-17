@@ -16,6 +16,13 @@ import type { BustController } from "@/lib/bust-scene";
  *  its loading state. The GL scene is armed once and persists across
  *  selection changes, so walking Socrates → Seneca turns the same stone.
  */
+/** The live 3D marble upgrade, retired. Its screen-space cross-hatch shader
+ *  wrapped the busts in wavy contour bands — a topographic tangle, not an
+ *  engraving — and it only ever mounted on desktop WebGL, which is why it
+ *  escaped every mobile-width check. Flip to true to bring it back, but fix
+ *  the shader first. */
+const ENABLE_GL_BUST = false;
+
 export function PortraitPlate({ influence }: { influence: Influence }) {
   const plate = portraitPlates[influence.id];
   const bust = influence.bust;
@@ -35,7 +42,13 @@ export function PortraitPlate({ influence }: { influence: Influence }) {
 
   // arm the GL machinery once, the first time a marble thinker is selected
   useEffect(() => {
-    if (!bust || armedRef.current) return;
+    // ENABLE_GL_BUST is off: the live 3D bust's screen-space cross-hatch shader
+    // reads as a noisy topographic tangle over the marble (wavy contour bands
+    // wrapping the head), markedly worse than the clean static engraved plate.
+    // The static plate stands for everyone, so the marble trio matches the rest
+    // of the gallery; bust-scene stays lazy-imported below but is never reached,
+    // so its chunk is never fetched.
+    if (!ENABLE_GL_BUST || !bust || armedRef.current) return;
     const fig = figRef.current;
     if (!fig) return;
     if (!window.matchMedia("(min-width: 640px)").matches) return;

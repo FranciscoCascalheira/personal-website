@@ -12,8 +12,11 @@ export type Influence = {
   note: string;
   read?: string[];
   links: { to: string; label: string; strong?: boolean }[];
-  /** Real scanned museum marble, engraved client-side. Moderns have none —
-   *  that asymmetry is honest and the figcaption says so. */
+  /** Real scanned museum marble. It USED to be engraved client-side in WebGL;
+   *  that layer is retired (see ENABLE_GL_BUST in PortraitPlate — the shader
+   *  banded the stone into a topographic tangle), so these three now show the
+   *  same pre-engraved static plate as everyone else and this data only feeds
+   *  the figcaption credit. */
   bust?: {
     file: string; // under /busts/
     credit: string;
@@ -104,7 +107,7 @@ export const influences: Influence[] = [
     name: "Seneca",
     dates: "c. 4 BC–AD 65",
     cluster: "foundations",
-    note: "Letters from a Stoic, read one letter at a time. Advice survives when it is addressed to one person instead of an audience. Berlin keeps him carved back-to-back with Socrates in a single stone; select either and the same marble turns.",
+    note: "Letters from a Stoic, read one letter at a time. Advice survives when it is addressed to one person instead of an audience. Berlin keeps him carved back-to-back with Socrates in a single stone — one block, two philosophers, facing opposite ways.",
     read: ["Letters from a Stoic"],
     links: [{ to: "socrates", label: "back-to-back in one stone" }],
     bust: {
