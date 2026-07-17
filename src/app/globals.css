@@ -94,6 +94,16 @@
 /* one easing for the whole document — everything is pressed into place */
 :root {
   --ease-press: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Tailwind's transition utilities resolve `var(--tw-ease,
+     var(--default-transition-timing-function))`, and its default is
+     cubic-bezier(0.4, 0, 0.2, 1) — so the rule above was true only where the
+     curve was hand-written. Measured: 50 of 123 transitioning elements were
+     still riding Tailwind's curve, i.e. the document broke its own rule in 41%
+     of cases. Pointing the token at --ease-press makes the sentence literal.
+     It lives here and not in @theme on purpose: @theme is the utility-class
+     export surface, and verify-tokens rightly fails a token there that no class
+     reads. This one is read by Tailwind's own cascade, not by a class. */
+  --default-transition-timing-function: var(--ease-press);
 }
 
 /* ───────────────────────────── Base ───────────────────────────── */
