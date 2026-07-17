@@ -24,9 +24,14 @@ export function Hero({ proof }: { proof: Proof }) {
   return (
     <section id="top" className="pt-16">
       <Container>
-        {/* running header — horizontal masthead strip */}
+        {/* running header — horizontal masthead strip.
+            immediate: the whole masthead is above the fold, so it plays its
+            rise-in as a CSS load animation rather than waiting for hydration —
+            the LCP text is in this block's neighbours and must paint on first
+            render, not ~3s later on a slow phone. */}
         <Reveal
           as="div"
+          immediate
           className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-border pb-5 pt-10 sm:pt-16"
         >
           <div className="flex flex-wrap items-baseline gap-x-6 gap-y-1">
@@ -44,7 +49,7 @@ export function Hero({ proof }: { proof: Proof }) {
 
         {/* the claim — monumental, owning the first screen */}
         <div className="pb-14 pt-12 sm:pb-20 sm:pt-16">
-          <Reveal>
+          <Reveal immediate>
             <h1 className="line-mask">
               <span className="line-inner display max-w-[17ch] text-[clamp(2.7rem,7.4vw,7rem)] leading-[0.92]">
                 The City of Porto runs its youth-internship programme on
@@ -60,7 +65,7 @@ export function Hero({ proof }: { proof: Proof }) {
           {/* intro + actions as ONE left cluster — the CTAs sit directly under
               the paragraph so they never strand across the monumental air on the
               right, which is the cover's deliberate breathing room */}
-          <Reveal delay={160}>
+          <Reveal delay={160} immediate>
             <div className="mt-12 max-w-xl sm:mt-14">
               <p className="text-lg leading-relaxed text-text-muted">
                 I&apos;m Francisco Cascalheira, a second-year Computer

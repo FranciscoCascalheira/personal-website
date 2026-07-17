@@ -267,6 +267,39 @@ html.js .reveal[data-revealed="true"] .rule-draw {
   transform: scaleX(1);
 }
 
+/* above-the-fold reveal — the SAME rise-in as .reveal, but a pure-CSS load
+   animation instead of the IntersectionObserver gate. Hero content is already
+   in view on load; gating it behind hydration made the LCP text wait ~3s on a
+   slow phone (the observer can't fire until JS runs). This plays on first
+   paint, keeps the visual identical, and needs no JS. No-JS still shows it
+   plainly (no html.js → no rule → natural opacity:1). */
+html.js .reveal-load {
+  animation: reveal-in 0.6s var(--ease-press) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+html.js .reveal-load .line-inner {
+  animation: line-rise 0.75s var(--ease-press) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes line-rise {
+  from {
+    transform: translateY(112%);
+  }
+  to {
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html.js .reveal,
   html.js .line-inner,
@@ -274,6 +307,13 @@ html.js .reveal[data-revealed="true"] .rule-draw {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+  /* load-reveal off too: base .line-inner is neutralised just above, and
+     .reveal-load has no static hidden state, so cancelling the animation
+     leaves both at their natural, visible values */
+  html.js .reveal-load,
+  html.js .reveal-load .line-inner {
+    animation: none;
   }
   body {
     transition: none;
