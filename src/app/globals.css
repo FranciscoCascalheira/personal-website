@@ -353,9 +353,22 @@ html.js .reveal[data-revealed="true"] .plate-fade {
 
 /* below ~640px the plate is a miniature — the micro lettering would render at
    2–3px, so it steps back and the figcaption carries the information */
+/* the tight cartouche frame is a mobile-only swap; desktop keeps the full box */
+.cartouche-frame-tight {
+  display: none;
+}
+
 @media (max-width: 640px) {
   .plate-micro {
     display: none;
+  }
+  /* the cartouche loses its sub-lines here (see above), so swap the full frame
+     for the tight one that hugs the wordmark instead of leaving the box empty */
+  .cartouche-frame-wide {
+    display: none;
+  }
+  .cartouche-frame-tight {
+    display: inline;
   }
 }
 

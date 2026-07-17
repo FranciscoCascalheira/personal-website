@@ -271,8 +271,19 @@ export function Fig0Plate() {
           className="plate-fade"
           style={{ "--plate-delay": "650ms" } as React.CSSProperties}
         >
-          <rect x="26" y="402" width="238" height="128" fill="var(--bg)" stroke="var(--border-strong)" strokeWidth="1" />
-          <rect x="30" y="406" width="230" height="120" fill="none" stroke="var(--border)" strokeWidth="0.5" />
+          {/* Two frames, toggled by display (CSS geometry props like `y` get
+              stripped by the Turbopack CSS pass; `display` survives, same as
+              .plate-micro). Below 640px the sub-lines drop under the micro cut,
+              so the full box read two-thirds empty — the tight frame hugs the
+              wordmark (baseline y=454) instead. */}
+          <g className="cartouche-frame-wide">
+            <rect x="26" y="402" width="238" height="128" fill="var(--bg)" stroke="var(--border-strong)" strokeWidth="1" />
+            <rect x="30" y="406" width="230" height="120" fill="none" stroke="var(--border)" strokeWidth="0.5" />
+          </g>
+          <g className="cartouche-frame-tight">
+            <rect x="26" y="430" width="238" height="48" fill="var(--bg)" stroke="var(--border-strong)" strokeWidth="1" />
+            <rect x="30" y="434" width="230" height="40" fill="none" stroke="var(--border)" strokeWidth="0.5" />
+          </g>
           {/* The real name, and the real pun: `PLATFORM_NAME = 'opPORTOnities'`
               in the repo, and what the council's own emails to candidates say.
               The plate said "opPORTOnidades" — a Portuguese pun on
