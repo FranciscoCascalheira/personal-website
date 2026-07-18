@@ -59,10 +59,6 @@ CANDIDATES: dict[str, list[str]] = {
         "File:Marcel Proust 1900-2.jpg",
         "File:Marcel Proust 1895.jpg",
     ],
-    "thiel": [
-        "File:Peter Thiel (51876933345).jpg",
-        "File:Peter Thiel by Gage Skidmore.jpg",
-    ],
     "girard": [
         "File:René Girard.jpg",
         "File:Rene Girard.jpg",
@@ -126,17 +122,6 @@ CANDIDATES: dict[str, list[str]] = {
         "File:António Vieira.jpg",
         "File:Padre António Vieira.jpg",
     ],
-    "fonseca": [
-        "File:Pedro da Fonseca (1528-1599).png",
-        "File:Pedro da Fonseca (1528-1599).jpg",
-        "File:PedrodaFonseca.jpg",
-        "File:Pedro da Fonseca.jpg",
-    ],
-    "banach": [
-        "File:Stefana Banach - ستيفان بناخ.jpg",
-        "File:Stefan Banach.jpg",
-        "File:StefanBanach.jpg",
-    ],
     "hardy": [
         "File:Godfrey Harold Hardy 1.jpg",
         "File:Ghhardy@72.jpg",
@@ -156,6 +141,41 @@ CANDIDATES: dict[str, list[str]] = {
         "File:Leslie Lamport.jpg",
         "File:Leslie Lamport 2005.jpg",
     ],
+    # The stage, the poets, the investors — added 2026-07 in the fig. A rebuild.
+    "virgil": [
+        "File:Virgil Mosaic Bardo Museum Tunis.jpg",
+    ],
+    "shakespeare": [
+        "File:Shakespeare.jpg",
+    ],
+    "sophocles": [
+        "File:Head of Sophocles, Roman copy of Greek original, marble - Fitchburg Art Museum - DSC08630.JPG",
+    ],
+    "goethe": [
+        "File:Joseph Karl Stieler portrait de Johann Wolfgang von Goethe.jpg",
+        "File:Goethe (Stieler 1828).jpg",
+    ],
+    "beckett": [
+        "File:Samuel Beckett, Pic, 1 bw.jpg",
+    ],
+    "machado_poet": [
+        "File:Antonio Machado, por Joaquín Sorolla.jpg",
+    ],
+    "yeats": [
+        "File:William Butler Yeats 1.jpg",
+    ],
+    "simons": [
+        "File:Jim Simons at MSRI (cropped).jpg",
+        "File:Jim Simons at MSRI.jpg",
+    ],
+    "munger": [
+        "File:Charlie Munger.jpg",
+    ],
+    "bogle": [
+        "File:Photo of a John C. Bogle By Bill Cramer.jpg",
+    ],
+    # fonseca is now owner-provided (the Proença-a-Nova statue), not Commons —
+    # kept out of this list on purpose; see portraits-provenance.json.
 }
 
 

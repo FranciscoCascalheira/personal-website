@@ -1,8 +1,9 @@
 // Appendix A — the influence map. Curated from a private "Influências"
-// ledger kept since 2024. Scope is deliberate: philosophy, literature and
-// economics only — no politics, no polemics. Every edge is a real,
-// documentable relationship (who taught whom, who wrote about whom), not a
-// mood board. Notes are first-person; "read" lists only works actually read.
+// ledger kept since 2024. Scope is deliberate: philosophy, literature,
+// economics and the investors I read as thinkers — no politics, no polemics,
+// no apologetics. Every edge is a real, documentable relationship (who taught
+// whom, who wrote about whom, who answered whom), not a mood board. Notes are
+// first-person; "read" lists only works actually read.
 
 export type Influence = {
   id: string;
@@ -32,24 +33,29 @@ export type Influence = {
   };
 };
 
-// One axis only: each shelf holds one kind of thing. The old "mimetic web"
-// mixed novelists with a VC because it grouped by a theory (Girard's) rather
-// than by what the figures ARE — so Girard is now the critic filed WITH the
-// novel he explained, reaching the novelists by edges, not by cohabiting a
-// shelf with them.
+// One axis only: each shelf holds one KIND of thing — a school, a genre, a
+// craft — never a theory that drags unlike things together. The figures reach
+// across shelves by EDGES, not by cohabiting one (Girard files with the novel
+// he explained and reaches the novelists by lines; Dostoevsky files with the
+// Russians and reaches Girard the same way). Eleven shelves, read top to
+// bottom as the arc of how I think: the old questions, the forms that carry
+// them, the schools that argued them, then the people who put ideas to work.
 export const clusters: { id: string; label: string }[] = [
   { id: "ancients", label: "The ancients" },
   { id: "epic", label: "The epic" },
+  { id: "stage", label: "The stage" },
   { id: "novel", label: "The novel" },
   { id: "russians", label: "The Russians" },
   { id: "madrid", label: "The School of Madrid" },
-  { id: "austrians", label: "The Austrians" },
+  { id: "poets", label: "The poets" },
   { id: "portuguese", label: "The Portuguese" },
+  { id: "austrians", label: "The Austrians" },
+  { id: "investors", label: "The investors" },
   { id: "machines", label: "Mathematics & machines" },
 ];
 
 export const influences: Influence[] = [
-  // ── The ancients & the epic ────────────────────────────────────────────
+  // ── The ancients ───────────────────────────────────────────────────────
   {
     id: "socrates",
     name: "Socrates",
@@ -91,24 +97,6 @@ export const influences: Influence[] = [
     },
   },
   {
-    id: "homer",
-    name: "Homer",
-    dates: "c. 8th century BC",
-    cluster: "epic",
-    note: "The Iliad and the Odyssey are the source code. Most of what I admire in literature is a fork of one of the two.",
-    read: ["The Iliad", "The Odyssey"],
-    links: [{ to: "camoes", label: "the epic line, Aegean to Tagus" }],
-  },
-  {
-    id: "dante",
-    name: "Dante",
-    dates: "1265–1321",
-    cluster: "epic",
-    note: "The Divine Comedy is proof that the strictest structure can carry the most feeling — one hundred cantos of rhymed constraint. Engineers should find that reassuring.",
-    read: ["The Divine Comedy"],
-    links: [],
-  },
-  {
     id: "seneca",
     name: "Seneca",
     dates: "c. 4 BC–AD 65",
@@ -126,6 +114,88 @@ export const influences: Influence[] = [
       offsetY: -0.03,
       toneBias: 0.05,
     },
+  },
+
+  // ── The epic ───────────────────────────────────────────────────────────
+  {
+    id: "homer",
+    name: "Homer",
+    dates: "c. 8th century BC",
+    cluster: "epic",
+    note: "The Iliad and the Odyssey are the source code. Most of what I admire in literature is a fork of one of the two.",
+    read: ["The Iliad", "The Odyssey"],
+    links: [{ to: "camoes", label: "the epic line, Aegean to Tagus" }],
+  },
+  {
+    id: "virgil",
+    name: "Virgil",
+    dates: "70–19 BC",
+    cluster: "epic",
+    note: "The Aeneid is Homer rewritten by a man who worked for the state — the same sea, now carrying duty and paperwork. Dante trusted him enough to make him his guide out of Hell, which is the largest compliment one writer has ever paid another.",
+    read: ["The Aeneid"],
+    links: [
+      { to: "homer", label: "the Odyssey, answered in Latin" },
+      { to: "dante", label: "led him out of Hell" },
+    ],
+  },
+  {
+    id: "dante",
+    name: "Dante",
+    dates: "1265–1321",
+    cluster: "epic",
+    note: "The Divine Comedy is proof that the strictest structure can carry the most feeling — one hundred cantos of rhymed constraint. Engineers should find that reassuring.",
+    read: ["The Divine Comedy"],
+    links: [],
+  },
+  {
+    id: "camoes",
+    name: "Luís de Camões",
+    dates: "c. 1524–1580",
+    cluster: "epic",
+    note: "Os Lusíadas — the epic of leaving home by sea. Required reading for anyone from the interior who left by the A23.",
+    read: ["Os Lusíadas"],
+    links: [
+      { to: "homer", label: "the epic he answers" },
+      { to: "pessoa", label: "answered four centuries later" },
+    ],
+  },
+
+  // ── The stage ──────────────────────────────────────────────────────────
+  {
+    id: "sophocles",
+    name: "Sophocles",
+    dates: "c. 497–406 BC",
+    cluster: "stage",
+    note: "Oedipus the King is the first detective story, and the detective turns out to be the murderer. Every plot that runs on a man investigating himself is a footnote to it.",
+    read: ["Oedipus the King"],
+    links: [{ to: "seneca", label: "reworked into Latin tragedy" }],
+  },
+  {
+    id: "shakespeare",
+    name: "William Shakespeare",
+    dates: "1564–1616",
+    cluster: "stage",
+    note: "Four tragedies so far, and each finds a different way for a strong man to wreck himself. I keep Macbeth closest — the shortest, and the one that understands ambition from the inside.",
+    read: ["Hamlet", "Macbeth", "Othello", "King Lear", "Romeo and Juliet"],
+    links: [{ to: "seneca", label: "the revenge-tragedy debt" }],
+  },
+  {
+    id: "goethe",
+    name: "Johann Wolfgang von Goethe",
+    dates: "1749–1832",
+    cluster: "stage",
+    note: "Faust is the bargain every ambitious person recognises — knowledge and power now, the bill later. Werther I read younger, when its self-pity still passed for depth.",
+    read: ["Faust", "The Sorrows of Young Werther"],
+    links: [{ to: "shakespeare", label: "the model he measured himself against" }],
+  },
+  {
+    id: "beckett",
+    name: "Samuel Beckett",
+    dates: "1906–1989",
+    cluster: "stage",
+    note: "Waiting for Godot is two acts in which nothing happens, twice, and it is the most honest thing I have read about waiting for anything. He wrote himself down to almost nothing and found the floor was solid.",
+    read: ["Waiting for Godot"],
+    links: [{ to: "yeats", label: "closed a play on a line of his" }],
   },
 
   // ── The novel (and the critic who read it) ─────────────────────────────
@@ -265,6 +335,57 @@ export const influences: Influence[] = [
     links: [],
   },
 
+  // ── The poets ──────────────────────────────────────────────────────────
+  {
+    id: "machado_poet",
+    name: "Antonio Machado",
+    dates: "1875–1939",
+    cluster: "poets",
+    note: "“Caminante, no hay camino: se hace camino al andar.” The line I reach for whenever a plan turns out to be a map of a country that was never there. He wrote the plainest Spanish of his generation, and it has worn the best.",
+    read: ["Poesías completas"],
+    links: [{ to: "unamuno", label: "the same Spain, argued and sung" }],
+  },
+  {
+    id: "yeats",
+    name: "W. B. Yeats",
+    dates: "1865–1939",
+    cluster: "poets",
+    note: "The best argument that a poet can keep getting better to the end. “The Second Coming” gets quoted whenever the news is bad, usually by people who would fail its own stricter charge: that the worst are full of passionate intensity.",
+    read: ["The Collected Poems of W. B. Yeats"],
+    links: [],
+  },
+
+  // ── The Portuguese ─────────────────────────────────────────────────────
+  {
+    id: "pessoa",
+    name: "Fernando Pessoa",
+    dates: "1888–1935",
+    cluster: "portuguese",
+    note: "A Mensagem replies to Camões four centuries later; the Book of Disquiet is the private counter-argument. One man shipped a whole literature under different names.",
+    read: ["A Mensagem", "O Livro do Desassossego"],
+    links: [
+      { to: "camoes", label: "the reply to Os Lusíadas" },
+      { to: "vieira", label: "‘Emperor of the Portuguese language’" },
+    ],
+  },
+  {
+    id: "vieira",
+    name: "Padre António Vieira",
+    dates: "1608–1697",
+    cluster: "portuguese",
+    note: "The Sermon of Saint Anthony to the Fish is the sharpest rhetoric I know aimed at an audience that could not clap. Pessoa crowned him emperor of the language; the title stands.",
+    read: ["Sermão de Santo António aos Peixes"],
+    links: [{ to: "pessoa", label: "crowned by him" }],
+  },
+  {
+    id: "fonseca",
+    name: "Pedro da Fonseca",
+    dates: "1528–1599",
+    cluster: "portuguese",
+    note: "The ‘Portuguese Aristotle’, born in Proença-a-Nova — the same municipality as me. The dashed line in fig. 0 drives past his statue on its way to Porto; the plate here is engraved from that statue.",
+    links: [{ to: "plato", label: "the tradition he systematised" }],
+  },
+
   // ── The Austrians ──────────────────────────────────────────────────────
   {
     id: "mises",
@@ -306,65 +427,40 @@ export const influences: Influence[] = [
     links: [{ to: "rothbard", label: "his mentor" }],
   },
 
-  // ── The Portuguese ─────────────────────────────────────────────────────
+  // ── The investors (read as thinkers, not tip sheets) ───────────────────
   {
-    id: "camoes",
-    name: "Luís de Camões",
-    dates: "c. 1524–1580",
-    cluster: "epic",
-    note: "Os Lusíadas — the epic of leaving home by sea. Required reading for anyone from the interior who left by the A23.",
-    read: ["Os Lusíadas"],
-    links: [
-      { to: "homer", label: "the epic he answers" },
-      { to: "pessoa", label: "answered four centuries later" },
-    ],
+    id: "simons",
+    name: "Jim Simons",
+    dates: "1938–2024",
+    cluster: "investors",
+    note: "A geometer who left a mathematics chair, decided the market was a very noisy dataset, and was right enough for thirty years to prove it. The rare hero who did both of the things I care about — the proof and the machine.",
+    links: [],
   },
   {
-    id: "pessoa",
-    name: "Fernando Pessoa",
-    dates: "1888–1935",
-    cluster: "portuguese",
-    note: "A Mensagem replies to Camões four centuries later; the Book of Disquiet is the private counter-argument. One man shipped a whole literature under different names.",
-    read: ["A Mensagem", "O Livro do Desassossego"],
-    links: [
-      { to: "camoes", label: "the reply to Os Lusíadas" },
-      { to: "vieira", label: "‘Emperor of the Portuguese language’" },
-    ],
+    id: "munger",
+    name: "Charlie Munger",
+    dates: "1924–2023",
+    cluster: "investors",
+    note: "“Take a simple idea and take it seriously.” His latticework of mental models is the only investing advice that reads like engineering: hold a small number of true things and reason from them.",
+    links: [],
   },
   {
-    id: "vieira",
-    name: "Padre António Vieira",
-    dates: "1608–1697",
-    cluster: "portuguese",
-    note: "The Sermon of Saint Anthony to the Fish is the sharpest rhetoric I know aimed at an audience that could not clap. Pessoa crowned him emperor of the language; the title stands.",
-    read: ["Sermão de Santo António aos Peixes"],
-    links: [{ to: "pessoa", label: "crowned by him" }],
-  },
-  {
-    id: "fonseca",
-    name: "Pedro da Fonseca",
-    dates: "1528–1599",
-    cluster: "portuguese",
-    note: "The ‘Portuguese Aristotle’, born in Proença-a-Nova — the same municipality as me. The dashed line in fig. 0 drives past his statue on its way to Porto.",
-    links: [{ to: "plato", label: "the tradition he systematised" }],
+    id: "bogle",
+    name: "John Bogle",
+    dates: "1929–2019",
+    cluster: "investors",
+    note: "He worked out that the surest way to beat almost every professional was to stop paying them, then built the fund that proved it. The most consequential act of subtraction in modern finance.",
+    links: [],
   },
 
   // ── Mathematics & machines ─────────────────────────────────────────────
-  {
-    id: "banach",
-    name: "Stefan Banach",
-    dates: "1892–1945",
-    cluster: "machines",
-    note: "“Mathematics is the most beautiful and most powerful creation of the human spirit.” The epigraph of an essay I wrote defending the subject — my relationship to it has been an asymptotic approach to that sentence.",
-    links: [{ to: "hardy", label: "the same defence, in English" }],
-  },
   {
     id: "hardy",
     name: "G. H. Hardy",
     dates: "1877–1947",
     cluster: "machines",
     note: "A Mathematician's Apology is the honest version of every ‘why mathematics’ argument. My own attempt at one is downstream of his.",
-    links: [{ to: "banach", label: "the same defence, in Polish" }],
+    links: [],
   },
   {
     id: "turing",

@@ -169,22 +169,14 @@
       "page": "https://commons.wikimedia.org/wiki/File:Pessoa_chapeu.jpg",
       "local": "src-pessoa.jpg"
     },
-    "banach": {
-      "title": "File:Stefana Banach - ستيفان بناخ.jpg",
-      "thumb": "https://upload.wikimedia.org/wikipedia/commons/5/51/Stefana_Banach_-_%D8%B3%D8%AA%D9%8A%D9%81%D8%A7%D9%86_%D8%A8%D9%86%D8%A7%D8%AE.jpg",
-      "license": "Public domain",
-      "artist": "nieznany/unknown",
-      "page": "https://commons.wikimedia.org/wiki/File:Stefana_Banach_-_%D8%B3%D8%AA%D9%8A%D9%81%D8%A7%D9%86_%D8%A8%D9%86%D8%A7%D8%AE.jpg",
-      "local": "src-banach.jpg"
-    },
     "fonseca": {
-      "title": "File:Pedro da Fonseca (1528-1599).png",
-      "thumb": "https://upload.wikimedia.org/wikipedia/commons/3/37/Pedro_da_Fonseca_%281528-1599%29.png",
-      "license": "Public domain",
-      "artist": "Pedro da Fonseca (1528-1599)",
-      "page": "https://commons.wikimedia.org/wiki/File:Pedro_da_Fonseca_(1528-1599).png",
-      "local": "src-fonseca.jpg",
-      "mode": "document"
+      "title": "Monument to Pedro da Fonseca, Proença-a-Nova",
+      "thumb": "",
+      "license": "owner-provided (photograph by the author)",
+      "artist": "Francisco Cascalheira",
+      "page": "",
+      "local": "PedroFonseca.jpg (from ~/Downloads)",
+      "engrave": "0.56 0.30 2.0"
     },
     "marias": {
       "title": "File:Julián Marías.JPG",
@@ -225,7 +217,101 @@
       "artist": "Marc Ferrez / Adam Cuerden",
       "page": "https://commons.wikimedia.org/wiki/File:Machado_de_Assis_by_Marc_Ferrez.jpg",
       "local": "src-machado.jpg"
+    },
+    "virgil": {
+      "title": "File:Virgil Mosaic Bardo Museum Tunis.jpg",
+      "thumb": "",
+      "license": "Public domain",
+      "artist": "David Bjorgen",
+      "page": "https://commons.wikimedia.org/wiki/File:Virgil_Mosaic_Bardo_Museum_Tunis.jpg",
+      "local": "src-virgil.jpg",
+      "engrave": "0.5 0.44 1.75"
+    },
+    "sophocles": {
+      "title": "File:Head of Sophocles, Roman copy of Greek original, marble - Fitchburg Art Museum - DSC08630.JPG",
+      "thumb": "",
+      "license": "CC0",
+      "artist": "Daderot",
+      "page": "https://commons.wikimedia.org/wiki/File:Head_of_Sophocles,_Roman_copy_of_Greek_original,_marble_-_Fitchburg_Art_Museum_-_DSC08630.JPG",
+      "local": "src-sophocles.jpg",
+      "engrave": "0.5 0.40 1.08"
+    },
+    "shakespeare": {
+      "title": "File:Shakespeare.jpg",
+      "thumb": "",
+      "license": "Public domain",
+      "artist": "Attributed to John Taylor",
+      "page": "https://commons.wikimedia.org/wiki/File:Shakespeare.jpg",
+      "local": "src-shakespeare.jpg",
+      "engrave": "0.5 0.40 1.12"
+    },
+    "goethe": {
+      "title": "File:Joseph Karl Stieler portrait de Johann Wolfgang von Goethe.jpg",
+      "thumb": "",
+      "license": "Public domain",
+      "artist": "Joseph Karl Stieler",
+      "page": "https://commons.wikimedia.org/wiki/File:Joseph_Karl_Stieler_portrait_de_Johann_Wolfgang_von_Goethe.jpg",
+      "local": "src-goethe.jpg",
+      "engrave": "0.5 0.40 1.4"
+    },
+    "beckett": {
+      "title": "File:Samuel Beckett, Pic, 1 bw.jpg",
+      "thumb": "",
+      "license": "Public domain",
+      "artist": "Roger Pic",
+      "page": "https://commons.wikimedia.org/wiki/File:Samuel_Beckett,_Pic,_1_bw.jpg",
+      "local": "src-beckett.jpg",
+      "engrave": "0.5 0.33 1.2"
+    },
+    "machado_poet": {
+      "title": "File:Antonio Machado, por Joaquín Sorolla.jpg",
+      "thumb": "",
+      "license": "Public domain",
+      "artist": "Joaquín Sorolla",
+      "page": "https://commons.wikimedia.org/wiki/File:Antonio_Machado,_por_Joaqu%C3%ADn_Sorolla.jpg",
+      "local": "src-machado_poet.jpg",
+      "engrave": "0.5 0.38 1.6"
+    },
+    "yeats": {
+      "title": "File:William Butler Yeats 1.jpg",
+      "thumb": "",
+      "license": "Public domain",
+      "artist": "Bain News Service, publisher",
+      "page": "https://commons.wikimedia.org/wiki/File:William_Butler_Yeats_1.jpg",
+      "local": "src-yeats.jpg",
+      "engrave": "0.5 0.38 1.25"
+    },
+    "simons": {
+      "title": "File:Jim Simons at MSRI (cropped).jpg",
+      "thumb": "",
+      "license": "CC BY-SA 3.0",
+      "artist": "Gleuschk",
+      "page": "https://commons.wikimedia.org/wiki/File:Jim_Simons_at_MSRI_(cropped).jpg",
+      "local": "src-simons.jpg",
+      "engrave": "0.5 0.40 1.0"
+    },
+    "munger": {
+      "title": "File:Charlie Munger.jpg",
+      "thumb": "",
+      "license": "CC BY 2.0",
+      "artist": "Nick",
+      "page": "https://commons.wikimedia.org/wiki/File:Charlie_Munger.jpg",
+      "local": "src-munger.jpg",
+      "engrave": "0.5 0.32 1.7"
+    },
+    "bogle": {
+      "title": "File:Photo of a John C. Bogle By Bill Cramer.jpg",
+      "thumb": "",
+      "license": "CC BY-SA 4.0",
+      "artist": "BillCramer",
+      "page": "https://commons.wikimedia.org/wiki/File:Photo_of_a_John_C._Bogle_By_Bill_Cramer.jpg",
+      "local": "src-bogle.jpg",
+      "engrave": "0.5 0.42 1.7"
     }
   },
-  "missing": {}
+  "missing": {
+    "lorca": "only environmental/low-res PD photos; face would not register when engraved",
+    "aquilino_ribeiro": "only tombs/statues on Commons; no free face portrait (d. 1963, in copyright)",
+    "zubiri": "only grave photos on Commons; no free face portrait (d. 1983, in copyright)"
+  }
 }

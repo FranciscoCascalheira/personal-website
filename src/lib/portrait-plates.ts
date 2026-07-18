@@ -18,12 +18,6 @@ export const portraitPlates: Record<string, PortraitPlate> = {
     credit: "After Vasily Perov, 1872 · Public domain",
     source: "https://commons.wikimedia.org/wiki/File:Vasily_Perov_-_%D0%9F%D0%BE%D1%80%D1%82%D1%80%D0%B5%D1%82_%D0%A4.%D0%9C.%D0%94%D0%BE%D1%81%D1%82%D0%BE%D0%B5%D0%B2%D1%81%D0%BA%D0%BE%D0%B3%D0%BE_-_Google_Art_Project.jpg",
   },
-  banach: {
-    light: "/portraits/banach-l1.png",
-    dark: "/portraits/banach-d1.png",
-    credit: "After a photograph, photographer unknown · Public domain",
-    source: "https://commons.wikimedia.org/wiki/File:Stefana_Banach_-_%D8%B3%D8%AA%D9%8A%D9%81%D8%A7%D9%86_%D8%A8%D9%86%D8%A7%D8%AE.jpg",
-  },
   camoes: {
     light: "/portraits/camoes-l1.png",
     dark: "/portraits/camoes-d1.png",
@@ -51,8 +45,7 @@ export const portraitPlates: Record<string, PortraitPlate> = {
   fonseca: {
     light: "/portraits/fonseca-l1.png",
     dark: "/portraits/fonseca-d1.png",
-    credit: "Institutionum Dialecticarum, title page (1623 printing) — no clean portrait survives · Public domain",
-    source: "https://commons.wikimedia.org/wiki/File:Pedro_da_Fonseca_(1528-1599).png",
+    credit: "Monument to Pedro da Fonseca, Proença-a-Nova — photograph provided by the author",
   },
   girard: {
     light: "/portraits/girard-l1.png",
@@ -155,6 +148,66 @@ export const portraitPlates: Record<string, PortraitPlate> = {
     dark: "/portraits/machado-d1.png",
     credit: "After a photograph by Marc Ferrez, c. 1890 · Public domain",
     source: "https://commons.wikimedia.org/wiki/File:Machado_de_Assis_by_Marc_Ferrez.jpg",
+  },
+  virgil: {
+    light: "/portraits/virgil-l1.png",
+    dark: "/portraits/virgil-d1.png",
+    credit: "After the Bardo Museum mosaic, photographed by David Bjorgen · Public domain",
+    source: "https://commons.wikimedia.org/wiki/File:Virgil_Mosaic_Bardo_Museum_Tunis.jpg",
+  },
+  sophocles: {
+    light: "/portraits/sophocles-l1.png",
+    dark: "/portraits/sophocles-d1.png",
+    credit: "Fitchburg Art Museum head, photographed by Daderot · CC0",
+    source: "https://commons.wikimedia.org/wiki/File:Head_of_Sophocles,_Roman_copy_of_Greek_original,_marble_-_Fitchburg_Art_Museum_-_DSC08630.JPG",
+  },
+  shakespeare: {
+    light: "/portraits/shakespeare-l1.png",
+    dark: "/portraits/shakespeare-d1.png",
+    credit: "After the Chandos portrait, attributed to John Taylor · Public domain",
+    source: "https://commons.wikimedia.org/wiki/File:Shakespeare.jpg",
+  },
+  goethe: {
+    light: "/portraits/goethe-l1.png",
+    dark: "/portraits/goethe-d1.png",
+    credit: "After Joseph Karl Stieler, 1828 · Public domain",
+    source: "https://commons.wikimedia.org/wiki/File:Joseph_Karl_Stieler_portrait_de_Johann_Wolfgang_von_Goethe.jpg",
+  },
+  beckett: {
+    light: "/portraits/beckett-l1.png",
+    dark: "/portraits/beckett-d1.png",
+    credit: "After a photograph by Roger Pic · Public domain",
+    source: "https://commons.wikimedia.org/wiki/File:Samuel_Beckett,_Pic,_1_bw.jpg",
+  },
+  machado_poet: {
+    light: "/portraits/machado_poet-l1.png",
+    dark: "/portraits/machado_poet-d1.png",
+    credit: "After Joaquín Sorolla · Public domain",
+    source: "https://commons.wikimedia.org/wiki/File:Antonio_Machado,_por_Joaqu%C3%ADn_Sorolla.jpg",
+  },
+  yeats: {
+    light: "/portraits/yeats-l1.png",
+    dark: "/portraits/yeats-d1.png",
+    credit: "After a Bain News Service photograph · Public domain",
+    source: "https://commons.wikimedia.org/wiki/File:William_Butler_Yeats_1.jpg",
+  },
+  simons: {
+    light: "/portraits/simons-l1.png",
+    dark: "/portraits/simons-d1.png",
+    credit: "After a photograph by Gleuschk, Wikimedia Commons · engraving CC BY-SA 3.0",
+    source: "https://commons.wikimedia.org/wiki/File:Jim_Simons_at_MSRI_(cropped).jpg",
+  },
+  munger: {
+    light: "/portraits/munger-l1.png",
+    dark: "/portraits/munger-d1.png",
+    credit: "After a photograph by Nick (Flickr) · CC BY 2.0",
+    source: "https://commons.wikimedia.org/wiki/File:Charlie_Munger.jpg",
+  },
+  bogle: {
+    light: "/portraits/bogle-l1.png",
+    dark: "/portraits/bogle-d1.png",
+    credit: "After a photograph by Bill Cramer · engraving CC BY-SA 4.0",
+    source: "https://commons.wikimedia.org/wiki/File:Photo_of_a_John_C._Bogle_By_Bill_Cramer.jpg",
   },
   tolstoy: {
     light: "/portraits/tolstoy-l1.png",
