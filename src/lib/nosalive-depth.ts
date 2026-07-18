@@ -148,14 +148,20 @@ export function mountPlateDepth(
   // ---- tilt: the plate faces the cursor; pins overshoot for parallax ----
   const target = { x: 0, y: 0 };
   const current = { x: 0, y: 0 };
+  // wake() the loop on every move: unlike the Porto plate there is no perpetual
+  // pulse keeping it alive, so once the intro settles the loop parks — and a
+  // pointer move must restart it or the tilt never responds. It re-parks itself
+  // when the damped tilt catches up to the cursor and stops.
   const onPointerMove = (ev: PointerEvent) => {
     const r = stage.getBoundingClientRect();
     target.x = (ev.clientX - r.left) / r.width - 0.5;
     target.y = (ev.clientY - r.top) / r.height - 0.5;
+    wake();
   };
   const onPointerLeave = () => {
     target.x = 0;
     target.y = 0;
+    wake();
   };
   stage.addEventListener("pointermove", onPointerMove);
   stage.addEventListener("pointerleave", onPointerLeave);

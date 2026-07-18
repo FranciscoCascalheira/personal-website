@@ -185,16 +185,16 @@ export function NosAlivePlate() {
                 ))}
             </g>
 
-            {/* FR Eventos' bars — lit, in the database. This is the .plate-net
-                layer: when the WebGL depth overlay mounts it fades (globals.css
-                [data-plate-3d]) and these bars stand up off the paper as 3D
-                pins. Without JS or WebGL it stays exactly this engraving. */}
+            {/* FR Eventos' bars — the amber marks. This is the .plate-net layer
+                the WebGL overlay lifts: it fades under [data-plate-3d] and these
+                marks stand up off the paper as 3D pins. Without JS or WebGL it
+                stays exactly this engraving. */}
             <g className="plate-net">
               {nodes
                 .filter((n) => n.lit)
                 .map((n) => (
                   <g
-                    key={`${n.label}-${n.x}`}
+                    key={`mark-${n.label}-${n.x}`}
                     className="plate-fade"
                     style={{ "--plate-delay": "440ms" } as React.CSSProperties}
                   >
@@ -206,17 +206,29 @@ export function NosAlivePlate() {
                       strokeWidth={1.5}
                     />
                     <circle cx={n.x} cy={n.y} r={2.6} className="fill-text" />
-                    <text
-                      x={n.x}
-                      y={n.y - 12}
-                      textAnchor="middle"
-                      className={`plate-micro font-mono text-[10px] ${
-                        n.kind === "stand" ? "fill-accent-text" : "fill-text"
-                      }`}
-                    >
-                      {n.label}
-                    </text>
                   </g>
+                ))}
+            </g>
+
+            {/* the lit bars' numbers live OUTSIDE .plate-net: the WebGL layer
+                redraws the amber marks but not the type, so if the labels faded
+                with the marks the FR bars would lose their numbers in 3D. */}
+            <g>
+              {nodes
+                .filter((n) => n.lit)
+                .map((n) => (
+                  <text
+                    key={`lbl-${n.label}-${n.x}`}
+                    x={n.x}
+                    y={n.y - 12}
+                    textAnchor="middle"
+                    className={`plate-fade plate-micro font-mono text-[10px] ${
+                      n.kind === "stand" ? "fill-accent-text" : "fill-text"
+                    }`}
+                    style={{ "--plate-delay": "440ms" } as React.CSSProperties}
+                  >
+                    {n.label}
+                  </text>
                 ))}
             </g>
 
