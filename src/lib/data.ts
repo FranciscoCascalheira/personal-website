@@ -113,8 +113,8 @@ export const projects: Project[] = [
     ],
     metrics: [
       { value: "18", label: "bars run" },
-      { value: "209", label: "staff" },
-      { value: "295", label: "of 322 commits" },
+      { value: "209", label: "staff rostered" },
+      { value: "944", label: "clock events" },
     ],
   },
   {
