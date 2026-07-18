@@ -46,3 +46,6 @@ next-env.d.ts
 # python bytecode from the engraving pipeline
 __pycache__/
 *.pyc
+
+# Claude Code local session/tooling config
+.claude/
