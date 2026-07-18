@@ -5,6 +5,7 @@ import {
   stages,
   opsContainer,
 } from "@/lib/nosalive-plate";
+import { NosAliveDepth } from "./NosAliveDepth";
 
 /** fig. 0 — the NOS Alive site, engraved, with FR Eventos' bars lit.
  *
@@ -24,13 +25,14 @@ export function NosAlivePlate() {
       className="border-y border-border-strong"
       aria-labelledby="fig0-caption"
     >
-      <div className="overflow-x-auto overscroll-x-contain py-7 print:overflow-visible">
-        <div className="min-w-[46rem] print:min-w-0">
+      <div className="overflow-x-auto overscroll-x-contain py-7 sm:overflow-visible print:overflow-visible">
+        <div className="min-w-[46rem] sm:min-w-0 print:min-w-0">
+          <NosAliveDepth>
           <svg
             viewBox={`0 0 ${PLATE_W} ${PLATE_H}`}
-            className="w-full"
+            className="block w-full"
             role="img"
-            aria-label="A stylised plan of the NOS Alive 2026 site at Algés. Eighteen bars are lit — the twelve numbered bars and six branded stands FR Eventos ran, which are exactly the eighteen in the UniSpot database. Six numbered bars, run by other operators, are drawn as empty ghosts."
+            aria-label="A stylised plan of the NOS Alive 2026 site at Algés. Eighteen bars are lit — the twelve numbered bars and six branded stands FR Eventos ran, which are exactly the eighteen in the UniSpot database. Six numbered bars, run by other operators, are drawn as empty ghosts. On a fine-pointer desktop the lit bars stand up off the paper in 3D."
           >
             <defs>
               <pattern
@@ -151,15 +153,51 @@ export function NosAlivePlate() {
               </text>
             </g>
 
-            {/* the bars */}
-            {nodes.map((n, i) => (
-              <g
-                key={`${n.label}-${i}`}
-                className="plate-fade"
-                style={{ "--plate-delay": "440ms" } as React.CSSProperties}
-              >
-                {n.lit ? (
-                  <>
+            {/* the bars run by other operators — flat ghosts, absent from the
+                platform. They stay on the paper; the depth layer never lifts
+                them, so on desktop they read as flat against the raised lit bars. */}
+            <g>
+              {nodes
+                .filter((n) => !n.lit)
+                .map((n) => (
+                  <g
+                    key={`${n.label}-${n.x}`}
+                    className="plate-fade"
+                    style={{ "--plate-delay": "440ms" } as React.CSSProperties}
+                  >
+                    <circle
+                      cx={n.x}
+                      cy={n.y}
+                      r={6}
+                      className="fill-bg stroke-text-faint"
+                      strokeWidth={1}
+                      strokeDasharray="2 2"
+                    />
+                    <text
+                      x={n.x}
+                      y={n.y - 12}
+                      textAnchor="middle"
+                      className="plate-micro fill-text-faint font-mono text-[10px]"
+                    >
+                      {n.label}
+                    </text>
+                  </g>
+                ))}
+            </g>
+
+            {/* FR Eventos' bars — lit, in the database. This is the .plate-net
+                layer: when the WebGL depth overlay mounts it fades (globals.css
+                [data-plate-3d]) and these bars stand up off the paper as 3D
+                pins. Without JS or WebGL it stays exactly this engraving. */}
+            <g className="plate-net">
+              {nodes
+                .filter((n) => n.lit)
+                .map((n) => (
+                  <g
+                    key={`${n.label}-${n.x}`}
+                    className="plate-fade"
+                    style={{ "--plate-delay": "440ms" } as React.CSSProperties}
+                  >
                     <circle
                       cx={n.x}
                       cy={n.y}
@@ -168,33 +206,19 @@ export function NosAlivePlate() {
                       strokeWidth={1.5}
                     />
                     <circle cx={n.x} cy={n.y} r={2.6} className="fill-text" />
-                  </>
-                ) : (
-                  <circle
-                    cx={n.x}
-                    cy={n.y}
-                    r={6}
-                    className="fill-bg stroke-text-faint"
-                    strokeWidth={1}
-                    strokeDasharray="2 2"
-                  />
-                )}
-                <text
-                  x={n.x}
-                  y={n.y - 12}
-                  textAnchor="middle"
-                  className={`plate-micro font-mono text-[10px] ${
-                    n.lit
-                      ? n.kind === "stand"
-                        ? "fill-accent-text"
-                        : "fill-text"
-                      : "fill-text-faint"
-                  }`}
-                >
-                  {n.label}
-                </text>
-              </g>
-            ))}
+                    <text
+                      x={n.x}
+                      y={n.y - 12}
+                      textAnchor="middle"
+                      className={`plate-micro font-mono text-[10px] ${
+                        n.kind === "stand" ? "fill-accent-text" : "fill-text"
+                      }`}
+                    >
+                      {n.label}
+                    </text>
+                  </g>
+                ))}
+            </g>
 
             {/* cartouche — over the water, bottom-left, like the Porto plate */}
             <g
@@ -242,6 +266,7 @@ export function NosAlivePlate() {
               </text>
             </g>
           </svg>
+          </NosAliveDepth>
         </div>
       </div>
 
