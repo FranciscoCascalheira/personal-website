@@ -38,6 +38,8 @@ export type Project = {
   stack: string[];
   metrics: { value: string; label: string }[];
   flagship?: boolean;
+  /** When set, the exhibit row links to its own deep-dive case study. */
+  caseStudyHref?: string;
 };
 
 export const projects: Project[] = [
@@ -80,34 +82,39 @@ export const projects: Project[] = [
     slug: "unispot",
     index: "02",
     name: "UniSpot",
-    tagline: "A clock-in kiosk and HR back office",
+    tagline: "A staffing console for festival bars",
+    client: "FR Eventos",
     year: "2026",
-    // Was "Sole developer" with a metric reading "223 solo commits". Neither was
-    // true: `git log` on the repo says 279 commits — 254 mine, 22 João Ferreira's,
-    // 3 André Grasslin's — and 223 was not the count of anything. On a site whose
-    // headline is that I built one thing alone, claiming I built everything alone
-    // is the cheapest way to make the true claim worthless.
-    role: "Lead developer — 254 of 279 commits, with two colleagues",
+    // The old card said "Sole developer / 223 solo commits" — both false. It is
+    // collaborative: `git shortlog` on the repo says 322 commits on main, 295
+    // mine (two identities), 24 João Ferreira's, 3 André Grasslin's. The engine
+    // (concurrency, tenancy, time) is mine; two colleagues wrote interface. On a
+    // site whose headline is one thing built alone, overclaiming a second is the
+    // cheapest way to make the true claim worthless. See /work/unispot.
+    role: "Lead developer — 295 of 322 commits, with two colleagues",
     status: "In development",
+    caseStudyHref: "/work/unispot",
     summary:
-      "A mobile-first attendance product: a PIN-unlocked kiosk terminal for clocking in and out, an admin back office for HR to review and correct records, and one-click Excel export. It runs as a demo on a generated Railway subdomain and is written to be installed white-label; no client has installed it yet, and it is still being written.",
+      "A staffing console for event bar operators: managers roster each bar, clock staff in and out, correct the record on the spot, and read off billable hours. It ran live at NOS Alive 2026 for FR Eventos — eighteen bars, 209 staff, three nights, from a container behind the main stage — and is still being built.",
     contributions: [
-      "Built the kiosk flow, the admin back office and the correction tooling as a single Next.js 15 app.",
-      "Modelled attendance and shifts in Prisma/PostgreSQL with server-side validation.",
-      "Added Excel export and a Railway deployment configuration.",
+      "Ran the floor at NOS Alive 2026 for FR Eventos: 18 bars, 209 staff, 944 clock events over three nights.",
+      "Designed the 18-model schema and wrote the concurrency, tenancy and operational-day logic.",
+      "Made the console idempotent against a festival's dropping network, so a lost-acknowledgement retry no longer duplicates people or their hours.",
     ],
     stack: [
       "Next.js 15",
+      "React 19",
       "TypeScript",
       "Prisma",
       "PostgreSQL",
-      "Tailwind",
+      "iron-session",
+      "Zod",
       "Railway",
     ],
     metrics: [
-      { value: "254", label: "of 279 commits" },
-      { value: "Kiosk", label: "+ back office" },
-      { value: "Excel", label: "export" },
+      { value: "18", label: "bars run" },
+      { value: "209", label: "staff" },
+      { value: "295", label: "of 322 commits" },
     ],
   },
   {

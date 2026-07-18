@@ -1,16 +1,30 @@
 "use client";
 
 import { Fragment } from "react";
-import { lifecycle } from "@/lib/case-study";
+import { lifecycle as opportonitiesLifecycle } from "@/lib/case-study";
 import { useInView } from "@/lib/motion";
 
-/** fig. 2 — the application state machine as a live diagram.
+type State = { id: string; label: string; note: string };
+type LifecycleData = {
+  states: readonly State[];
+  terminal: readonly State[];
+  caption: string;
+};
+
+/** fig. 2 — a state machine as a live diagram.
  *
  * The states are typeset on a single line (a column on small screens) and
  * joined by hairlines through which an amber pulse travels once the figure
  * is in view — the machine reads as running, because it is. Notes annotate
- * each state below; terminal states close the figure as a ruled footnote. */
-export function Lifecycle() {
+ * each state below; terminal states close the figure as a ruled footnote.
+ *
+ * Data-driven so both case studies share it; defaults to opPORTOnities'
+ * application lifecycle, so its call site is unchanged. */
+export function Lifecycle({
+  lifecycle = opportonitiesLifecycle,
+}: {
+  lifecycle?: LifecycleData;
+} = {}) {
   const { ref, inView } = useInView<HTMLElement>();
 
   return (

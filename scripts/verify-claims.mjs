@@ -45,7 +45,17 @@ import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-const SOURCE = process.env.TERA_LINKR_PATH ?? join(homedir(), "TERA-LINKR");
+// The repos moved under ~/business/unilinkr; resolve to wherever the schema
+// actually is, so a local build genuinely runs this check instead of silently
+// skipping it (which it did for weeks after the move, defeating the point).
+const SOURCE =
+  process.env.TERA_LINKR_PATH ??
+  [
+    join(homedir(), "TERA-LINKR"),
+    join(homedir(), "dev/TERA-LINKR"),
+    join(homedir(), "business/unilinkr/teralinkr"),
+  ].find((p) => existsSync(join(p, "packages/backend/prisma/schema.prisma"))) ??
+  join(homedir(), "TERA-LINKR");
 const SCHEMA = join(SOURCE, "packages/backend/prisma/schema.prisma");
 /** The commit fig. 3 recounts. Its pre-fix states are only publishable while it
  *  stays an ancestor of what is deployed — history, not a live advisory. */
@@ -456,6 +466,173 @@ if (!openM || !asOfM) {
         ? `"available for work" stated ${asOfM[1]}, ${days} day${days === 1 ? "" : "s"} ago`
         : `"available for work" was last stated ${asOfM[1]}, ${days} days ago — say it again or set open: false`,
   );
+}
+
+// ── UniSpot (FC-DOSSIER 02) ──────────────────────────────────────────────────
+// A second case study: a second private repo (unilinkr-org/unilinkr-ponto) and a
+// second production database, in a different Railway project (ponto-demo). Same
+// rule as opPORTOnities above — check the claims against git and the DB, and skip
+// cleanly where the repo isn't present, so the Railway build never depends on it.
+const PONTO = process.env.PONTO_PATH ?? join(homedir(), "business/unilinkr/ponto");
+const US = "src/lib/case-study-unispot.ts";
+
+if (!existsSync(PONTO)) {
+  record("unispot · source repo", true, `skipped: no ponto repo at ${PONTO} (set PONTO_PATH)`);
+} else {
+  const pgit = (...args) =>
+    execFileSync("git", ["-C", PONTO, ...args], { encoding: "utf8" }).trim();
+
+  // Authorship. This one is collaborative, and the claim says so out loud —
+  // "295 of 322 commits, with two colleagues". Two Francisco git identities
+  // collapse to one person; git had better agree on the count, the total AND
+  // that there are three authors, or the honest framing has rotted.
+  let total = 0;
+  let fran = 0;
+  const others = new Set();
+  for (const l of pgit("shortlog", "-sne", "HEAD").split("\n").filter(Boolean)) {
+    const m = l.match(/^\s*(\d+)\s+(.+?)\s+<([^>]+)>$/);
+    if (!m) continue;
+    const [, count, name, email] = m;
+    total += Number(count);
+    if (name === "FranciscoCascalheira" || /francisco\.cascalheira|FranciscoCascalheira/.test(email))
+      fran += Number(count);
+    else others.add(email);
+  }
+  const people = others.size + (fran > 0 ? 1 : 0);
+
+  for (const [file, tag] of [[US, "case study"], ["src/lib/data.ts", "ledger"]]) {
+    const c = readFileSync(file, "utf8").match(/(\d+) of (\d+) commits, with two colleagues/);
+    if (!c) {
+      record(`unispot commits · ${tag}`, false, `could not find the "N of M commits" claim in ${file}`);
+      continue;
+    }
+    const ok = Number(c[1]) === fran && Number(c[2]) === total;
+    record(
+      `unispot commits · ${tag}`,
+      ok,
+      ok ? `${fran} of ${total}` : `claims ${c[1]}/${c[2]}, git says ${fran}/${total} — the repo moved, or the claim did`,
+    );
+  }
+  record(
+    "unispot · collaborative, not solo",
+    people === 3 && fran > total - fran && fran < total,
+    `${people} authors · mine ${fran}, the two colleagues ${total - fran}`,
+  );
+
+  // The model count. fig. 1 shipped claiming 18 while rendering 17 once (a
+  // dropped AppConfig); lock the caption's digit to the real schema so the
+  // figure and its label cannot drift apart again.
+  const usModels = (readFileSync(join(PONTO, "prisma/schema.prisma"), "utf8").match(/^model /gm) ?? []).length;
+  const capM = readFileSync("src/app/work/unispot/page.tsx", "utf8").match(/fig\. 1 — (\d+) relational models/);
+  record(
+    "unispot · model count",
+    !!capM && Number(capM[1]) === usModels,
+    capM
+      ? Number(capM[1]) === usModels
+        ? `${usModels} — caption matches schema.prisma`
+        : `caption says ${capM[1]}, schema.prisma has ${usModels}`
+      : "could not find the fig. 1 model-count caption in page.tsx",
+  );
+
+  // The four operational figures + the corroboration invariant, against the live
+  // production DB. Aggregate counts only — that database holds real staff data.
+  const usSrc = readFileSync(US, "utf8");
+  const metric = (label) =>
+    usSrc.match(new RegExp(`value:\\s*"(\\d+)",\\s*\\n?\\s*label:\\s*"${label}"`))?.[1] ?? null;
+  const claimed = {
+    "bars run": metric("bars run"),
+    "staff rostered": metric("staff rostered"),
+    shifts: metric("shifts"),
+    "clock events": metric("clock events"),
+  };
+  // The festival map's green numbered bars. The database's numbered postos must
+  // BE this set — that is what fig. 0 asserts, and the whole corroboration.
+  const GREEN_NUMBERED = "1,2,3,5,6,7,8,9,10,12,14,18";
+
+  // SQL over stdin (psql -f -) so PascalCase identifiers need no shell escaping.
+  const sql =
+    `select (select count(*) from "Posto" p join "OperationalEvent" e on e.id=p."eventId" where e.code='NOS-2026' and p.kind='BAR')::text || '|' ||` +
+    ` (select count(distinct "employeeId") from "EventAssignment" a join "OperationalEvent" e on e.id=a."eventId" where e.code='NOS-2026')::text || '|' ||` +
+    ` (select count(*) from "Shift" s join "OperationalEvent" e on e.id=s."eventId" where e.code='NOS-2026')::text || '|' ||` +
+    ` (select count(*) from "TimeEvent" t join "OperationalEvent" e on e.id=t."eventId" where e.code='NOS-2026')::text || '|' ||` +
+    ` coalesce((select string_agg(substring(p.code from 'BAR-([0-9]+)'), ',' order by (substring(p.code from 'BAR-([0-9]+)'))::int) from "Posto" p join "OperationalEvent" e on e.id=p."eventId" where e.code='NOS-2026' and p.kind='BAR' and p.code like 'BAR-%'),'')`;
+  let live = null;
+  try {
+    live = execFileSync(
+      "railway",
+      ["run", "--service", "Postgres", "--", "bash", "-c", 'psql "$DATABASE_PUBLIC_URL" -At -f -'],
+      { cwd: PONTO, input: sql, encoding: "utf8", stdio: ["pipe", "pipe", "ignore"], timeout: 120_000 },
+    )
+      .trim()
+      .split("\n")
+      .pop();
+  } catch {
+    live = null;
+  }
+
+  const mm = live?.match(/^(\d+)\|(\d+)\|(\d+)\|(\d+)\|([\d,]*)$/);
+  if (mm) {
+    const [, bars, staff, shifts, clock, codes] = mm;
+    const real = { "bars run": bars, "staff rostered": staff, shifts, "clock events": clock };
+    for (const label of Object.keys(claimed)) {
+      const ok = claimed[label] === real[label];
+      record(
+        `unispot · ${label}`,
+        ok,
+        ok ? `${real[label]} — matches` : `site claims ${claimed[label]}, production has ${real[label]}`,
+      );
+    }
+    record(
+      "unispot · database bars are the map's green set",
+      codes === GREEN_NUMBERED && bars === "18",
+      codes === GREEN_NUMBERED
+        ? `18 bars; numbered set ${codes} — exactly the green nodes on the festival map (fig. 0)`
+        : `numbered set is "${codes}", expected "${GREEN_NUMBERED}" — the plate and the data have diverged`,
+    );
+  } else {
+    unverifiable.push({
+      claim: `${claimed["bars run"]} bars · ${claimed["staff rostered"]} staff at NOS Alive`,
+      why: "the Railway CLI could not reach ponto-demo from here; the figures are a dated snapshot — re-check with `npm run verify:claims` where railway is logged in",
+    });
+  }
+
+  // Public record — FR Eventos and the festival, checked exactly like the
+  // council's documents above: a 200 is not evidence, so each must return its
+  // `proof` string in the body.
+  const cited = [
+    ...usSrc.matchAll(/url:\s*"(https?:\/\/[^"]+)"[\s\S]{0,400}?proof:\s*"([^"]+)"/g),
+  ].map((x) => ({ url: x[1], proof: x[2] }));
+  if (!cited.length) {
+    record("unispot public record · present", false, "no url/proof pairs in case-study-unispot.ts");
+  } else {
+    const UA2 =
+      "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36";
+    const dead = [];
+    for (const { url, proof } of cited) {
+      let body = "";
+      let code = "000";
+      try {
+        body = execFileSync(
+          "curl",
+          ["-sS", "-L", "--max-time", "45", "-A", UA2, "-w", "\\n%{http_code}", url],
+          { encoding: "latin1", stdio: ["ignore", "pipe", "ignore"], timeout: 60_000, maxBuffer: 32 * 1024 * 1024 },
+        );
+        code = body.trimEnd().split("\n").pop().trim();
+      } catch {
+        code = "000";
+      }
+      const needle = Buffer.from(proof, "utf8").toString("latin1");
+      if (code !== "200") dead.push(`${url} → HTTP ${code}`);
+      else if (!body.includes(needle)) dead.push(`${url} → 200 but no “${proof}” in it`);
+    }
+    record(
+      "unispot public record · every cited source is still the document cited",
+      dead.length === 0,
+      dead.length === 0
+        ? `${cited.length} cited, ${cited.length} answering with what they are supposed to say`
+        : `dead: ${dead.join(" · ")}`,
+    );
+  }
 }
 
 // ── report ───────────────────────────────────────────────────────────────────

@@ -85,12 +85,36 @@ function ExhibitIndex() {
         >
           <span className="mono-label">{`Exhibit ${"BCD"[i] ?? ""}`}</span>
           <div>
-            <h3 className="text-base font-medium text-text">{p.name}</h3>
+            <h3 className="text-base font-medium text-text">
+              {p.caseStudyHref ? (
+                <Link href={p.caseStudyHref} className="accent-underline text-text">
+                  {p.name}
+                </Link>
+              ) : (
+                p.name
+              )}
+            </h3>
             <p className="mono-label mt-1">{p.role}</p>
           </div>
-          <p className="text-sm leading-relaxed text-text-muted">
-            {p.tagline}. {p.contributions[0]}
-          </p>
+          <div className="text-sm leading-relaxed text-text-muted">
+            <p>
+              {p.tagline}. {p.contributions[0]}
+            </p>
+            {p.caseStudyHref ? (
+              <Link
+                href={p.caseStudyHref}
+                className="group mt-2 inline-flex items-center gap-1.5 font-medium text-accent-text"
+              >
+                Read the case study
+                <span
+                  className="transition-transform group-hover:translate-x-0.5"
+                  aria-hidden
+                >
+                  →
+                </span>
+              </Link>
+            ) : null}
+          </div>
           <span className="mono-label sm:text-right">
             {p.year} · {p.status}
           </span>
@@ -123,7 +147,7 @@ export function Work() {
       index="01"
       label="The evidence"
       title="One system carries the argument."
-      lede="Real systems with real users. The flagship gets the depth it earned; the rest is stated briefly and honestly."
+      lede="Real systems with real users. The flagship gets the depth it earned; the next has a case study of its own; the rest is stated briefly and honestly."
     >
       <div className="space-y-10">
         <CaseStudyTeaser />

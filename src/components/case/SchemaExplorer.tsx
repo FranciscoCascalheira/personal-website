@@ -8,27 +8,58 @@ import {
   useRef,
   useState,
 } from "react";
-import { schemaModels, domains } from "@/lib/case-study";
+import {
+  schemaModels as opportonitiesModels,
+  domains as opportonitiesDomains,
+} from "@/lib/case-study";
 
 type Line = { x1: number; y1: number; x2: number; y2: number };
 
-/** fig. 1 — the real 12-model schema, typeset as a document plate.
+type Domain = { id: string; label: string };
+
+/** Structural shape shared by both case studies. `domain` is a free string so
+ *  each names its own groups (opPORTOnities' union widens to it cleanly). */
+type SchemaModel = {
+  id: string;
+  name: string;
+  domain: string;
+  purpose: string;
+  fields: string[];
+  relations: { to: string; label: string }[];
+  note: string;
+};
+
+/** fig. 1 — a relational schema typeset as a document plate.
  *
  * No chips, no panel chrome: the models are set directly on the paper as
  * typographic nodes, and the selected model's relations are drawn as ink
  * hairlines with amber endpoints, measured from live DOM rects so they
  * survive resize and theme changes. The figure sits between two strong
  * rules, captioned like a printed plate.
+ *
+ * Parameterised over its data so both case studies (opPORTOnities' 12 models,
+ * UniSpot's 18) share one component; the defaults are the opPORTOnities schema,
+ * so its call site — `<SchemaExplorer />` — is unchanged.
  */
-export function SchemaExplorer() {
-  const [selectedId, setSelectedId] = useState<string>("application");
+export function SchemaExplorer({
+  models = opportonitiesModels,
+  domains = opportonitiesDomains,
+  caption = "fig. 1 — 12 relational models · one developer · in production for Câmara Municipal do Porto",
+  initialId = "application",
+}: {
+  models?: SchemaModel[];
+  domains?: Domain[];
+  caption?: string;
+  initialId?: string;
+} = {}) {
+  const [selectedId, setSelectedId] = useState<string>(initialId);
   const mapRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef(new Map<string, HTMLButtonElement>());
   const [lines, setLines] = useState<Line[]>([]);
 
   const selected = useMemo(
-    () => schemaModels.find((m) => m.id === selectedId) ?? schemaModels[0],
-    [selectedId]
+    () => models.find((m) => m.id === selectedId) ?? models[0],
+    [models, selectedId]
   );
   const relatedIds = useMemo(
     () => new Set(selected.relations.map((r) => r.to)),
@@ -70,8 +101,8 @@ export function SchemaExplorer() {
     if (!["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(e.key))
       return;
     e.preventDefault();
-    const order = schemaModels.map((m) => m.id);
-    const i = order.indexOf(selectedId);
+    const order = models.map((m) => m.id);
+    const i = order.indexOf(selected.id);
     const delta = e.key === "ArrowDown" || e.key === "ArrowRight" ? 1 : -1;
     const nextId = order[(i + delta + order.length) % order.length];
     setSelectedId(nextId);
@@ -125,7 +156,7 @@ export function SchemaExplorer() {
                   {d.label}
                 </p>
                 <div className="flex flex-wrap gap-x-5 gap-y-2.5">
-                  {schemaModels
+                  {models
                     .filter((m) => m.domain === d.id)
                     .map((m) => {
                       const isSelected = m.id === selected.id;
@@ -198,7 +229,7 @@ export function SchemaExplorer() {
               <p className="mono-label mt-6 mb-2">Relations</p>
               <ul className="space-y-1">
                 {selected.relations.map((r) => {
-                  const target = schemaModels.find((m) => m.id === r.to);
+                  const target = models.find((m) => m.id === r.to);
                   return (
                     <li key={`${r.to}-${r.label}`} className="font-mono text-xs">
                       <button
@@ -229,10 +260,7 @@ export function SchemaExplorer() {
         id="fig1-caption"
         className="border-t border-border-strong py-3"
       >
-        <span className="mono-label">
-          fig. 1 — 12 relational models · one developer · in production for
-          Câmara Municipal do Porto
-        </span>
+        <span className="mono-label">{caption}</span>
       </figcaption>
     </figure>
   );
