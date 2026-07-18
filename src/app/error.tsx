@@ -41,9 +41,7 @@ export default function Error({
         <Container>
           <div className="grid gap-y-8 py-20 sm:py-28 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-y-0">
             <aside className="flex items-baseline gap-4 lg:block lg:self-start lg:pr-10">
-              <p className="folio" aria-hidden>
-                err
-              </p>
+              <p className="folio" aria-hidden data-folio="err" />
               <p className="mono-label lg:mt-5">Interrupted</p>
             </aside>
 

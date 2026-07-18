@@ -116,8 +116,12 @@ export function InfluenceMap() {
           role="listbox"
           aria-label="Influences. Use the arrow keys to move between thinkers."
         >
+          {/* The debt lines are drawn only in the two-column desktop layout.
+              Stacked into one column on mobile, the diagonals cut straight
+              through unrelated names; there the amber node underlines + the
+              "Connections" list in the margin carry the relationships instead. */}
           <svg
-            className="no-print pointer-events-none absolute inset-0 h-full w-full"
+            className="no-print pointer-events-none absolute inset-0 hidden h-full w-full lg:block"
             aria-hidden
           >
             {lines.map((l, i) => (

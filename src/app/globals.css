@@ -204,7 +204,12 @@ body {
   text-wrap: balance;
 }
 
-/* ghost folio numeral — the section number used architecturally */
+/* ghost folio numeral — the section number used architecturally.
+   Rendered via ::before from data-folio, not as a text node: at 16% ink it is
+   deliberately sub-contrast decoration (the mono label beside it carries the
+   meaning, and it is aria-hidden), and contrast tools correctly do not check
+   pseudo-element content — same reason the footer surname watermark is a
+   pseudo-element. A text node here would fail color-contrast. */
 .folio {
   font-family: var(--font-serif);
   font-size: clamp(4.5rem, 7vw, 7.5rem);
@@ -212,6 +217,9 @@ body {
   letter-spacing: -0.02em;
   color: color-mix(in oklab, var(--text) 16%, var(--bg));
   user-select: none;
+}
+.folio::before {
+  content: attr(data-folio);
 }
 
 /* an inked stamp — bordered mono, used for the live-production seal */

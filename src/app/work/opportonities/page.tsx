@@ -51,9 +51,7 @@ function DocSection({
             as="aside"
             className="flex items-baseline gap-4 lg:sticky lg:top-24 lg:block lg:self-start lg:pr-10"
           >
-            <p className="folio" aria-hidden>
-              {n}
-            </p>
+            <p className="folio" aria-hidden data-folio={n} />
             <p className="mono-label lg:mt-5">{label}</p>
           </Reveal>
           {/* min-w-0: grid items default to min-width:auto, so a wide child

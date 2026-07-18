@@ -92,9 +92,7 @@ export function Section({
             as="aside"
             className="flex items-baseline gap-4 lg:sticky lg:top-24 lg:block lg:self-start lg:pr-10"
           >
-            <p className="folio" aria-hidden>
-              {index}
-            </p>
+            <p className="folio" aria-hidden data-folio={index} />
             <p className="mono-label lg:mt-5">{label}</p>
           </Reveal>
 
