@@ -15,8 +15,14 @@
  *  A word that flatters every rung equally is not a status. It is decoration. */
 export type Status = "In production" | "In development" | "Delivered";
 
-export const statusLegend =
-  "In production — someone other than me depends on it today · In development — being written now · Delivered — handed over, accepted, finished";
+// The ledger's key. The status term is the data token (mono, like the column
+// it defines); its gloss is a sentence, so it is set in sans — mono is for
+// glancing at, never for reading.
+export const statusLegend: { term: Status; gloss: string }[] = [
+  { term: "In production", gloss: "someone other than me depends on it today" },
+  { term: "In development", gloss: "being written now" },
+  { term: "Delivered", gloss: "handed over, accepted, finished" },
+];
 
 export type Project = {
   slug: string;

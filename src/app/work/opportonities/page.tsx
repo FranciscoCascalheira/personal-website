@@ -259,7 +259,7 @@ export default async function CaseStudyPage() {
         {/* 00 — abstract */}
         <DocSection id="abstract" n="00" label="Abstract" title="What this document claims.">
           <Reveal>
-            <p className="max-w-3xl text-lg leading-relaxed text-text-muted">
+            <p className="measure text-lg leading-relaxed text-text-muted">
               {abstract.body}
             </p>
           </Reveal>
@@ -315,7 +315,7 @@ export default async function CaseStudyPage() {
         {/* 01 — problem */}
         <DocSection id="problem" n="01" label="The problem" title="What the city needed.">
           <Reveal>
-            <div className="max-w-3xl space-y-5 text-lg leading-relaxed text-text-muted">
+            <div className="measure space-y-5 text-lg leading-relaxed text-text-muted">
               {problem.paragraphs.map((p) => (
                 <p key={p.slice(0, 24)}>{p}</p>
               ))}
@@ -344,7 +344,7 @@ export default async function CaseStudyPage() {
         {/* 03 — the system */}
         <DocSection id="system" n="03" label="The system" title="Twelve models, one machine.">
           <Reveal>
-            <p className="max-w-3xl text-lg leading-relaxed text-text-muted">
+            <p className="measure text-lg leading-relaxed text-text-muted">
               The whole platform stands on twelve Prisma models over
               PostgreSQL. This is the real schema, sanitised to shapes — click
               a model, or walk it with the arrow keys.
@@ -355,7 +355,7 @@ export default async function CaseStudyPage() {
           </Reveal>
 
           <Reveal className="mt-16">
-            <p className="max-w-3xl text-lg leading-relaxed text-text-muted">
+            <p className="measure text-lg leading-relaxed text-text-muted">
               An application is the contested object: companies compete for
               candidates, candidates weigh offers, and the council supervises
               all of it. Its lifecycle is an explicit state machine — every
@@ -369,7 +369,7 @@ export default async function CaseStudyPage() {
 
         {/* 04 — what held */}
         <DocSection id="decisions" n="04" label="Decisions" title="What held.">
-          <div className="max-w-3xl space-y-12">
+          <div className="measure space-y-12">
             {decisions.map((d, i) => (
               <Reveal key={d.index} delay={i * 40}>
                 <article className="border-t border-border pt-6">
@@ -395,7 +395,7 @@ export default async function CaseStudyPage() {
         <DocSection id="audit" n="05" label="The audit" title="What broke.">
           {/* fig. 3 — the audit, audited */}
           <Reveal>
-            <p className="max-w-3xl text-lg leading-relaxed text-text-muted">
+            <p className="measure text-lg leading-relaxed text-text-muted">
               Before the largest release I audited the whole platform myself,
               because nobody else was going to. It landed as one commit. Here
               is what was actually in it — recounted from the diff, including
@@ -407,7 +407,7 @@ export default async function CaseStudyPage() {
           </Reveal>
 
           <Reveal className="mt-16">
-            <div className="max-w-3xl space-y-12">
+            <div className="measure space-y-12">
               {auditExhibits.map((e) => (
                 <article key={e.index} className="border-t border-border pt-6">
                   <h3 className="flex items-baseline gap-3 text-xl font-medium text-text">
@@ -431,7 +431,7 @@ export default async function CaseStudyPage() {
 
           {/* fig. 4 — exhibit 3.4, made playable */}
           <Reveal className="mt-16">
-            <p className="max-w-3xl text-lg leading-relaxed text-text-muted">
+            <p className="measure text-lg leading-relaxed text-text-muted">
               {raceIntro}
             </p>
           </Reveal>
@@ -443,7 +443,7 @@ export default async function CaseStudyPage() {
         {/* 06 — outcome */}
         <DocSection id="outcome" n="06" label="Outcome" title="Where it stands today.">
           <Reveal>
-            <div className="max-w-3xl space-y-5 text-lg leading-relaxed text-text-muted">
+            <div className="measure space-y-5 text-lg leading-relaxed text-text-muted">
               {outcome.paragraphs.map((p) => (
                 <p key={p.slice(0, 24)}>{p}</p>
               ))}

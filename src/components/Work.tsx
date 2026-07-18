@@ -98,10 +98,16 @@ function ExhibitIndex() {
       ))}
       <Rule />
       {/* A ledger states its units. Three status words that read like a ladder
-          and define nothing are decoration; these are the definitions. */}
-      <p className="mt-3 font-mono text-[0.68rem] leading-relaxed text-text-faint">
-        {statusLegend}
-      </p>
+          and define nothing are decoration; these are the definitions. The
+          term stays mono (the data token); the gloss is a sentence, so sans. */}
+      <dl className="mt-3 flex flex-col gap-1 text-[0.8rem] leading-relaxed text-text-faint sm:flex-row sm:flex-wrap sm:gap-x-5">
+        {statusLegend.map((s) => (
+          <div key={s.term} className="flex items-baseline gap-2">
+            <dt className="mono-label whitespace-nowrap">{s.term}</dt>
+            <dd className="text-text-muted">{s.gloss}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
   );
 }

@@ -31,7 +31,7 @@ export function Appendix() {
 
         {/* Appendix B — provenance */}
         <Reveal>
-          <div className="max-w-3xl">
+          <div className="measure">
             <p className="mono-label mb-4">Appendix B — Provenance</p>
             <div className="border-l-2 border-accent/60 pl-6">
               <p className="font-serif text-2xl italic leading-snug text-text sm:text-[1.7rem]">

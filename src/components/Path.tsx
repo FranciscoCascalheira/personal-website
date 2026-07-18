@@ -53,6 +53,12 @@ export function Path() {
             </li>
           ))}
         </ol>
+        {/* The row scrolls past the right edge on wide screens (the mask fade
+            hints it); this states plainly that there is more and how much, so
+            the certification and EBEC entries off-screen aren't missed. */}
+        <p className="mono-label mt-4 hidden text-right lg:block" aria-hidden>
+          {trajectory.length} entries · scroll →
+        </p>
       </Reveal>
     </Section>
   );

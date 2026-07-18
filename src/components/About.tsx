@@ -24,7 +24,7 @@ export function About() {
             “A CV is a claim. A system in production is proof.”
           </blockquote>
 
-          <div className="mt-8 max-w-2xl space-y-5 leading-relaxed text-text-muted">
+          <div className="measure mt-8 space-y-5 leading-relaxed text-text-muted">
             <p>
               That conviction comes from the Austrian economists I read for
               fun: value isn&apos;t declared, it&apos;s demonstrated in

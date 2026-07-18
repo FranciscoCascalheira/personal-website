@@ -380,7 +380,7 @@ export function RaceCondition() {
 
       <div className="border-t border-border py-4">
         <p className="mono-label">Method</p>
-        <p className="mt-2 max-w-3xl text-xs leading-relaxed text-text-faint">
+        <p className="measure mt-2 text-sm leading-relaxed text-text-faint">
           {raceMethod}
         </p>
       </div>

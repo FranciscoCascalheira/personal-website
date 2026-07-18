@@ -102,7 +102,7 @@ export function Section({
                 {title}
               </h2>
               {lede ? (
-                <p className="mt-6 max-w-xl leading-relaxed text-text-muted">
+                <p className="measure mt-6 leading-relaxed text-text-muted">
                   {lede}
                 </p>
               ) : null}

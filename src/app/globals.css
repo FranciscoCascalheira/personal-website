@@ -222,6 +222,15 @@ body {
   content: attr(data-folio);
 }
 
+/* The prose measure. The seed is a typeset document, and a document sets its
+   running text to a fixed measure (~65ch) while plates, tables and figures run
+   the full column. One value, tuned in one place — narrow argument, wide
+   exhibits. Applied to running body prose only; display ledes and figures are
+   intentionally wider. */
+.measure {
+  max-width: 34rem;
+}
+
 /* an inked stamp — bordered mono, used for the live-production seal */
 .stamp {
   display: inline-flex;
@@ -565,6 +574,11 @@ html.js .reveal[data-revealed="true"] .plate-fade {
   opacity: 0;
 }
 .pipeline-live .flow-link::after {
+  /* Deliberate exception to the one-easing rule: this is a signal travelling
+     a wire (a symmetric, ambient, infinite pulse), not a document reveal.
+     --ease-press is an ease-OUT tuned for entrances and would make the dot
+     lurch then crawl; ease-in-out is the correct curve for travel. Same
+     category exemption as sub-200ms hover feedback. Gated by reduced-motion. */
   animation: flow-down 2.6s ease-in-out infinite;
   animation-delay: var(--flow-delay, 0s);
 }
