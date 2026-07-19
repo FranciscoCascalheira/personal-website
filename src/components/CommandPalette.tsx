@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { nav, site } from "@/lib/site";
+import { projects } from "@/lib/data";
 import { usePrefersReducedMotion } from "@/lib/motion";
 
 type Command = {
@@ -128,7 +129,21 @@ export function CommandPalette() {
   const commands = useMemo<Command[]>(() => {
     const sections: Command[] = [
       { id: "top", label: "Top", group: "Navigate", keywords: "home hero", run: () => goto("top") },
-      { id: "case-study", label: "Case study — opPORTOnities", hint: "deep dive", group: "Navigate", keywords: "work flagship teardown schema porto", run: () => { window.location.href = "/work/opportonities"; } },
+      // Every case study, indexed from the ledger — so the palette can never
+      // jump to one and silently miss another (it did: UniSpot was unreachable
+      // by ⌘K until 2026-07-19).
+      ...projects
+        .filter((p) => p.caseStudyHref)
+        .map((p) => ({
+          id: `case-${p.slug}`,
+          label: `Case study — ${p.name}`,
+          hint: "deep dive",
+          group: "Navigate" as const,
+          keywords: `work teardown case study ${p.name} ${p.client ?? ""}`,
+          run: () => {
+            window.location.href = p.caseStudyHref!;
+          },
+        })),
       ...nav.map((n) => ({
         id: n.id,
         label: n.label,

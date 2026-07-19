@@ -53,6 +53,7 @@ export const projects: Project[] = [
     role: "Sole developer — requirements to deployment",
     status: "In production",
     flagship: true,
+    caseStudyHref: "/work/opportonities",
     summary:
       "A full-stack recruitment platform for TERA, a youth-employment programme of Câmara Municipal do Porto. It connects young candidates with companies through profiles, vacancy listings and an end-to-end application pipeline. I own the entire system: I sat in requirements meetings with municipal stakeholders, designed the architecture, built it, and shipped it to production.",
     contributions: [
