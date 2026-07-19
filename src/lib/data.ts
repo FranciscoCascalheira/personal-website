@@ -152,6 +152,32 @@ export const projects: Project[] = [
       { value: "5", label: "person team" },
     ],
   },
+  {
+    slug: "keyblitz",
+    index: "04",
+    name: "KeyBlitz",
+    tagline: "A typing game on the metal — C on MINIX 3",
+    // The register counterweight: the only case study that lives at the bottom
+    // of the stack. Team of four, I was one; the grade (16.5) stays off the
+    // page — the corroboration is that it runs. See /work/keyblitz.
+    year: "2026",
+    role: "RTC driver + interface layer — team of 4",
+    status: "Delivered",
+    caseStudyHref: "/work/keyblitz",
+    summary:
+      "A typing-speed game for MINIX 3, built for FEUP's Computer Laboratory course from raw device drivers up — no engine, no graphics library, every frame written to the VBE framebuffer by hand. My part was the interrupt-driven RTC driver and the game's whole interface layer; three teammates wrote the keyboard, mouse, timer and video drivers.",
+    contributions: [
+      "Wrote an interrupt-driven RTC driver and the game's interface layer — menu, on-screen keyboard, and text rendered glyph by glyph into the framebuffer.",
+      "Worked in C on MINIX 3, driving hardware through interrupts and reading device registers directly — no libraries underneath.",
+      "One of four; the counterweight to a dossier that otherwise lives at the top of the stack.",
+    ],
+    stack: ["C", "MINIX 3", "VBE framebuffer", "i8042 / PS-2", "Interrupts"],
+    metrics: [
+      { value: "5", label: "devices driven" },
+      { value: "0", label: "graphics libraries" },
+      { value: "4.8k", label: "lines of C" },
+    ],
+  },
 ];
 
 export type Experience = {

@@ -990,6 +990,94 @@ const HER_REPO = process.env.ENGINEHER_REPO ?? "LEIC-ES-2025-26-2LEIC04/T3";
   }
 }
 
+// ── KeyBlitz / LCOM (FC-DOSSIER 04) ──────────────────────────────────────────
+// The register case study: bare-metal C on MINIX. No live system, no outside
+// authority — the claims are about the code, so they're checked against it.
+// Francisco's honest slice (the RTC driver + the interface layer) is verified
+// by git blame, so the modest role can't quietly inflate. Skips cleanly when
+// the repo isn't present locally.
+const LCOM = process.env.LCOM_PATH ?? join(homedir(), "uni/cs-feup/LCOM/shared");
+const LCOM_SRC = join(LCOM, "project/src");
+const LCOM_LIB = "src/lib/case-study-lcom.ts";
+
+if (!existsSync(LCOM_SRC)) {
+  record("keyblitz · source repo", true, `skipped: no LCOM repo at ${LCOM} (set LCOM_PATH)`);
+} else {
+  const lcomLib = readFileSync(LCOM_LIB, "utf8");
+
+  // Lines of C — the "4.8k" metric.
+  let loc = 0;
+  try {
+    const files = execFileSync("bash", ["-c", `find '${LCOM_SRC}' \\( -name '*.c' -o -name '*.h' \\) -print0 | xargs -0 cat | wc -l`], {
+      encoding: "utf8",
+    }).trim();
+    loc = Number(files);
+  } catch {
+    loc = 0;
+  }
+  const locK = `${(Math.round(loc / 100) / 10).toFixed(1)}k`;
+  const claimedLoc = lcomLib.match(/value:\s*"([\d.]+k)",\s*label:\s*"lines of C"/)?.[1];
+  record(
+    "keyblitz · lines of C",
+    claimedLoc === locK,
+    claimedLoc === locK ? `${loc} lines → ${locK}` : `claims ${claimedLoc}, project/src has ${loc} (${locK})`,
+  );
+
+  // Four devices on interrupt lines — the subscribe calls in main.c.
+  const mainC = readFileSync(join(LCOM_SRC, "main.c"), "utf8");
+  const subscribes = (mainC.match(/_subscribe_int\(&/g) ?? []).length;
+  record(
+    "keyblitz · four interrupt lines",
+    subscribes === 4,
+    subscribes === 4
+      ? `4 devices subscribe to interrupts in main.c (timer, keyboard, mouse, RTC)`
+      : `main.c has ${subscribes} interrupt subscribes, fig. 1 / the metric say four`,
+  );
+
+  // The RTC driver is really Francisco's — git blame, majority his.
+  const blameMine = (path) => {
+    try {
+      const out = execFileSync("git", ["-C", LCOM, "blame", "--line-porcelain", `project/src/${path}`], {
+        encoding: "utf8",
+        maxBuffer: 16 * 1024 * 1024,
+      });
+      const mails = [...out.matchAll(/^author-mail <([^>]+)>/gm)].map((m) => m[1]);
+      const mine = mails.filter((e) => /202405068|francisco\.cascalheira/i.test(e)).length;
+      return { mine, total: mails.length };
+    } catch {
+      return { mine: 0, total: 0 };
+    }
+  };
+  const rtc = blameMine("devices/rtc.c");
+  record(
+    "keyblitz · the RTC driver is mine",
+    rtc.total > 0 && rtc.mine * 2 > rtc.total,
+    rtc.total > 0
+      ? `${rtc.mine}/${rtc.total} lines of devices/rtc.c are Francisco's (${Math.round((rtc.mine / rtc.total) * 100)}%)`
+      : "could not blame devices/rtc.c",
+  );
+
+  // The interface layer is really Francisco's — ui.c should be almost all his.
+  const ui = blameMine("game/ui.c");
+  record(
+    "keyblitz · the interface layer is mine",
+    ui.total > 0 && ui.mine * 2 > ui.total,
+    ui.total > 0
+      ? `${ui.mine}/${ui.total} lines of game/ui.c are Francisco's (${Math.round((ui.mine / ui.total) * 100)}%)`
+      : "could not blame game/ui.c",
+  );
+
+  // fig. 2's fiddly bit: the RTC really does decode BCD.
+  const rtcSrc = readFileSync(join(LCOM_SRC, "devices/rtc.c"), "utf8");
+  record(
+    "keyblitz · fig. 2 · the RTC decodes BCD",
+    /bcd_to_bin/.test(rtcSrc) && /&\s*0x0f/.test(rtcSrc),
+    /bcd_to_bin/.test(rtcSrc)
+      ? "devices/rtc.c converts BCD → binary, as fig. 2 shows"
+      : "no BCD conversion found in devices/rtc.c — fig. 2 describes code that isn't there",
+  );
+}
+
 // ── report ───────────────────────────────────────────────────────────────────
 const pad = Math.max(...results.map((r) => r.name.length));
 console.log("\n  verify-claims — the dossier, checked against the thing it describes\n");
