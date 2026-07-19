@@ -315,9 +315,9 @@ export const teamwork = [
   },
   {
     index: "4.2",
-    title: "Pull requests, not a single trunk of commits",
-    body: "39 pull requests, authored by four of the five team logins, almost every one carrying reviewers requested from the rest of the team. Roughly a third of merged PRs were merged by someone other than the person who opened them — a real, if partial, signal that more than one person was reading the code before it landed, not just approving their own work.",
-    evidence: "GitHub PR authorship and merged_by across 35 merged pull requests",
+    title: "The code changed hands",
+    body: "Thirty-nine pull requests, opened by all five of us. The work did not stay in silos: twelve of the thirty-five that merged were merged by a teammate rather than the person who opened them — one member's branch landing through another's hands. Formal review clustered on two of the five more than it spread evenly, so read this as honest evidence that the code crossed the team, not a claim that every line had a queue of reviewers.",
+    evidence: "GitHub PR authorship, reviews and merged_by across 39 pull requests (35 merged)",
   },
   {
     index: "4.3",

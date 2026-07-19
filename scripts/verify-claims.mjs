@@ -947,6 +947,49 @@ if climb is not None:
   }
 }
 
+// ── EngineHER pull requests — the integration signal in §4.2 ─────────────────
+// Two hard PR facts: all five opened pull requests, and 12 of the 35 that merged
+// were merged by a teammate, not their author. Both come from GitHub in a single
+// GraphQL call (author + mergedBy for every PR). Skips cleanly when gh is absent
+// or unauthed, so it never blocks a build — like the repo/xlsx checks above.
+const HER_REPO = process.env.ENGINEHER_REPO ?? "LEIC-ES-2025-26-2LEIC04/T3";
+{
+  const [owner, name] = HER_REPO.split("/");
+  const q = `query{repository(owner:"${owner}",name:"${name}"){pullRequests(first:100){nodes{author{login} merged mergedBy{login}}}}}`;
+  let nodes = null;
+  try {
+    const raw = execFileSync("gh", ["api", "graphql", "-f", `query=${q}`], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+      timeout: 30_000,
+    });
+    nodes = JSON.parse(raw)?.data?.repository?.pullRequests?.nodes ?? null;
+  } catch {
+    nodes = null;
+  }
+  if (!nodes) {
+    record("engineher · pull requests (§4.2)", true, `skipped: gh could not read ${HER_REPO} (needs gh auth + access to the private repo)`);
+  } else {
+    const authors = new Set(nodes.map((n) => n.author?.login).filter(Boolean));
+    const merged = nodes.filter((n) => n.merged);
+    const cross = merged.filter((n) => n.mergedBy?.login && n.mergedBy.login !== n.author?.login).length;
+    const her = readFileSync(HER_LIB, "utf8");
+    // The prose spells the numbers as words — verify the live counts AND that the
+    // matching words are present, so a drift on either side goes red.
+    const ok =
+      authors.size === 5 && /opened by all five/.test(her) &&
+      merged.length === 35 && /thirty-five/.test(her) &&
+      cross === 12 && /twelve of the thirty-five/.test(her);
+    record(
+      "engineher · pull requests (§4.2)",
+      ok,
+      ok
+        ? `all ${authors.size} opened PRs; ${cross} of ${merged.length} merged by a teammate — matches §4.2`
+        : `GitHub: ${authors.size} authors, ${merged.length} merged, ${cross} cross-merged — §4.2 says all five / 35 / twelve; one has drifted`,
+    );
+  }
+}
+
 // ── report ───────────────────────────────────────────────────────────────────
 const pad = Math.max(...results.map((r) => r.name.length));
 console.log("\n  verify-claims — the dossier, checked against the thing it describes\n");
