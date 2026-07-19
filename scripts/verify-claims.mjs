@@ -437,6 +437,40 @@ if (!CITED.length) {
   );
 }
 
+// ── navigation integrity — every case study is reachable ─────────────────────
+// The flagship's primary CTA ("Read the case study") once silently resolved to
+// "#": the Exhibit A teaser falls back to `caseStudyHref ?? "#"`, and the
+// flagship entry in data.ts had no caseStudyHref, so the site's most important
+// link led nowhere — live in production. A dead link is invisible to a
+// screenshot and to the design reviewer; both judge appearance, not targets. So
+// it is checked here: the flagship must carry a case-study link, and every route
+// a project points at must exist on disk.
+const dataSrc = readFileSync("src/lib/data.ts", "utf8");
+const projectBlocks = dataSrc.split(/\n  \{\n/).map((b) => `{\n${b}`);
+const flagshipBlock = projectBlocks.find((b) => /flagship:\s*true/.test(b));
+const flagshipHref = flagshipBlock?.match(/caseStudyHref:\s*"([^"]+)"/)?.[1];
+record(
+  "nav · flagship links to its case study",
+  !!flagshipHref,
+  flagshipBlock
+    ? flagshipHref
+      ? `flagship → ${flagshipHref}`
+      : `the flagship project has no caseStudyHref — its "Read the case study" falls back to "#"`
+    : "could not locate the flagship project in data.ts",
+);
+
+const caseHrefs = [...dataSrc.matchAll(/caseStudyHref:\s*"([^"]+)"/g)].map((m) => m[1]);
+const deadRoutes = caseHrefs.filter((h) => !existsSync(join("src/app", h, "page.tsx")));
+record(
+  "nav · every case-study route exists",
+  caseHrefs.length > 0 && deadRoutes.length === 0,
+  caseHrefs.length === 0
+    ? "no caseStudyHref found in data.ts — the check moved or the links were removed"
+    : deadRoutes.length === 0
+      ? `${caseHrefs.length} case-study routes, all present`
+      : `missing page.tsx for: ${deadRoutes.join(" · ")}`,
+);
+
 // ── the claim no command can check ───────────────────────────────────────────
 // "Available for work" cannot be verified by anything. It can only be re-stated.
 // So it expires: 90 days after the date it carries, this goes red and someone
