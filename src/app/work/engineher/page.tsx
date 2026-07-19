@@ -7,6 +7,8 @@ import { Reveal } from "@/components/Reveal";
 import { SchemaExplorer } from "@/components/case/SchemaExplorer";
 import { Lifecycle } from "@/components/case/Lifecycle";
 import { TeamPlate } from "@/components/case/TeamPlate";
+import { TeamCadence } from "@/components/case/TeamCadence";
+import { RubricBreakdown } from "@/components/case/RubricBreakdown";
 import {
   caseMeta,
   assessment,
@@ -296,7 +298,10 @@ export default function EngineHERCaseStudyPage() {
               repository or the course&apos;s own record.
             </p>
           </Reveal>
-          <Reveal className="mt-10">
+          <Reveal delay={100} className="mt-10">
+            <TeamCadence />
+          </Reveal>
+          <Reveal className="mt-16">
             <div className="measure space-y-12">
               {teamwork.map((t, i) => (
                 <Reveal key={t.index} delay={i * 40}>
@@ -325,6 +330,9 @@ export default function EngineHERCaseStudyPage() {
               <p>{assessment.attests}</p>
               <p className="text-base text-text-muted">{assessment.note}</p>
             </div>
+          </Reveal>
+          <Reveal delay={100} className="mt-10">
+            <RubricBreakdown />
           </Reveal>
         </DocSection>
 

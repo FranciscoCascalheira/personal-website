@@ -801,6 +801,46 @@ if (!existsSync(join(HER, ".git"))) {
       ? ".github/workflows/ci.yml"
       : "no CI workflow file found in the repo",
   );
+
+  // fig. 3 — the cadence matrix. Recompute per-person commits per month (WITH
+  // merges, so lane totals equal fig. 0's) from git and check every cell of the
+  // figure against it. Uses the same ROSTER, in the same order as the lib's
+  // lanes (mine first, then the four teammates by descending total). A drift in
+  // any cell — or a new git identity outside the roster — turns this red.
+  const CAD_MONTHS = ["2026-03", "2026-04", "2026-05"];
+  const laneOrder = ["me", "p2", "p3", "p4", "p5"]; // matches ROSTER + the lib's lane order
+  const matrix = new Map(laneOrder.map((p) => [p, [0, 0, 0]]));
+  let cadUnmapped = 0;
+  let cadOutside = 0;
+  for (const l of hgit("log", "main", "--format=%ae|%ad", "--date=short").split("\n").filter(Boolean)) {
+    const [email, date] = l.split("|");
+    const person = emailToPerson.get(email.toLowerCase());
+    if (!person) { cadUnmapped++; continue; }
+    const mi = CAD_MONTHS.indexOf(date.slice(0, 7));
+    if (mi < 0) { cadOutside++; continue; }
+    matrix.get(person)[mi]++;
+  }
+  // The lib's lanes, in file order, each `counts: [a, b, c]`.
+  const libCounts = [...readFileSync(HER_LIB, "utf8").matchAll(/counts:\s*\[(\d+),\s*(\d+),\s*(\d+)\]/g)].map((m) =>
+    [Number(m[1]), Number(m[2]), Number(m[3])],
+  );
+  const realCounts = laneOrder.map((p) => matrix.get(p));
+  const cadOk =
+    cadUnmapped === 0 &&
+    cadOutside === 0 &&
+    libCounts.length === 5 &&
+    realCounts.every((row, i) => row.every((v, j) => v === libCounts[i]?.[j]));
+  record(
+    "engineher · fig. 3 cadence matches git",
+    cadOk,
+    cadUnmapped
+      ? `${cadUnmapped} commits from git identities outside the roster — the cadence would be wrong`
+      : cadOutside
+        ? `${cadOutside} commits fall outside Mar–May — the fig. 3 axis misses them`
+        : cadOk
+          ? `5 lanes × 3 months reconcile to git; grand total ${realCounts.flat().reduce((a, b) => a + b, 0)}`
+          : `fig. 3 cells differ from git — lib ${JSON.stringify(libCounts)} vs git ${JSON.stringify(realCounts)}`,
+  );
 }
 
 // The course's own grading rubric — a private spreadsheet, not something
@@ -816,17 +856,34 @@ import openpyxl
 wb = openpyxl.load_workbook(${JSON.stringify(ESOF_XLSX)}, data_only=True)
 ws = wb["4.3"]
 vsum = esum = 0.0
+cat = None
+cats = {}
+climb = None
 for r in range(5, 42):
+    a = ws.cell(row=r, column=1).value
     b = ws.cell(row=r, column=2).value
-    if b is None:
-        continue
     v = ws.cell(row=r, column=22).value
     e = ws.cell(row=r, column=5).value
+    if a and not b:
+        cat = a
+        continue
+    if b is None:
+        continue
     if isinstance(v, (int, float)):
         vsum += v
     if isinstance(e, (int, float)):
         esum += e
-print(f"{vsum:.3f} {esum:.3f}")
+    if isinstance(v, (int, float)) and isinstance(e, (int, float)) and e > 0:
+        d = cats.setdefault(cat, [0.0, 0.0])
+        d[0] += v
+        d[1] += e
+    if isinstance(b, str) and b.startswith("Manage issues"):
+        climb = [s for s in (ws.cell(row=r, column=c).value for c in range(6, 22)) if isinstance(s, (int, float))]
+print(f"TOTAL {vsum:.3f} {esum:.3f}")
+for c, (ev, we) in cats.items():
+    print(f"CAT {c.strip().lower()}|{round(ev * 20 / we, 1)}")
+if climb is not None:
+    print("CLIMB " + ",".join(str(int(s)) for s in climb))
 `.trim();
   let out = null;
   try {
@@ -834,11 +891,11 @@ print(f"{vsum:.3f} {esum:.3f}")
   } catch {
     out = null;
   }
-  const mm = out?.match(/^([\d.]+)\s+([\d.]+)$/);
-  if (!mm) {
+  const totalLine = out?.match(/^TOTAL\s+([\d.]+)\s+([\d.]+)$/m);
+  if (!totalLine) {
     record("engineher · assessment computed", false, "could not read sheet 4.3 from the rubric — python3/openpyxl missing, or the sheet moved");
   } else {
-    const [, realV, realE] = mm;
+    const [, realV, realE] = totalLine;
     const claimM = readFileSync(HER_LIB, "utf8").match(/([\d.]+) of ([\d.]+) available weight/);
     if (!claimM) {
       record("engineher · assessment figure locatable", false, `could not find "N of M available weight" in ${HER_LIB}`);
@@ -852,6 +909,41 @@ print(f"{vsum:.3f} {esum:.3f}")
           : `claims ${claimM[1]} of ${claimM[2]}, rubric computes ${realV} of ${realE}`,
       );
     }
+
+    // fig. 4 — every activity bar against the sheet. The lib's category names
+    // are lower-cased and matched to the rubric's own activity headers; each
+    // claimed /20 must equal what the sheet computes for team 4.3.
+    const realCats = new Map(
+      [...out.matchAll(/^CAT\s+(.+?)\|([\d.]+)$/gm)].map((m) => [m[1], Number(m[2])]),
+    );
+    const herLib = readFileSync(HER_LIB, "utf8");
+    const libCats = [...herLib.matchAll(/\{\s*name:\s*"([^"]+)",\s*score:\s*([\d.]+),\s*weight:/g)].map((m) => ({
+      name: m[1].toLowerCase(),
+      score: Number(m[2]),
+    }));
+    const catMiss = libCats.filter((c) => realCats.get(c.name) !== c.score);
+    record(
+      "engineher · fig. 4 activity scores match the rubric",
+      libCats.length === 9 && catMiss.length === 0,
+      libCats.length !== 9
+        ? `expected 9 activities in fig. 4, found ${libCats.length}`
+        : catMiss.length === 0
+          ? `9 activities, all matching sheet 4.3 (${libCats.find((c) => c.name === "construction")?.score}/20 construction … ${libCats.find((c) => c.name === "change management")?.score}/20 change mgmt)`
+          : `mismatch: ${catMiss.map((c) => `${c.name} claims ${c.score}, sheet ${realCats.get(c.name) ?? "—"}`).join(" · ")}`,
+    );
+
+    // The honest climb (5 → 8 → 17 → 19) must be the sheet's actual sequence.
+    const realClimb = out.match(/^CLIMB\s+([\d,]+)$/m)?.[1];
+    const libClimb = herLib.match(/scores:\s*\[([\d,\s]+)\]/)?.[1].replace(/\s/g, "");
+    record(
+      "engineher · fig. 4 climb is the real sequence",
+      !!realClimb && realClimb === libClimb,
+      realClimb
+        ? realClimb === libClimb
+          ? `${realClimb} — the sheet's own scores for managing issues/branches/PRs`
+          : `fig. 4 shows ${libClimb}, sheet 4.3 has ${realClimb}`
+        : "could not find the 'Manage issues' row in sheet 4.3",
+    );
   }
 }
 

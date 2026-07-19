@@ -240,6 +240,70 @@ export const releases = [
 export const teamPlateCaption =
   "fig. 0 — 320 commits, five people, nobody over 34% · four tagged releases across three sprints · git tag, git shortlog · 19 Jul 2026";
 
+// ─── fig. 3 — the cadence: every hand on the repo, month by month ───────────
+// The bars in fig. 0 show the split; they cannot show that all five were on the
+// repo across the whole window, at their own rhythm. This does. Counts include
+// merges, so each lane's three months sum to that person's fig. 0 total — one
+// set of numbers across both figures. Teammates stay "Teammate" (no names
+// without consent), ordered by total to match fig. 0. git log by month.
+
+export type CadenceLane = { label: string; counts: number[]; total: number; mine?: boolean };
+
+export const cadence = {
+  months: ["Mar", "Apr", "May"],
+  // The four tagged releases, placed on the Mar 1 → Jun 1 axis by their date
+  // (fraction of the 92-day span), so a reader sees when each increment landed
+  // against who was committing around it.
+  releases: [
+    { tag: "v0.1.0", at: 0.38 }, // 5 Apr
+    { tag: "v0.2.0", at: 0.565 }, // 22 Apr
+    { tag: "v0.3.0", at: 0.79 }, // 13 May
+    { tag: "v0.4.0", at: 0.945 }, // 27 May
+  ],
+  lanes: [
+    { label: "Architecture & integration (me)", counts: [1, 21, 87], total: 109, mine: true },
+    { label: "Teammate", counts: [5, 30, 53], total: 88 },
+    { label: "Teammate", counts: [0, 23, 37], total: 60 },
+    { label: "Teammate", counts: [15, 9, 9], total: 33 },
+    { label: "Teammate", counts: [0, 7, 23], total: 30 },
+  ] as CadenceLane[],
+  caption:
+    "fig. 3 — commits by month, one lane per person (counts include merges, so each lane sums to its fig. 0 total) · git log · 19 Jul 2026",
+} as const;
+
+// ─── fig. 4 — the professor's rubric, by activity ──────────────────────────
+// The corroboration made into an artifact. Every number here is team 4.3's own
+// score on the course's shared rubric — no other team's row, no individual
+// student. Scores are the weighted /20 the team earned per activity; the total
+// is the 0.538 of 0.600 that §05 states. Read off sheet "4.3" only.
+
+export type RubricRow = { name: string; score: number; weight: number };
+
+export const rubric = {
+  total: { score: 17.9, weightEarned: 0.538, weightOf: 0.6, pct: 90 },
+  // Ordered by score; Construction is both the strongest and the heaviest
+  // weight, Change management the weakest but the lightest — shown, not hidden.
+  categories: [
+    { name: "Construction", score: 19.2, weight: 0.16 },
+    { name: "Business modeling", score: 19.1, weight: 0.04 },
+    { name: "DevOps", score: 18.8, weight: 0.04 },
+    { name: "Testing", score: 18.4, weight: 0.08 },
+    { name: "Analysis & design", score: 18.3, weight: 0.03 },
+    { name: "Project management", score: 17.3, weight: 0.08 },
+    { name: "Requirements", score: 16.9, weight: 0.1 },
+    { name: "Environment", score: 15.8, weight: 0.06 },
+    { name: "Change management", score: 12.2, weight: 0.01 },
+  ] as RubricRow[],
+  // The honest arc: the team was weak at git hygiene early and got good at it.
+  // The rubric scored "manage issues, versions, branches, PRs" once per sprint.
+  climb: {
+    label: "Managing issues, branches and pull requests",
+    scores: [5, 8, 17, 19],
+    note: "scored once per sprint — a team that got measurably better at its own process",
+  },
+  caption: "fig. 4 — team 4.3's weighted score per activity, out of 20 · course rubric, sheet 4.3 only",
+} as const;
+
 // ─── how the team worked ───────────────────────────────────────────────────
 
 export const teamwork = [
