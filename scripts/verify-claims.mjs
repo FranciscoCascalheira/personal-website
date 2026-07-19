@@ -669,6 +669,192 @@ if (!existsSync(PONTO)) {
   }
 }
 
+// ── EngineHER (FC-DOSSIER 03) ────────────────────────────────────────────────
+// A third case study, on the FEUP course's own private repo and its private
+// grading rubric — not a live system, so nothing here touches a database.
+// Same rule: check every claim against git (the commit split, the releases,
+// the test suite) and, separately, against the rubric spreadsheet itself.
+// Both skip cleanly when their source isn't present locally.
+const HER = process.env.ENGINEHER_PATH ?? join(homedir(), "uni/cs-feup/ESOF/EngineHER");
+const HER_LIB = "src/lib/case-study-engineher.ts";
+
+if (!existsSync(join(HER, ".git"))) {
+  record("engineher · source repo", true, `skipped: no repo at ${HER} (set ENGINEHER_PATH)`);
+} else {
+  const hgit = (...args) =>
+    execFileSync("git", ["-C", HER, ...args], { encoding: "utf8" }).trim();
+
+  // The commit split. Five people — but ~10 git identities: most of the team
+  // commits under two or three (a GitHub login, a personal email, a faculty
+  // email), so neither `shortlog -sn` (by name) nor `-sne` (by email) dedups
+  // to 5 on its own. This is a fixed five-person team, so the honest, auditable
+  // dedup is an explicit roster: each person's set of email addresses. The
+  // check then proves the five per-person totals in the figure sum to git's
+  // grand total, that mine matches, and that nobody crossed a third — the
+  // whole claim of the figure. If the roster ever drifts from git (a new
+  // identity appears unmapped), the totals stop reconciling and this goes red.
+  const ROSTER = [
+    ["me", ["francisco.cascalheira2006@gmail.com", "138157517+franciscocascalheira@users.noreply.github.com"]],
+    ["p2", ["up202406702@up.pt"]],
+    ["p3", ["sunyezx@gmail.com"]],
+    ["p4", ["anarafael492@gmail.com", "up202403634@fe.up.pt"]],
+    ["p5", ["alexamadu23@gmail.com"]],
+  ];
+  const emailToPerson = new Map();
+  for (const [person, emails] of ROSTER) for (const e of emails) emailToPerson.set(e, person);
+
+  let total = 0;
+  const byPerson = new Map();
+  const unmapped = new Set();
+  for (const l of hgit("shortlog", "-sne", "main").split("\n").filter(Boolean)) {
+    const m = l.match(/^\s*(\d+)\s+.+?\s+<([^>]+)>$/);
+    if (!m) continue;
+    const [, count, email] = m;
+    const n = Number(count);
+    total += n;
+    const person = emailToPerson.get(email.toLowerCase());
+    if (!person) unmapped.add(email);
+    else byPerson.set(person, (byPerson.get(person) ?? 0) + n);
+  }
+  const mine = byPerson.get("me") ?? 0;
+  const people = byPerson.size;
+  const maxPct = Math.max(...[...byPerson.values()].map((c) => (c / total) * 100));
+
+  const herSrc = readFileSync(HER_LIB, "utf8");
+  const shares = [...herSrc.matchAll(/commits:\s*(\d+),\s*pct:\s*[\d.]+(?:,\s*mine:\s*true)?/g)].map((m) =>
+    Number(m[1]),
+  );
+  const claimedMine = shares[0];
+  const claimedTotal = shares.reduce((a, b) => a + b, 0);
+  const ok =
+    unmapped.size === 0 &&
+    shares.length === 5 &&
+    people === 5 &&
+    claimedMine === mine &&
+    claimedTotal === total &&
+    maxPct < 34.2;
+  record(
+    "engineher · commit split",
+    ok,
+    unmapped.size
+      ? `unmapped git identities — the roster has drifted: ${[...unmapped].join(", ")}`
+      : ok
+        ? `5 people, ${mine} of ${total} mine, top share ${maxPct.toFixed(1)}% — matches git shortlog`
+        : `figure claims ${shares.length} people, ${claimedMine}/${claimedTotal} — git roster says ${people} people, ${mine}/${total}`,
+  );
+
+  // The four tagged releases, against every claim site.
+  const tags = hgit("tag").split("\n").filter(Boolean).sort();
+  for (const [file, re, what] of [
+    [HER_LIB, /\{\s*value:\s*"(\d+)",\s*\n\s*label:\s*"releases"/, "abstract metric"],
+    ["src/lib/data.ts", /\{\s*value:\s*"(\d+)",\s*label:\s*"releases"\s*\}/, "data.ts metric"],
+  ]) {
+    const got = claim(file, re, `engineher releases · ${what}`);
+    if (got === null) continue;
+    record(
+      `engineher releases · ${what}`,
+      Number(got) === tags.length,
+      Number(got) === tags.length ? `${got}` : `claims ${got}, git tag has ${tags.length} (${tags.join(", ")})`,
+    );
+  }
+
+  // The test suite: Dart tests (unit + widget + integration) plus the
+  // Firestore rules suite, all CI-gated.
+  const dartTestCount = (dir) => {
+    const p = join(HER, dir);
+    if (!existsSync(p)) return 0;
+    try {
+      return Number(
+        execFileSync("bash", ["-c", `grep -rhE '^\\s*(test|testWidgets)\\(' --include=*.dart '${p}' | wc -l`], {
+          encoding: "utf8",
+        }).trim(),
+      );
+    } catch {
+      return 0;
+    }
+  };
+  const rulesTestCount = (() => {
+    const f = join(HER, "test/firestore_rules.test.cjs");
+    if (!existsSync(f)) return 0;
+    return (readFileSync(f, "utf8").match(/^\s*test\(/gm) ?? []).length;
+  })();
+  const realTests = dartTestCount("test") + dartTestCount("integration_test") + rulesTestCount;
+
+  for (const [file, re, what] of [
+    [HER_LIB, /\{\s*value:\s*"(\d+)",\s*\n\s*label:\s*"automated tests"/, "abstract metric"],
+    ["src/lib/data.ts", /\{\s*value:\s*"(\d+)",\s*label:\s*"automated tests"\s*\}/, "data.ts metric"],
+  ]) {
+    const got = claim(file, re, `engineher tests · ${what}`);
+    if (got === null) continue;
+    record(
+      `engineher tests · ${what}`,
+      Number(got) === realTests,
+      Number(got) === realTests ? `${got}` : `claims ${got}, repo has ${realTests} (${dartTestCount("test")} unit/widget + ${dartTestCount("integration_test")} integration + ${rulesTestCount} rules)`,
+    );
+  }
+
+  // The CI/CD gate is claimed as real — check the workflow exists.
+  record(
+    "engineher · CI workflow present",
+    existsSync(join(HER, ".github/workflows/ci.yml")),
+    existsSync(join(HER, ".github/workflows/ci.yml"))
+      ? ".github/workflows/ci.yml"
+      : "no CI workflow file found in the repo",
+  );
+}
+
+// The course's own grading rubric — a private spreadsheet, not something
+// this script can fetch. Reads ONLY sheet "4.3" (team 4.3's own row); every
+// other team's sheet in the same file is never opened. Needs python3 +
+// openpyxl, both already used elsewhere on this machine for the same job.
+const ESOF_XLSX = process.env.ESOF_XLSX_PATH ?? join(homedir(), "Downloads/ESOF.xlsx");
+if (!existsSync(ESOF_XLSX)) {
+  record("engineher · assessment source", true, `skipped: no rubric at ${ESOF_XLSX} (set ESOF_XLSX_PATH)`);
+} else {
+  const py = `
+import openpyxl
+wb = openpyxl.load_workbook(${JSON.stringify(ESOF_XLSX)}, data_only=True)
+ws = wb["4.3"]
+vsum = esum = 0.0
+for r in range(5, 42):
+    b = ws.cell(row=r, column=2).value
+    if b is None:
+        continue
+    v = ws.cell(row=r, column=22).value
+    e = ws.cell(row=r, column=5).value
+    if isinstance(v, (int, float)):
+        vsum += v
+    if isinstance(e, (int, float)):
+        esum += e
+print(f"{vsum:.3f} {esum:.3f}")
+`.trim();
+  let out = null;
+  try {
+    out = execFileSync("python3", ["-c", py], { encoding: "utf8" }).trim();
+  } catch {
+    out = null;
+  }
+  const mm = out?.match(/^([\d.]+)\s+([\d.]+)$/);
+  if (!mm) {
+    record("engineher · assessment computed", false, "could not read sheet 4.3 from the rubric — python3/openpyxl missing, or the sheet moved");
+  } else {
+    const [, realV, realE] = mm;
+    const claimM = readFileSync(HER_LIB, "utf8").match(/([\d.]+) of ([\d.]+) available weight/);
+    if (!claimM) {
+      record("engineher · assessment figure locatable", false, `could not find "N of M available weight" in ${HER_LIB}`);
+    } else {
+      const ok = claimM[1] === realV && claimM[2] === realE;
+      record(
+        "engineher · assessment matches the rubric",
+        ok,
+        ok
+          ? `${realV} of ${realE} — team 4.3, sheet "4.3" only`
+          : `claims ${claimM[1]} of ${claimM[2]}, rubric computes ${realV} of ${realE}`,
+      );
+    }
+  }
+}
+
 // ── report ───────────────────────────────────────────────────────────────────
 const pad = Math.max(...results.map((r) => r.name.length));
 console.log("\n  verify-claims — the dossier, checked against the thing it describes\n");

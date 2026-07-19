@@ -40,6 +40,11 @@ export type Project = {
   flagship?: boolean;
   /** When set, the exhibit row links to its own deep-dive case study. */
   caseStudyHref?: string;
+  /** Promotes the exhibit from a ledger row to the ruled SecondaryCase tier.
+   *  A project can have a case study (and link to it from the ledger) without
+   *  this — EngineHER does, deliberately: a team academic project reads
+   *  quieter than the solo/lead ones, so it stays a linked ledger row. */
+  secondaryCase?: boolean;
 };
 
 export const projects: Project[] = [
@@ -95,6 +100,7 @@ export const projects: Project[] = [
     role: "Lead developer — 295 of 322 commits, with two colleagues",
     status: "In development",
     caseStudyHref: "/work/unispot",
+    secondaryCase: true,
     summary:
       "A staffing console for event bar operators: managers roster each bar, clock staff in and out, correct the record on the spot, and read off billable hours. It ran live at NOS Alive 2026 for FR Eventos — eighteen bars, 209 staff, three nights, from a container behind the main stage — and is still being built.",
     contributions: [
@@ -131,17 +137,18 @@ export const projects: Project[] = [
     // nbsp: "team of 5" broke across lines and left "OF 5" orphaned on its own
     role: "Architecture & integration — team of 5",
     status: "Delivered",
+    caseStudyHref: "/work/engineher",
     summary:
       "A Flutter mobile app connecting female engineering students with mentors and role models. Built across three Agile sprints by a team of five, with a real CI pipeline and a thorough automated test suite. My focus was the architecture — data flow, system structure and the integration between components.",
     contributions: [
       "Owned data flow and system structure; integrated the pieces the team built.",
       "Shipped iteratively across three sprints to four tagged releases.",
-      "Backed the app with GitHub Actions CI and 80+ unit, widget and rules tests.",
+      "Backed the app with GitHub Actions CI and 127 unit, widget, integration and rules tests.",
     ],
     stack: ["Flutter", "Dart", "Firebase", "Firestore", "GitHub Actions"],
     metrics: [
       { value: "4", label: "releases" },
-      { value: "80+", label: "automated tests" },
+      { value: "127", label: "automated tests" },
       { value: "5", label: "person team" },
     ],
   },

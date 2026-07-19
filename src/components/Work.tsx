@@ -188,8 +188,8 @@ const blurbs: Record<string, string> = {
 
 export function Work() {
   const flagship = projects.find((p) => p.flagship) ?? projects[0];
-  const secondary = projects.filter((p) => p.caseStudyHref && !p.flagship);
-  const ledger = projects.filter((p) => !p.flagship && !p.caseStudyHref);
+  const secondary = projects.filter((p) => p.secondaryCase && !p.flagship);
+  const ledger = projects.filter((p) => !p.flagship && !p.secondaryCase);
 
   return (
     <Section
